@@ -32,14 +32,16 @@ import type { WorkloadSpec } from './types.js';
  * Replay identity: same spec + masterSeed + WORKLOAD_COMPILER_VERSION = same trace.
  */
 export const WORKLOAD_COMPILER_VERSION = '1.0.0';
+export const SEED_DERIVATION_ALGORITHM = 'fnv1a64+splitmix64-v1';
+export const PRNG_ALGORITHM = 'mulberry32-v1';
 
 /**
  * Named distribution algorithm identifiers.
- * Must change if the algorithm implementation changes.
+ * Must change if the distribution algorithm implementation changes.
  */
 const ALGORITHM_NAMES = {
   ZIPFIAN: 'ycsb-rejection-inversion-v1',
-  UNIFORM: 'mulberry32-uniform-v1',
+  UNIFORM: 'uniform-direct-v1',
 } as const;
 
 export function compileWorkload(
@@ -90,6 +92,8 @@ export function compileWorkload(
     masterSeed,
     entries,
     workloadCompilerVersion: WORKLOAD_COMPILER_VERSION,
+    seedDerivationAlgorithm: SEED_DERIVATION_ALGORITHM,
+    prngAlgorithm: PRNG_ALGORITHM,
     distributionAlgorithm,
   };
 }

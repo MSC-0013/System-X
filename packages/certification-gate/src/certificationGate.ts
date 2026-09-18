@@ -15,6 +15,7 @@ import type {
   CertificationRecord,
   CertificationLineage,
   CertificationFailureReason,
+  ExecutionEnvironmentProvenance,
 } from './types.js';
 import { verifyLineageCompleteness, computeRecordHash } from './artifactIntegrity.js';
 
@@ -31,6 +32,7 @@ import { verifyLineageCompleteness, computeRecordHash } from './artifactIntegrit
  * @param lineage            Full artifact lineage (from I8 upload step).
  * @param requireVersionId   If true, all artifacts must have a versionId (zero-mock check).
  * @param certifiedAt        Optional ISO timestamp (defaults to current time).
+ * @param environmentOverride Optional environment provenance (defaults to current process info).
  */
 export function evaluateCertification(
   integrationRunId: string,
@@ -39,6 +41,7 @@ export function evaluateCertification(
   lineage: CertificationLineage,
   requireVersionId: boolean = true,
   certifiedAt?: string,
+  environmentOverride?: ExecutionEnvironmentProvenance,
 ): CertificationRecord {
   const failures: string[] = [];
   const reasons: CertificationFailureReason[] = [];
@@ -91,12 +94,21 @@ export function evaluateCertification(
     ? 'CERTIFIED: all end-to-end gates passed with zero-mock artifact lineage'
     : `NOT CERTIFIED: ${failures.join('; ')}`;
 
+  const environment: ExecutionEnvironmentProvenance = environmentOverride ?? {
+    nodeVersion: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    contractVersion: '1.0.0',
+    ...(process.env['GIT_COMMIT_SHA'] ? { gitSha: process.env['GIT_COMMIT_SHA'] } : {}),
+  };
+
   const recordWithoutHash: Omit<CertificationRecord, 'recordHash'> = {
     integrationRunId,
     experimentSpecHash,
     certified,
     verdict,
     lineage,
+    environment,
     certifiedAt: certifiedAt ?? new Date().toISOString(),
   };
 

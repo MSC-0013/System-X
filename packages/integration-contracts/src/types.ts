@@ -104,15 +104,13 @@ export interface CanonicalOperationTrace {
   /**
    * Version of the workload-compiler package that produced this trace.
    * Required for replay identity: same spec + seed + compilerVersion = same trace.
-   * If compiler logic changes (Zipf algorithm, key encoding, scheduling), bump
-   * this version so consumers know a new trace is not identical to prior ones.
-   * Format: semver string, e.g. '1.0.0'.
    */
   readonly workloadCompilerVersion: string;
-  /**
-   * Named algorithm used for key distribution (e.g. 'ycsb-rejection-inversion-v1').
-   * Included in traceHash provenance so algorithm changes are detectable.
-   */
+  /** Layer 1: Stream seed derivation algorithm (e.g. 'fnv1a64+splitmix64-v1'). */
+  readonly seedDerivationAlgorithm: string;
+  /** Layer 2: Pseudo-random number step generator algorithm (e.g. 'mulberry32-v1'). */
+  readonly prngAlgorithm: string;
+  /** Layer 3: Key distribution algorithm (e.g. 'ycsb-rejection-inversion-v1' | 'uniform-direct-v1'). */
   readonly distributionAlgorithm: string;
 }
 

@@ -18,5 +18,6 @@ export type {
   CertificationRecord,
   ArtifactStoreConfig,
   CertificationFailureReason,
+  ExecutionEnvironmentProvenance,
 } from './types.js';
 export { DEFAULT_ARTIFACT_STORE_CONFIG } from './types.js';

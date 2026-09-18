@@ -1,4 +1,9 @@
-export { compileWorkload, WORKLOAD_COMPILER_VERSION } from './workloadCompiler.js';
+export {
+  compileWorkload,
+  WORKLOAD_COMPILER_VERSION,
+  SEED_DERIVATION_ALGORITHM,
+  PRNG_ALGORITHM,
+} from './workloadCompiler.js';
 export type {
   WorkloadCompilationRequest,
   WorkloadCompilationResult,

@@ -20,7 +20,12 @@
  * Exit code 1 = at least one gate failed.
  */
 
-import { compileWorkload, WORKLOAD_COMPILER_VERSION } from '@system-x/workload-compiler';
+import {
+  compileWorkload,
+  WORKLOAD_COMPILER_VERSION,
+  SEED_DERIVATION_ALGORITHM,
+  PRNG_ALGORITHM,
+} from '@system-x/workload-compiler';
 import { compileFaultSchedule } from '@system-x/fault-compiler';
 import { normalizeRunResult } from '@system-x/result-normalizer';
 import { generateComparisonReport, DEFAULT_COMPARISON_CRITERIA } from '@system-x/comparison-engine';
@@ -108,14 +113,23 @@ await gate('Compiler version provenance in CanonicalOperationTrace', async () =>
   const trace = compileWorkload(spec, SPEC_HASH);
 
   if (!trace.workloadCompilerVersion) throw new Error('workloadCompilerVersion missing from trace');
+  if (!trace.seedDerivationAlgorithm) throw new Error('seedDerivationAlgorithm missing from trace');
+  if (!trace.prngAlgorithm) throw new Error('prngAlgorithm missing from trace');
   if (!trace.distributionAlgorithm) throw new Error('distributionAlgorithm missing from trace');
+
   if (trace.workloadCompilerVersion !== WORKLOAD_COMPILER_VERSION) {
     throw new Error(
       `Version mismatch: trace=${trace.workloadCompilerVersion} constant=${WORKLOAD_COMPILER_VERSION}`,
     );
   }
+  if (trace.seedDerivationAlgorithm !== SEED_DERIVATION_ALGORITHM) {
+    throw new Error(`Seed derivation mismatch: ${trace.seedDerivationAlgorithm} !== ${SEED_DERIVATION_ALGORITHM}`);
+  }
+  if (trace.prngAlgorithm !== PRNG_ALGORITHM) {
+    throw new Error(`PRNG mismatch: ${trace.prngAlgorithm} !== ${PRNG_ALGORITHM}`);
+  }
 
-  return `version=${trace.workloadCompilerVersion} algorithm="${trace.distributionAlgorithm}" ✓`;
+  return `v=${trace.workloadCompilerVersion} seedDeriv="${trace.seedDerivationAlgorithm}" prng="${trace.prngAlgorithm}" dist="${trace.distributionAlgorithm}" ✓`;
 });
 
 // ---------------------------------------------------------------------------

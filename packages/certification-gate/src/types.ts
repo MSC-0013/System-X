@@ -54,6 +54,15 @@ export interface CertificationLineage {
   readonly validationReport?: ArtifactRecord;
 }
 
+/** Execution environment provenance for archival reproducibility. */
+export interface ExecutionEnvironmentProvenance {
+  readonly nodeVersion: string;
+  readonly platform: string;
+  readonly arch: string;
+  readonly contractVersion: string;
+  readonly gitSha?: string;
+}
+
 /** Final certification decision for an integration run. */
 export interface CertificationRecord {
   readonly integrationRunId: string;
@@ -64,6 +73,8 @@ export interface CertificationRecord {
   readonly verdict: string;
   /** The immutable artifact lineage. */
   readonly lineage: CertificationLineage;
+  /** Execution environment provenance. */
+  readonly environment: ExecutionEnvironmentProvenance;
   /** ISO 8601 timestamp of certification. */
   readonly certifiedAt: string;
   /** SHA-256 of the canonical JSON of the entire certification record. */

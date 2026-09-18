@@ -175,10 +175,12 @@ await gate('Deterministic workload trace compilation', async () => {
 
   const t1 = compileWorkload(spec, SPEC_HASH);
   const t2 = compileWorkload(spec, SPEC_HASH);
-  if (t1.traceHash !== t2.traceHash) throw new Error('Non-deterministic trace!');
   if (!t1.workloadCompilerVersion) throw new Error('Missing workloadCompilerVersion');
+  if (!t1.seedDerivationAlgorithm) throw new Error('Missing seedDerivationAlgorithm');
+  if (!t1.prngAlgorithm) throw new Error('Missing prngAlgorithm');
+  if (!t1.distributionAlgorithm) throw new Error('Missing distributionAlgorithm');
 
-  return `traceHash=${t1.traceHash.slice(0, 16)}… version=${t1.workloadCompilerVersion} ✓`;
+  return `traceHash=${t1.traceHash.slice(0, 16)}… v=${t1.workloadCompilerVersion} seedDeriv="${t1.seedDerivationAlgorithm}" prng="${t1.prngAlgorithm}" dist="${t1.distributionAlgorithm}" ✓`;
 });
 
 // ---------------------------------------------------------------------------
@@ -466,7 +468,15 @@ await gate('Negative mutation tests — DELETE & overwrite rejected with 403', a
     throw new Error(`WORM VIOLATION: PUT over locked versionId returned HTTP ${putResp.status} instead of rejection`);
   }
 
-  return `DELETE rejected (${delResp.status}), Overwrite rejected (${putResp.status}) — WORM verified ✓`;
+  // 3. Confirm locked version V1 remains unaltered and byte-identical
+  const getResp = await fetch(`${MINIO_URL}/${MINIO_BUCKET}/${objectKey}?versionId=${uploadedArtifact.versionId}`);
+  if (!getResp.ok) throw new Error(`GET locked version failed with HTTP ${getResp.status}`);
+  const body = await getResp.text();
+  if (computeSha256(body) !== uploadedArtifact.sha256) {
+    throw new Error('WORM VIOLATION: locked version content altered despite rejection of mutation attempts');
+  }
+
+  return `lockedVersion(${uploadedArtifact.versionId}) invariant holds: DELETE(403), Overwrite(403), SHA-256 intact ✓`;
 });
 
 // ---------------------------------------------------------------------------

@@ -9,6 +9,6 @@
   "include": ["src/**/*"],
   "references": [
     { "path": "../integration-contracts" },
-    { "path": "../comparison-engine" }
+    { "path": "../result-normalizer" }
   ]
 }

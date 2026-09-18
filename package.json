@@ -7,7 +7,8 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "gate": "node --import tsx gate/integratedGate.ts"
   },
   "devDependencies": {
     "turbo": "^2.4.4",

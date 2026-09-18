@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@system-x/integration-contracts": "workspace:*",
-    "@system-x/comparison-engine": "workspace:*"
+    "@system-x/result-normalizer": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

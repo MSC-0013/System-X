@@ -53,15 +53,28 @@ export function generateComparisonReport(
   const realThroughput = realSummary?.throughputOpsSec ?? 0;
   const throughputMape = computeMape(realThroughput, simThroughput);
 
-  // Certification decision.
-  const ksPass =
-    !latencyKs.rejected || latencyKs.dStatistic <= criteria.maxKsDStatistic;
+  // ---------------------------------------------------------------------------
+  // Two-tier KS certification (I0 contract): BOTH gates must pass independently.
+  //
+  //   Gate A — Statistical hypothesis:   p-value >= alpha  (null NOT rejected)
+  //   Gate B — Engineering D_KS bound:   D_KS <= maxKsDStatistic
+  //
+  // These are NOT interchangeable via OR. A failing statistical test means the
+  // distributions are empirically distinguishable at the chosen alpha, regardless
+  // of whether D_KS happens to be small. The engineering gate is a separate
+  // floor that protects against underpowered tests on small samples.
+  // ---------------------------------------------------------------------------
+  const statisticalKsPass = !latencyKs.rejected;                                 // Gate A
+  const engineeringKsPass = latencyKs.dStatistic <= criteria.maxKsDStatistic;   // Gate B
   const p99Pass = p99LatencyMape.mapePercent <= criteria.maxP99MapePercent;
   const tputPass = throughputMape.mapePercent <= criteria.maxThroughputMapePercent;
-  const certified = ksPass && p99Pass && tputPass;
+
+  // All four gates must pass.
+  const certified = statisticalKsPass && engineeringKsPass && p99Pass && tputPass;
 
   const reasons: string[] = [];
-  if (!ksPass) reasons.push(`KS D=${latencyKs.dStatistic.toFixed(3)} exceeds max=${criteria.maxKsDStatistic}`);
+  if (!statisticalKsPass) reasons.push(`KS hypothesis rejected: p=${latencyKs.pValue.toFixed(4)} < alpha=${criteria.ksAlpha}`);
+  if (!engineeringKsPass) reasons.push(`KS D=${latencyKs.dStatistic.toFixed(3)} exceeds engineering max=${criteria.maxKsDStatistic}`);
   if (!p99Pass) reasons.push(`p99 MAPE=${p99LatencyMape.mapePercent.toFixed(1)}% exceeds max=${criteria.maxP99MapePercent}%`);
   if (!tputPass) reasons.push(`throughput MAPE=${throughputMape.mapePercent.toFixed(1)}% exceeds max=${criteria.maxThroughputMapePercent}%`);
 

@@ -160,6 +160,53 @@ describe('I5: Comparison Engine', () => {
     expect(report.verdict).toContain('NOT CERTIFIED');
   });
 
+  it('not certified when stat test fails even if D_KS is below engineering threshold (OR bug guard)', () => {
+    // This is the EXACT scenario the review identified.
+    // We construct distributions where stat test rejects (small p) but D_KS is tiny.
+    // With large samples, even a small D_KS can be statistically significant.
+    // Force the situation: use strict alpha=1.0 (always reject stat gate),
+    // but engineering maxKsDStatistic = 1.0 (always passes engineering gate).
+    // Result must be NOT CERTIFIED — both gates must pass independently.
+    const a = Array.from({ length: 50 }, (_, i) => i + 1);
+    const b = Array.from({ length: 50 }, (_, i) => i + 2); // slight shift
+    const result = makeNormalizedResult(a, b);
+
+    const strictCriteria = {
+      ...DEFAULT_COMPARISON_CRITERIA,
+      ksAlpha: 1.0,           // forces statistical rejection always
+      maxKsDStatistic: 1.0,   // engineering gate always passes
+      maxP99MapePercent: 100, // disable MAPE gates
+      maxThroughputMapePercent: 100,
+    };
+
+    const report = generateComparisonReport(result, strictCriteria);
+    // Statistical gate fails (alpha=1.0 always rejects), engineering passes.
+    // The OLD code would have returned certified=true (OR semantics).
+    // The CORRECT code must return certified=false (AND semantics).
+    expect(report.certified).toBe(false);
+    expect(report.verdict).toContain('hypothesis rejected');
+  });
+
+  it('not certified when engineering D_KS exceeds threshold even if stat test passes', () => {
+    // Force stat gate to always pass (alpha=0.0), engineering gate to always fail.
+    const a = Array.from({ length: 10 }, (_, i) => i + 1);
+    const b = Array.from({ length: 10 }, (_, i) => i + 1);
+    const result = makeNormalizedResult(a, b);
+
+    const lenientStatCriteria = {
+      ...DEFAULT_COMPARISON_CRITERIA,
+      ksAlpha: 0.0,              // stat test never rejects
+      maxKsDStatistic: -0.001,   // engineering gate impossible to pass (D_KS always >= 0)
+      maxP99MapePercent: 100,
+      maxThroughputMapePercent: 100,
+    };
+
+    const report = generateComparisonReport(result, lenientStatCriteria);
+    // Engineering gate fails (maxKsDStatistic=-0.001), stat passes.
+    expect(report.certified).toBe(false);
+    expect(report.verdict).toContain('engineering max');
+  });
+
   it('report contains correct metadata', () => {
     const latencies = Array.from({ length: 50 }, (_, i) => 10 + i);
     const result = makeNormalizedResult(latencies, latencies);

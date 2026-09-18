@@ -46,7 +46,15 @@ export interface LoadDimension {
   readonly targetThroughputOpsSec: number;
 }
 
-/** QUORUM LAB capability matrix — what the cluster can actually support. */
+/** QUORUM LAB capability matrix — what the cluster can actually support.
+ *
+ * Topology requirements are policy-derived:
+ *  - quorumNodeRequirement: minimum nodes needed to form a read/write quorum.
+ *    Undefined means no quorum size check is applied.
+ *  - raftMinNodes: minimum nodes needed for Raft fault tolerance.
+ *    Undefined means Raft topology check is skipped.
+ *  These replace any blanket "N >= 3" universal rule.
+ */
 export interface QuorumCapabilityMatrix {
   /** Supported read consistency levels. */
   readonly supportedReadConsistency: readonly ReadConsistency[];
@@ -60,6 +68,18 @@ export interface QuorumCapabilityMatrix {
   readonly maxConcurrency: number;
   /** Minimum number of nodes in the cluster. */
   readonly minNodeCount: number;
+  /**
+   * Policy-derived: minimum node count required to form a QUORUM.
+   * Example: 3 for a 3-node cluster (W=2, R=2). 2 for 2-node async replication.
+   * Undefined = no quorum node requirement applied.
+   */
+  readonly quorumNodeRequirement?: number;
+  /**
+   * Policy-derived: minimum node count required for Raft-based fault tolerance.
+   * Example: 3 for f=1 tolerance (2f+1). 1 for single-node (f=0, no tolerance).
+   * Undefined = no Raft node check applied.
+   */
+  readonly raftMinNodes?: number;
 }
 
 // ---------------------------------------------------------------------------

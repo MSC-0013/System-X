@@ -181,12 +181,12 @@ importers:
 
   packages/calibration-loop:
     dependencies:
-      '@system-x/comparison-engine':
-        specifier: workspace:*
-        version: link:../comparison-engine
       '@system-x/integration-contracts':
         specifier: workspace:*
         version: link:../integration-contracts
+      '@system-x/result-normalizer':
+        specifier: workspace:*
+        version: link:../result-normalizer
     devDependencies:
       '@types/node':
         specifier: ^24.0.0

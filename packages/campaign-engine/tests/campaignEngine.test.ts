@@ -24,6 +24,8 @@ const FULL_CAPABILITIES: QuorumCapabilityMatrix = {
   supportedFaultTypes: ['NONE', 'PARTITION', 'DELAY', 'LOSS', 'CLOCK_SKEW', 'CRASH', 'RESTART', 'RECOVER'],
   maxConcurrency: 100,
   minNodeCount: 3,
+  quorumNodeRequirement: 3, // policy-derived: 3-node cluster for W+R>N quorum
+  raftMinNodes: 3,          // policy-derived: 3 nodes for f=1 Raft fault tolerance
 };
 
 const LIMITED_CAPABILITIES: QuorumCapabilityMatrix = {
@@ -33,6 +35,18 @@ const LIMITED_CAPABILITIES: QuorumCapabilityMatrix = {
   supportedFaultTypes: ['NONE', 'DELAY'],
   maxConcurrency: 10,
   minNodeCount: 1,
+  // No quorumNodeRequirement / raftMinNodes — leaderless async, N=1 valid
+};
+
+/** A 2-node async capability: supports QUORUM reads but quorumNodeRequirement=2 */
+const TWO_NODE_ASYNC_CAPABILITIES: QuorumCapabilityMatrix = {
+  supportedReadConsistency: ['ONE', 'QUORUM', 'EVENTUAL'],
+  supportedWriteAckPolicies: ['ONE', 'QUORUM'],
+  supportedConflictStrategies: ['LAST_WRITE_WINS'],
+  supportedFaultTypes: ['NONE'],
+  maxConcurrency: 20,
+  minNodeCount: 2,
+  quorumNodeRequirement: 2, // 2-node quorum is valid for this topology
 };
 
 const consistencyDims: ConsistencyDimension[] = [
@@ -52,15 +66,12 @@ const loadDims: LoadDimension[] = [
 
 function makeSpec(
   caps: QuorumCapabilityMatrix = FULL_CAPABILITIES,
-  extraConsistency: ConsistencyDimension[] = [],
-  extraFault: FaultDimension[] = [],
-  extraLoad: LoadDimension[] = [],
 ): CampaignSpec {
   return {
     campaignId: 'campaign-test-001',
-    consistencyDimensions: [...consistencyDims, ...extraConsistency],
-    faultDimensions: [...faultDims, ...extraFault],
-    loadDimensions: [...loadDims, ...extraLoad],
+    consistencyDimensions: consistencyDims,
+    faultDimensions: faultDims,
+    loadDimensions: loadDims,
     quorumCapabilities: caps,
   };
 }
@@ -109,18 +120,53 @@ describe('I7: Campaign Engine', () => {
     expect(excluded.length).toBeGreaterThan(0);
   });
 
-  it('excludes QUORUM policy when minNodeCount < 3', () => {
-    const lowNodeCaps: QuorumCapabilityMatrix = {
-      ...FULL_CAPABILITIES,
-      minNodeCount: 1,
-    };
-    const spec = makeSpec(lowNodeCaps);
+  it('QUORUM policy validation uses quorumNodeRequirement (policy-derived, not blanket N≥3)', () => {
+    // 2-node cluster with quorumNodeRequirement=2 should ACCEPT QUORUM cells.
+    const spec = makeSpec(TWO_NODE_ASYNC_CAPABILITIES);
     const plan = generateCampaignPlan(spec);
 
-    const quorumExcluded = plan.excludedCells.filter((e) =>
-      e.reason.includes('minNodeCount'),
+    // QUORUM cells should pass because quorumNodeRequirement=2 and minNodeCount=2.
+    const quorumCells = plan.cells.filter(
+      (c) => c.consistency.readConsistency === 'QUORUM',
     );
-    expect(quorumExcluded.length).toBeGreaterThan(0);
+    expect(quorumCells.length).toBeGreaterThan(0);
+  });
+
+  it('rejects QUORUM policy when minNodeCount < quorumNodeRequirement', () => {
+    const strictCaps: QuorumCapabilityMatrix = {
+      ...FULL_CAPABILITIES,
+      minNodeCount: 2,
+      quorumNodeRequirement: 3, // requires 3 but only 2 available
+    };
+    const spec = makeSpec(strictCaps);
+    const plan = generateCampaignPlan(spec);
+    const excluded = plan.excludedCells.filter((e) =>
+      e.reason.includes('quorumNodeRequirement'),
+    );
+    expect(excluded.length).toBeGreaterThan(0);
+  });
+
+  it('fault fraction check excludes cells that would fault all nodes', () => {
+    const singleNodeCaps: QuorumCapabilityMatrix = {
+      ...LIMITED_CAPABILITIES,
+      minNodeCount: 1,
+    };
+    const specWithFullFault: CampaignSpec = {
+      campaignId: 'campaign-fault',
+      consistencyDimensions: [
+        { readConsistency: 'ONE', writeAckPolicy: 'ONE', conflictStrategy: 'LAST_WRITE_WINS' },
+      ],
+      faultDimensions: [
+        { faultType: 'DELAY', targetFraction: 1.0, durationMs: 1000 }, // 100% = 1/1 nodes faulted
+      ],
+      loadDimensions: [
+        { operationCount: 100, concurrency: 1, targetThroughputOpsSec: 10 },
+      ],
+      quorumCapabilities: singleNodeCaps,
+    };
+    const plan = generateCampaignPlan(specWithFullFault);
+    expect(plan.excludedCells.length).toBeGreaterThan(0);
+    expect(plan.excludedCells[0]!.reason).toContain('healthy');
   });
 
   it('cell IDs are unique', () => {

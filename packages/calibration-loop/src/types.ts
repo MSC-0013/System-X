@@ -22,7 +22,13 @@ export interface SimulationParameter {
   readonly step: number;
 }
 
-/** Calibration request sent to BLACKBOX-X POST /v1/calibration/runs. */
+/** Calibration request sent to BLACKBOX-X POST /v1/calibration/runs.
+ *
+ * Carries the full empirical distribution shape from QUORUM LAB, not just
+ * summary statistics. This feeds BLACKBOX-X's multi-objective calibration
+ * function (D_KS + MAPE + p99 error + breach penalty) with the same
+ * distribution-level signal it uses internally in M6.
+ */
 export interface BlackboxCalibrationRequest {
   /** Correlation ID from SYSTEM-X. */
   readonly integrationRunId: string;
@@ -30,10 +36,46 @@ export interface BlackboxCalibrationRequest {
   readonly experimentSpecHash: string;
   /** Parameters to calibrate. */
   readonly parameters: Record<string, number>;
-  /** Observed real-system p99 latency in ms (target to match). */
-  readonly targetP99Ms: number;
-  /** Observed real-system throughput in ops/sec (target to match). */
+
+  // ---------------------------------------------------------------------------
+  // Empirical distribution — richer than scalars alone.
+  // BLACKBOX uses KS + MAPE + p99 error + breach penalty, so it needs shape.
+  // ---------------------------------------------------------------------------
+
+  /** Latency percentiles from QUORUM LAB (ms). */
+  readonly empiricalLatencyQuantiles: {
+    readonly p50Ms: number;
+    readonly p75Ms: number;
+    readonly p90Ms: number;
+    readonly p95Ms: number;
+    readonly p99Ms: number;
+    readonly p999Ms: number;
+    readonly minMs: number;
+    readonly maxMs: number;
+    readonly meanMs: number;
+  };
+
+  /**
+   * Empirical CDF histogram — bucket boundary (ms) → cumulative fraction [0,1].
+   * Gives BLACKBOX the distribution shape for KS-test fitting.
+   * Example: [[1,0.01],[5,0.10],[10,0.50],[20,0.90],[50,0.99],[100,1.0]]
+   */
+  readonly empiricalCdfBuckets: ReadonlyArray<readonly [number, number]>;
+
+  /** Observed real-system throughput in ops/sec. */
   readonly targetThroughputOpsSec: number;
+
+  /** Operation error rate [0,1]. */
+  readonly errorRate: number;
+
+  /** Stale read rate [0,1] (relevant for eventual/causal consistency modes). */
+  readonly staleReadRate?: number;
+
+  /** Number of SLO breaches (operations exceeding targetP99Ms). */
+  readonly sloBreachCount: number;
+
+  /** Total operation count in the observed run. */
+  readonly totalOperations: number;
 }
 
 /** Response from BLACKBOX-X POST /v1/calibration/runs. */

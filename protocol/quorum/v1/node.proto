@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package quorum.node.v1;
+
+import "common.proto";
+
+service NodeService {
+  rpc Put(PutRequest) returns (PutResponse);
+  rpc Get(GetRequest) returns (GetResponse);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc GetVersions(GetVersionsRequest) returns (quorum.common.v1.VersionFrontier);
+  rpc GetNodeState(GetNodeStateRequest) returns (NodeStateResponse);
+  rpc CreateSnapshot(CreateSnapshotRequest) returns (CreateSnapshotResponse);
+}
+
+message PutRequest {
+  string key = 1;
+  bytes value = 2;
+  string run_id = 3;
+  string client_id = 4;
+  string operation_id = 5;
+  string request_id = 6;
+  uint64 fencing_epoch = 7;
+}
+
+message PutResponse {
+  quorum.common.v1.Status status = 1;
+  quorum.common.v1.VersionStamp version = 2;
+  quorum.common.v1.VersionFrontier resulting_frontier = 3;
+}
+
+message GetRequest {
+  string key = 1;
+  string run_id = 2;
+  string client_id = 3;
+  string operation_id = 4;
+  string request_id = 5;
+  string read_consistency = 6;
+}
+
+message GetResponse {
+  quorum.common.v1.Status status = 1;
+  quorum.common.v1.KeyState key_state = 2;
+  quorum.common.v1.VersionFrontier frontier = 3;
+}
+
+message DeleteRequest {
+  string key = 1;
+  string run_id = 2;
+  string client_id = 3;
+  string operation_id = 4;
+  string request_id = 5;
+  uint64 fencing_epoch = 6;
+}
+
+message DeleteResponse {
+  quorum.common.v1.Status status = 1;
+  quorum.common.v1.VersionStamp tombstone_version = 2;
+  quorum.common.v1.VersionFrontier resulting_frontier = 3;
+}
+
+message GetVersionsRequest {
+  string key = 1;
+}
+
+message GetNodeStateRequest {
+  bool include_keys = 1;
+}
+
+message NodeStateResponse {
+  string node_id = 1;
+  string cluster_id = 2;
+  string lifecycle_state = 3;
+  quorum.common.v1.MembershipSnapshot membership = 4;
+  uint64 key_count = 5;
+  uint64 lamport = 6;
+  int64 wall_time_ms = 7;
+}
+
+message CreateSnapshotRequest {
+  string destination_path = 1;
+}
+
+message CreateSnapshotResponse {
+  quorum.common.v1.Status status = 1;
+  uint64 snapshot_sequence = 2;
+}

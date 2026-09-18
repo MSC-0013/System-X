@@ -1,0 +1,10 @@
+{
+  "version": "v1.0.0",
+  "files": [
+    "common.proto",
+    "health.proto",
+    "node.proto"
+  ],
+  "bundleSha256": "4f3468ab9cd7298a0f2b3ec813b28b2ecdb503dc9422a578917e335552b9f362",
+  "updatedAt": "2026-09-18T12:00:00.000Z"
+}

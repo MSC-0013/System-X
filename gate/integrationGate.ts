@@ -84,7 +84,7 @@ interface GateResult {
   detail: string;
 }
 
-const TOTAL = 16;
+const TOTAL = 18;
 const results: GateResult[] = [];
 let stepCounter = 0;
 
@@ -264,52 +264,107 @@ await gate('Comparison engine — two-gate AND certification', async () => {
 });
 
 // ---------------------------------------------------------------------------
-// [10] Calibration CDF shape
+// [10] Calibration partition submission (zero-leakage to optimizer)
 // ---------------------------------------------------------------------------
 
-await gate('Calibration — empirical CDF shape sent to BLACKBOX-X', async () => {
+let lastCalibrationResult: Awaited<ReturnType<typeof import('@system-x/calibration-loop')['runCalibrationCycle']>> | null = null;
+let lastCapturedOptimizerPayload: Record<string, unknown> = {};
+
+await gate('Calibration partition submission (zero-leakage to optimizer)', async () => {
   const { runCalibrationCycle } = await import('@system-x/calibration-loop');
 
-  let capturedBody: Record<string, unknown> = {};
   const origFetch = globalThis.fetch;
   globalThis.fetch = async (_url: string | URL | Request, init?: RequestInit) => {
-    capturedBody = JSON.parse((init?.body as string) ?? '{}') as Record<string, unknown>;
+    lastCapturedOptimizerPayload = JSON.parse((init?.body as string) ?? '{}') as Record<string, unknown>;
     return new Response(JSON.stringify({
-      runId: 'gate-cal-001', calibratedParameters: {}, predictedP99Ms: 30,
-      predictedThroughputOpsSec: 900, p99MapePercent: 3,
-      throughputMapePercent: 2, converged: true, iterations: 5,
+      runId: 'gate-cal-001',
+      calibratedParameters: { networkLatencyMs: 6, syncBatchSize: 32 },
+      predictedP99Ms: 29.5,
+      predictedThroughputOpsSec: 920,
+      p99MapePercent: 2.8,
+      throughputMapePercent: 1.9,
+      converged: true,
+      iterations: 6,
     }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   };
 
-  const qrSamples: NormalizedSample[] = Array.from({ length: 60 }, (_, i) => ({
+  const qrSamples: NormalizedSample[] = Array.from({ length: 100 }, (_, i) => ({
     operationId: `qs-${i}`, operationType: 'READ' as const, success: true,
-    source: 'QUORUM_CLIENT' as const, latencyMs: 5 + i * 0.4,
+    source: 'QUORUM_CLIENT' as const, latencyMs: 5 + i * 0.25,
     timestampMs: Date.now() + i * 10, errorClass: 'NONE' as const,
   }));
   const normalizedResult = normalizeRunResult(RUN_ID, SPEC_HASH, [], qrSamples);
 
-  await runCalibrationCycle(RUN_ID, SPEC_HASH, normalizedResult, [], {
+  lastCalibrationResult = await runCalibrationCycle(RUN_ID, SPEC_HASH, normalizedResult, [], {
     blackboxBaseUrl: 'http://mock', requestTimeoutMs: 2000,
     maxRetries: 0, calibrationFraction: 0.7,
   });
   globalThis.fetch = origFetch;
 
-  if (!capturedBody.validationCdfBuckets) throw new Error('validationCdfBuckets missing');
-  if (!capturedBody.empiricalCdfBuckets) throw new Error('empiricalCdfBuckets missing');
-  const calN = capturedBody.calibrationSampleCount as number;
-  const valN = capturedBody.validationSampleCount as number;
-  if (calN + valN !== 60) throw new Error(`calN+valN=${calN}+${valN}≠60`);
+  // Assert ZERO LEAKAGE: optimizer payload MUST NOT contain validation data
+  if ((lastCapturedOptimizerPayload as Record<string, unknown>)['validationCdfBuckets']) {
+    throw new Error('LEAKAGE DETECTED: validationCdfBuckets found in optimizer payload');
+  }
+  if (!lastCapturedOptimizerPayload.empiricalCdfBuckets) {
+    throw new Error('empiricalCdfBuckets missing from calibration payload');
+  }
+  if (lastCapturedOptimizerPayload.totalOperations !== 70) {
+    throw new Error(`Expected calibration partition size=70, got ${lastCapturedOptimizerPayload.totalOperations}`);
+  }
 
-  return `calPartition=${calN} valPartition=${valN} cdfBuckets=${(capturedBody.empiricalCdfBuckets as unknown[]).length} ✓`;
+  return `calibrationPartition=70 ops sent, validation data withheld (zero leakage ✓)`;
 });
 
 // ---------------------------------------------------------------------------
-// [11] Upload artifact to MinIO (real PUT)
+// [11] Calibrated parameter receipt (coordinate-descent convergence)
+// ---------------------------------------------------------------------------
+
+await gate('Calibrated parameter receipt (coordinate-descent convergence)', async () => {
+  if (!lastCalibrationResult) throw new Error('Calibration result missing');
+  if (!lastCalibrationResult.converged) throw new Error('Calibration optimizer did not converge');
+
+  const paramKeys = Object.keys(lastCalibrationResult.calibratedParameters);
+  if (paramKeys.length === 0) throw new Error('No calibrated parameters returned');
+
+  return `runId=${lastCalibrationResult.blackboxRunId} params=${paramKeys.join(',')} iterations=${lastCalibrationResult.iterations} converged ✓`;
+});
+
+// ---------------------------------------------------------------------------
+// [12] Held-out validation execution (evaluation against unseen partition)
+// ---------------------------------------------------------------------------
+
+await gate('Held-out validation execution (unseen partition evaluation)', async () => {
+  if (!lastCalibrationResult) throw new Error('Calibration result missing');
+  const report = lastCalibrationResult.validationReport;
+  if (!report) throw new Error('Validation report missing from calibration result');
+  if (report.sampleCount !== 30) {
+    throw new Error(`Expected held-out validation sampleCount=30, got ${report.sampleCount}`);
+  }
+
+  return `heldOutSamples=${report.sampleCount} predictedP99=${report.predictedP99Ms}ms observedP99=${report.validationP99Ms.toFixed(2)}ms ✓`;
+});
+
+// ---------------------------------------------------------------------------
+// [13] Validation MAPE / distribution checks (generalization bound)
+// ---------------------------------------------------------------------------
+
+await gate('Validation MAPE / distribution checks (generalization bound)', async () => {
+  if (!lastCalibrationResult) throw new Error('Calibration result missing');
+  const report = lastCalibrationResult.validationReport;
+  if (!report.validated) {
+    throw new Error(`Validation failed: p99 MAPE ${report.validationP99MapePercent.toFixed(1)}% exceeds 20% bound`);
+  }
+
+  return `validationP99Mape=${report.validationP99MapePercent.toFixed(2)}% (<= 20% bound ✓)`;
+});
+
+// ---------------------------------------------------------------------------
+// [14] WORM artifact storage (real PUT with COMPLIANCE lock)
 // ---------------------------------------------------------------------------
 
 let uploadedArtifact: ArtifactRecord | null = null;
 
-await gate('Upload artifact to MinIO — real PUT with WORM headers', async () => {
+await gate('WORM artifact storage — real PUT with COMPLIANCE lock', async () => {
   const content = JSON.stringify({
     integrationRunId: RUN_ID, experimentSpecHash: SPEC_HASH,
     generatedAt: new Date().toISOString(), type: 'integration-gate-artifact',
@@ -332,11 +387,11 @@ await gate('Upload artifact to MinIO — real PUT with WORM headers', async () =
 });
 
 // ---------------------------------------------------------------------------
-// [12] Verify SHA-256 + versionId via GET
+// [15] WORM checksum verification (GET and SHA-256 bit-level match)
 // ---------------------------------------------------------------------------
 
-await gate('Verify SHA-256 + versionId — GET artifact back', async () => {
-  if (!uploadedArtifact) throw new Error('Skipped: artifact from step 11 not available');
+await gate('WORM checksum verification — GET and SHA-256 bit-level match', async () => {
+  if (!uploadedArtifact) throw new Error('Skipped: artifact from step 14 not available');
 
   const objectKey = `runs/${RUN_ID}/gate-test-artifact.json`;
   const url = `${MINIO_URL}/${MINIO_BUCKET}/${objectKey}`;
@@ -357,11 +412,11 @@ await gate('Verify SHA-256 + versionId — GET artifact back', async () => {
 });
 
 // ---------------------------------------------------------------------------
-// [13] Verify COMPLIANCE retention — HEAD object lock metadata
+// [16] WORM retention verification (HEAD object lock metadata)
 // ---------------------------------------------------------------------------
 
-await gate('Verify COMPLIANCE object lock retention — HEAD request', async () => {
-  if (!uploadedArtifact) throw new Error('Skipped: artifact from step 11 not available');
+await gate('WORM retention verification — HEAD object lock metadata', async () => {
+  if (!uploadedArtifact) throw new Error('Skipped: artifact from step 14 not available');
 
   const objectKey = `runs/${RUN_ID}/gate-test-artifact.json`;
   const url = `${MINIO_URL}/${MINIO_BUCKET}/${objectKey}`;
@@ -383,61 +438,42 @@ await gate('Verify COMPLIANCE object lock retention — HEAD request', async () 
 });
 
 // ---------------------------------------------------------------------------
-// [14] Negative WORM test — Attempt to DELETE locked object version (MUST FAIL)
+// [17] Negative mutation tests (DELETE & overwrite rejected with 403)
 // ---------------------------------------------------------------------------
 
-await gate('Negative WORM test — Attempt DELETE locked version (MUST FAIL)', async () => {
+await gate('Negative mutation tests — DELETE & overwrite rejected with 403', async () => {
   if (!uploadedArtifact || !uploadedArtifact.versionId) {
-    throw new Error('Skipped: artifact from step 11 not available or unversioned');
+    throw new Error('Skipped: artifact from step 14 not available or unversioned');
   }
 
   const objectKey = `runs/${RUN_ID}/gate-test-artifact.json`;
   const deleteUrl = `${MINIO_URL}/${MINIO_BUCKET}/${objectKey}?versionId=${uploadedArtifact.versionId}`;
-
-  const r = await fetch(deleteUrl, { method: 'DELETE' });
-
-  // In S3 COMPLIANCE WORM mode, deleting a specific locked versionId MUST return 403 / AccessDenied / ObjectLocked
-  if (r.status === 204 || r.status === 200) {
-    throw new Error(
-      `WORM VIOLATION: DELETE on locked versionId returned HTTP ${r.status} instead of 403 AccessDenied / ObjectLocked`,
-    );
-  }
-
-  return `DELETE rejected with HTTP ${r.status} (WORM immutability enforced ✓)`;
-});
-
-// ---------------------------------------------------------------------------
-// [15] Negative WORM test — Attempt to overwrite locked object version (MUST FAIL)
-// ---------------------------------------------------------------------------
-
-await gate('Negative WORM test — Attempt overwrite locked version (MUST FAIL)', async () => {
-  if (!uploadedArtifact || !uploadedArtifact.versionId) {
-    throw new Error('Skipped: artifact from step 11 not available or unversioned');
-  }
-
-  const objectKey = `runs/${RUN_ID}/gate-test-artifact.json`;
   const putUrl = `${MINIO_URL}/${MINIO_BUCKET}/${objectKey}?versionId=${uploadedArtifact.versionId}`;
 
-  const r = await fetch(putUrl, {
+  // 1. Attempt DELETE on locked version
+  const delResp = await fetch(deleteUrl, { method: 'DELETE' });
+  if (delResp.status === 204 || delResp.status === 200) {
+    throw new Error(`WORM VIOLATION: DELETE on locked versionId returned HTTP ${delResp.status} instead of rejection`);
+  }
+
+  // 2. Attempt PUT overwrite on locked version
+  const putResp = await fetch(putUrl, {
     method: 'PUT',
     body: '{"tampered": true}',
     headers: { 'Content-Type': 'application/json' },
   });
-
-  if (r.ok) {
-    throw new Error(
-      `WORM VIOLATION: PUT over locked versionId returned HTTP ${r.status} instead of rejection`,
-    );
+  if (putResp.ok) {
+    throw new Error(`WORM VIOLATION: PUT over locked versionId returned HTTP ${putResp.status} instead of rejection`);
   }
 
-  return `Overwrite rejected with HTTP ${r.status} (WORM immutability enforced ✓)`;
+  return `DELETE rejected (${delResp.status}), Overwrite rejected (${putResp.status}) — WORM verified ✓`;
 });
 
 // ---------------------------------------------------------------------------
-// [16] Certification record hash stable
+// [18] Final certification + recordHash (lineage including validationReport)
 // ---------------------------------------------------------------------------
 
-await gate('Certification record hash stable', async () => {
+await gate('Final certification + recordHash (lineage including validationReport)', async () => {
   const makeArtifact = (name: string): ArtifactRecord => ({
     name, uri: `s3://${MINIO_BUCKET}/${RUN_ID}/${name}`,
     sha256: computeSha256(`gate-content-${name}`),
@@ -455,6 +491,8 @@ await gate('Certification record hash stable', async () => {
     quorumResults: makeArtifact('quorumResults.json'),
     blackboxResults: makeArtifact('blackboxResults.json'),
     comparisonReport: makeArtifact('comparisonReport.json'),
+    calibrationResult: makeArtifact('calibrationResult.json'),
+    validationReport: makeArtifact('validationReport.json'),
   };
 
   const mockComp = {

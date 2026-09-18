@@ -64,6 +64,7 @@ export function evaluateCertification(
     lineage.blackboxResults,
     lineage.comparisonReport,
     ...(lineage.calibrationResult ? [lineage.calibrationResult] : []),
+    ...(lineage.validationReport ? [lineage.validationReport] : []),
   ];
 
   for (const artifact of allArtifacts) {

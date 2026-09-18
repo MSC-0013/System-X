@@ -50,6 +50,8 @@ export interface CertificationLineage {
   readonly comparisonReport: ArtifactRecord;
   /** Calibration result artifact (if calibration was run). */
   readonly calibrationResult?: ArtifactRecord;
+  /** Held-out validation report artifact (if validation was run). */
+  readonly validationReport?: ArtifactRecord;
 }
 
 /** Final certification decision for an integration run. */

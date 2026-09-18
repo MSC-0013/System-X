@@ -198,6 +198,22 @@ importers:
         specifier: ^3.0.7
         version: 3.2.7(@types/node@24.13.5)
 
+  packages/campaign-engine:
+    dependencies:
+      '@system-x/integration-contracts':
+        specifier: workspace:*
+        version: link:../integration-contracts
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.13.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.7
+        version: 3.2.7(@types/node@24.13.5)
+
   packages/comparison-engine:
     dependencies:
       '@system-x/integration-contracts':

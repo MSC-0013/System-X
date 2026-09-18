@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://system-x.io/schemas/experiment.schema.json",
+  "title": "IntegratedExperiment",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "contractVersion",
+    "masterSeed",
+    "workload",
+    "consistency"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "contractVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "masterSeed": {
+      "type": "integer"
+    },
+    "workload": {
+      "$ref": "workload.schema.json"
+    },
+    "consistency": {
+      "type": "object",
+      "required": [
+        "replicationEngine",
+        "readConsistency",
+        "writeAckPolicy",
+        "durability",
+        "conflictStrategy"
+      ],
+      "properties": {
+        "replicationEngine": {
+          "type": "string",
+          "enum": ["LEADERLESS", "LEADER", "RAFT"]
+        },
+        "readConsistency": {
+          "type": "string",
+          "enum": ["ONE", "QUORUM", "ALL", "EVENTUAL", "CAUSAL", "SESSION"]
+        },
+        "writeAckPolicy": {
+          "type": "string",
+          "enum": ["ONE", "QUORUM", "ALL"]
+        },
+        "durability": {
+          "type": "string",
+          "enum": ["MEMORY_ONLY", "BATCHED_FSYNC", "SYNC_FSYNC"]
+        },
+        "conflictStrategy": {
+          "type": "string",
+          "enum": ["LAST_WRITE_WINS", "VERSION_VECTOR", "MULTI_VALUE", "CUSTOM_MERGE"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "faultSchedule": {
+      "$ref": "fault.schema.json"
+    },
+    "slo": {
+      "type": "object",
+      "required": ["targetP99Ms", "maxErrorRate"],
+      "properties": {
+        "targetP99Ms": {
+          "type": "number",
+          "minimum": 0.0
+        },
+        "targetP95Ms": {
+          "type": "number",
+          "minimum": 0.0
+        },
+        "targetP50Ms": {
+          "type": "number",
+          "minimum": 0.0
+        },
+        "maxErrorRate": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "maxStaleReadRate": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "minThroughputOpsSec": {
+          "type": "number",
+          "minimum": 0.0
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

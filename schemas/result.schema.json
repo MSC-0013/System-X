@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://system-x.io/schemas/result.schema.json",
+  "title": "IntegratedRunResult",
+  "type": "object",
+  "required": [
+    "integrationRunId",
+    "experimentSpecHash",
+    "contractVersion",
+    "status",
+    "startedAt",
+    "completedAt",
+    "metrics"
+  ],
+  "properties": {
+    "integrationRunId": {
+      "type": "string"
+    },
+    "experimentSpecHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "blackboxRunId": {
+      "type": "string"
+    },
+    "quorumRunId": {
+      "type": "string"
+    },
+    "contractVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED", "ABORTED"]
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "totalOperations",
+        "successfulOperations",
+        "failedOperations",
+        "throughputOpsSec",
+        "p50LatencyMs",
+        "p90LatencyMs",
+        "p95LatencyMs",
+        "p99LatencyMs"
+      ],
+      "properties": {
+        "totalOperations": { "type": "integer", "minimum": 0 },
+        "successfulOperations": { "type": "integer", "minimum": 0 },
+        "failedOperations": { "type": "integer", "minimum": 0 },
+        "throughputOpsSec": { "type": "number", "minimum": 0.0 },
+        "p50LatencyMs": { "type": "number", "minimum": 0.0 },
+        "p90LatencyMs": { "type": "number", "minimum": 0.0 },
+        "p95LatencyMs": { "type": "number", "minimum": 0.0 },
+        "p99LatencyMs": { "type": "number", "minimum": 0.0 },
+        "minLatencyMs": { "type": "number", "minimum": 0.0 },
+        "maxLatencyMs": { "type": "number", "minimum": 0.0 },
+        "meanLatencyMs": { "type": "number", "minimum": 0.0 },
+        "staleReadCount": { "type": "integer", "minimum": 0 },
+        "staleReadRate": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "causalAnomalies": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "samples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "timestampMs",
+          "operationId",
+          "operationType",
+          "latencyMs",
+          "success",
+          "source"
+        ],
+        "properties": {
+          "timestampMs": { "type": "number" },
+          "operationId": { "type": "string" },
+          "operationType": { "type": "string", "enum": ["READ", "WRITE", "DELETE"] },
+          "latencyMs": { "type": "number", "minimum": 0.0 },
+          "success": { "type": "boolean" },
+          "source": {
+            "type": "string",
+            "enum": [
+              "BLACKBOX_SIMULATION",
+              "BLACKBOX_REAL",
+              "QUORUM_NODE",
+              "QUORUM_CLIENT"
+            ]
+          },
+          "nodeId": { "type": "string" },
+          "errorCode": { "type": "string" },
+          "semanticCategory": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "ROUTING_RETRYABLE_FAILURE",
+              "WRITE_AVAILABILITY_FAILURE",
+              "READ_AVAILABILITY_FAILURE",
+              "LEADERSHIP_SAFETY_FAILURE",
+              "MEMBERSHIP_SAFETY_FAILURE",
+              "COORDINATION_LEASE_EXPIRED",
+              "CONSISTENCY_REQUIREMENT_FAILURE",
+              "INTERNAL_STORAGE_FAILURE"
+            ]
+          },
+          "staleRead": { "type": "boolean" },
+          "causalAnomaly": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "divergence": {
+      "type": "object",
+      "properties": {
+        "ksStatistic": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "ksPValue": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+        "wassersteinDistance": { "type": "number", "minimum": 0.0 },
+        "p50Mape": { "type": "number", "minimum": 0.0 },
+        "p95Mape": { "type": "number", "minimum": 0.0 },
+        "p99Mape": { "type": "number", "minimum": 0.0 },
+        "calibrated": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

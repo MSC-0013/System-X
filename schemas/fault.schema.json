@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://system-x.io/schemas/fault.schema.json",
+  "title": "IntegratedFaultSchedule",
+  "type": "object",
+  "required": ["faults"],
+  "properties": {
+    "faults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "targetNodes", "offsetMs", "durationMs"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["PARTITION", "DELAY", "LOSS", "CLOCK_SKEW", "CRASH_RESTART"]
+          },
+          "targetNodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "offsetMs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "durationMs": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "delayMs": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "jitterMs": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lossRate": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 1.0
+              },
+              "skewOffsetMs": {
+                "type": "integer"
+              },
+              "cleanRestart": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

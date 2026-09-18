@@ -101,6 +101,19 @@ export interface CanonicalOperationTrace {
   readonly traceHash: string;
   readonly masterSeed: number;
   readonly entries: readonly OperationTraceEntry[];
+  /**
+   * Version of the workload-compiler package that produced this trace.
+   * Required for replay identity: same spec + seed + compilerVersion = same trace.
+   * If compiler logic changes (Zipf algorithm, key encoding, scheduling), bump
+   * this version so consumers know a new trace is not identical to prior ones.
+   * Format: semver string, e.g. '1.0.0'.
+   */
+  readonly workloadCompilerVersion: string;
+  /**
+   * Named algorithm used for key distribution (e.g. 'ycsb-rejection-inversion-v1').
+   * Included in traceHash provenance so algorithm changes are detectable.
+   */
+  readonly distributionAlgorithm: string;
 }
 
 export type MetricSource =

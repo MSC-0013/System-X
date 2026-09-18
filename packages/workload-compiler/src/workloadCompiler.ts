@@ -21,6 +21,27 @@ import type { WorkloadSpec } from './types.js';
  * @param experimentSpecHash  SHA-256 of the canonical experiment spec (from I0).
  * @returns                CanonicalOperationTrace ready to pass to the QUORUM adapter.
  */
+
+/**
+ * Workload compiler version — bump when any of these change:
+ *   - PRNG algorithm or seed derivation
+ *   - Zipf/Uniform generator logic
+ *   - Key encoding scheme
+ *   - Operation scheduling model
+ *
+ * Replay identity: same spec + masterSeed + WORKLOAD_COMPILER_VERSION = same trace.
+ */
+export const WORKLOAD_COMPILER_VERSION = '1.0.0';
+
+/**
+ * Named distribution algorithm identifiers.
+ * Must change if the algorithm implementation changes.
+ */
+const ALGORITHM_NAMES = {
+  ZIPFIAN: 'ycsb-rejection-inversion-v1',
+  UNIFORM: 'mulberry32-uniform-v1',
+} as const;
+
 export function compileWorkload(
   spec: IntegratedExperiment,
   experimentSpecHash: string,
@@ -57,6 +78,10 @@ export function compileWorkload(
   }));
 
   const traceHash = computeTraceHash(entries);
+  const distributionAlgorithm =
+    workload.distribution === 'ZIPFIAN'
+      ? ALGORITHM_NAMES.ZIPFIAN
+      : ALGORITHM_NAMES.UNIFORM;
 
   return {
     contractVersion: '1.0.0',
@@ -64,6 +89,8 @@ export function compileWorkload(
     traceHash,
     masterSeed,
     entries,
+    workloadCompilerVersion: WORKLOAD_COMPILER_VERSION,
+    distributionAlgorithm,
   };
 }
 

@@ -74,8 +74,32 @@ export interface BlackboxCalibrationRequest {
   /** Number of SLO breaches (operations exceeding targetP99Ms). */
   readonly sloBreachCount: number;
 
-  /** Total operation count in the observed run. */
+  /** Total operation count in the calibration partition. */
   readonly totalOperations: number;
+
+  // ---------------------------------------------------------------------------
+  // Held-out validation partition — prevents calibration overfitting.
+  //
+  // SYSTEM-X splits the QUORUM_CLIENT sample set:
+  //   [0, calibrationFraction) → calibration partition (sent as empiricalCdfBuckets)
+  //   [calibrationFraction, 1] → validation partition (sent as validationCdfBuckets)
+  //
+  // BLACKBOX-X MUST evaluate its calibrated model on validationCdfBuckets,
+  // not on the same data it calibrated against. This mirrors M6's held-out
+  // validation step and prevents apparent convergence on overfit statistics.
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Held-out validation partition CDF — bucket boundary (ms) → cumulative fraction.
+   * Must be derived from a DIFFERENT sample set than empiricalCdfBuckets.
+   */
+  readonly validationCdfBuckets: ReadonlyArray<readonly [number, number]>;
+
+  /** Number of samples in the calibration partition. */
+  readonly calibrationSampleCount: number;
+
+  /** Number of samples in the held-out validation partition. */
+  readonly validationSampleCount: number;
 }
 
 /** Response from BLACKBOX-X POST /v1/calibration/runs. */
@@ -120,10 +144,20 @@ export interface CalibrationLoopConfig {
   readonly requestTimeoutMs: number;
   /** Maximum retry count on 429/503. */
   readonly maxRetries: number;
+  /**
+   * Fraction of QUORUM_CLIENT samples used for calibration [0,1].
+   * The remainder forms the held-out validation partition.
+   * Must be in range (0, 1). Default: 0.7 (70% calibration, 30% validation).
+   *
+   * IMPORTANT: If totalSamples < 10 the split is still applied but both
+   * partitions may be very small. Minimum recommended sample count: 50.
+   */
+  readonly calibrationFraction: number;
 }
 
 export const DEFAULT_CALIBRATION_CONFIG: CalibrationLoopConfig = {
   blackboxBaseUrl: 'http://localhost:3001',
   requestTimeoutMs: 60_000,
   maxRetries: 3,
+  calibrationFraction: 0.7,
 };

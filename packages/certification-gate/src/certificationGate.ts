@@ -30,6 +30,7 @@ import { verifyLineageCompleteness, computeRecordHash } from './artifactIntegrit
  * @param comparison         ComparisonReport from I5.
  * @param lineage            Full artifact lineage (from I8 upload step).
  * @param requireVersionId   If true, all artifacts must have a versionId (zero-mock check).
+ * @param certifiedAt        Optional ISO timestamp (defaults to current time).
  */
 export function evaluateCertification(
   integrationRunId: string,
@@ -37,6 +38,7 @@ export function evaluateCertification(
   comparison: ComparisonReport,
   lineage: CertificationLineage,
   requireVersionId: boolean = true,
+  certifiedAt?: string,
 ): CertificationRecord {
   const failures: string[] = [];
   const reasons: CertificationFailureReason[] = [];
@@ -94,7 +96,7 @@ export function evaluateCertification(
     certified,
     verdict,
     lineage,
-    certifiedAt: new Date().toISOString(),
+    certifiedAt: certifiedAt ?? new Date().toISOString(),
   };
 
   const recordHash = computeRecordHash(recordWithoutHash);

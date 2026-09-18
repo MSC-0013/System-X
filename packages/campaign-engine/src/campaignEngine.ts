@@ -5,6 +5,7 @@
  *  1. Computing the Cartesian product of all dimensions.
  *  2. Validating each cell against the QUORUM capability matrix.
  *  3. Separating valid cells from excluded cells (with reasons).
+ *  4. Computing the effective per-cell alpha from the multiple-comparison policy.
  *
  * IMPORTANT: Pure function — NO I/O performed here.
  */
@@ -13,6 +14,7 @@ import type {
   CampaignPlan,
   CampaignCell,
   ExcludedCell,
+  MultipleComparisonPolicy,
 } from './types.js';
 import { validateCellCapability } from './capabilityValidator.js';
 
@@ -45,11 +47,22 @@ export function generateCampaignPlan(spec: CampaignSpec): CampaignPlan {
     }
   }
 
+  const policy: MultipleComparisonPolicy =
+    spec.multipleComparisonPolicy ?? 'BENJAMINI_HOCHBERG';
+  const baseAlpha = spec.baseKsAlpha ?? 0.05;
+  const effectiveAlphaPerCell = computeEffectiveAlpha(
+    baseAlpha,
+    validCells.length,
+    policy,
+  );
+
   return {
     campaignId: spec.campaignId,
     totalCells: validCells.length + excludedCells.length,
     cells: validCells,
     excludedCells,
+    multipleComparisonPolicy: policy,
+    effectiveAlphaPerCell,
   };
 }
 
@@ -62,6 +75,8 @@ export function summarizeCampaignPlan(plan: CampaignPlan): string {
     `Total matrix size: ${plan.totalCells} cells`,
     `Valid cells: ${plan.cells.length}`,
     `Excluded cells: ${plan.excludedCells.length}`,
+    `Multiple-comparison policy: ${plan.multipleComparisonPolicy}`,
+    `Effective alpha per cell: ${plan.effectiveAlphaPerCell.toFixed(6)}`,
   ];
 
   if (plan.excludedCells.length > 0) {
@@ -76,4 +91,41 @@ export function summarizeCampaignPlan(plan: CampaignPlan): string {
   }
 
   return lines.join('\n');
+}
+
+// ---------------------------------------------------------------------------
+// Internal: multiple-comparison alpha adjustment
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the effective per-cell alpha for the given policy.
+ *
+ * NONE:             effectiveAlpha = baseAlpha
+ * BONFERRONI:       effectiveAlpha = baseAlpha / numCells  (pre-experiment)
+ * HOLM:             effectiveAlpha = baseAlpha  (adjustment applied post-hoc per result)
+ * BENJAMINI_HOCHBERG: effectiveAlpha = baseAlpha  (FDR applied post-hoc per result)
+ *
+ * For HOLM and BH, the effectiveAlpha reported here is the nominal base alpha.
+ * The actual step-down or BH adjustment is applied when processing ordered p-values
+ * after all cell results are collected (post-hoc, not per-cell pre-experiment).
+ */
+export function computeEffectiveAlpha(
+  baseAlpha: number,
+  numCells: number,
+  policy: MultipleComparisonPolicy,
+): number {
+  if (numCells <= 0) return baseAlpha;
+
+  switch (policy) {
+    case 'NONE':
+      return baseAlpha;
+    case 'BONFERRONI':
+      return baseAlpha / numCells;
+    case 'HOLM':
+    case 'BENJAMINI_HOCHBERG':
+      // Post-hoc corrections; effectiveAlpha reported is the nominal base.
+      return baseAlpha;
+    default:
+      return baseAlpha;
+  }
 }

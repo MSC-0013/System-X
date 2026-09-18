@@ -166,9 +166,39 @@ importers:
 
   .:
     devDependencies:
+      '@system-x/calibration-loop':
+        specifier: workspace:*
+        version: link:packages/calibration-loop
+      '@system-x/campaign-engine':
+        specifier: workspace:*
+        version: link:packages/campaign-engine
+      '@system-x/certification-gate':
+        specifier: workspace:*
+        version: link:packages/certification-gate
+      '@system-x/comparison-engine':
+        specifier: workspace:*
+        version: link:packages/comparison-engine
+      '@system-x/fault-compiler':
+        specifier: workspace:*
+        version: link:packages/fault-compiler
+      '@system-x/integration-contracts':
+        specifier: workspace:*
+        version: link:packages/integration-contracts
+      '@system-x/quorum-adapter':
+        specifier: workspace:*
+        version: link:packages/quorum-adapter
+      '@system-x/result-normalizer':
+        specifier: workspace:*
+        version: link:packages/result-normalizer
+      '@system-x/workload-compiler':
+        specifier: workspace:*
+        version: link:packages/workload-compiler
       '@types/node':
         specifier: ^24.0.0
         version: 24.13.5
+      tsx:
+        specifier: ^4.19.3
+        version: 4.23.13
       turbo:
         specifier: ^2.4.4
         version: 2.10.13
@@ -177,7 +207,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/calibration-loop:
     dependencies:
@@ -196,7 +226,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/campaign-engine:
     dependencies:
@@ -212,7 +242,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/certification-gate:
     dependencies:
@@ -231,7 +261,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/comparison-engine:
     dependencies:
@@ -250,7 +280,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/fault-compiler:
     dependencies:
@@ -266,7 +296,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/integration-contracts:
     devDependencies:
@@ -278,7 +308,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/quorum-adapter:
     dependencies:
@@ -306,7 +336,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/result-normalizer:
     dependencies:
@@ -322,7 +352,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
   packages/workload-compiler:
     dependencies:
@@ -338,7 +368,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.0.7
-        version: 3.2.7(@types/node@24.13.5)
+        version: 3.2.7(@types/node@24.13.5)(tsx@4.23.13)
 
 packages:
 
@@ -1123,6 +1153,11 @@ packages:
     resolution: {integrity: sha512-m1TdR/rvT7kgGJZhspNtXdsdYk0fddFpJJFlG5s+UkPFo6lkLoZ3YLOaovPYjq1R75NP5JfeTlSHaOsE09peCg==}
     engines: {node: '>=20'}
 
+  tsx@4.23.13:
+    resolution: {integrity: sha512-BL5MGkRln6aDYhb0xbQlEAGw743BaZYWdbWtdJOBriYJboKgUUYCadFp2/FpBBZquBC/ezNBn7wMMPx7FDZUDw==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   turbo@2.10.13:
     resolution: {integrity: sha512-69MkPbjk+G8oyC7pC2DeBk0rPdbLz51wuH5eAT0Q4BVJkzq/b1XM4kUUidsARbmDjwIELSJwd1ezITULY9kWNw==}
     hasBin: true
@@ -1498,13 +1533,13 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.7(vite@7.3.6(@types/node@24.13.5))':
+  '@vitest/mocker@3.2.7(vite@7.3.6(@types/node@24.13.5)(tsx@4.23.13))':
     dependencies:
       '@vitest/spy': 3.2.7
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.6(@types/node@24.13.5)
+      vite: 7.3.6(@types/node@24.13.5)(tsx@4.23.13)
 
   '@vitest/pretty-format@3.2.7':
     dependencies:
@@ -1888,6 +1923,12 @@ snapshots:
 
   toad-cache@3.7.4: {}
 
+  tsx@4.23.13:
+    dependencies:
+      esbuild: 0.28.2
+    optionalDependencies:
+      fsevents: 2.3.3
+
   turbo@2.10.13:
     optionalDependencies:
       '@turbo/darwin-64': 2.10.13
@@ -1903,13 +1944,13 @@ snapshots:
 
   undici@7.29.1: {}
 
-  vite-node@3.2.4(@types/node@24.13.5):
+  vite-node@3.2.4(@types/node@24.13.5)(tsx@4.23.13):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.3.6(@types/node@24.13.5)
+      vite: 7.3.6(@types/node@24.13.5)(tsx@4.23.13)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -1924,7 +1965,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite@7.3.6(@types/node@24.13.5):
+  vite@7.3.6(@types/node@24.13.5)(tsx@4.23.13):
     dependencies:
       esbuild: 0.28.2
       fdir: 6.5.0(picomatch@4.0.7)
@@ -1935,12 +1976,13 @@ snapshots:
     optionalDependencies:
       '@types/node': 24.13.5
       fsevents: 2.3.3
+      tsx: 4.23.13
 
-  vitest@3.2.7(@types/node@24.13.5):
+  vitest@3.2.7(@types/node@24.13.5)(tsx@4.23.13):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.7
-      '@vitest/mocker': 3.2.7(vite@7.3.6(@types/node@24.13.5))
+      '@vitest/mocker': 3.2.7(vite@7.3.6(@types/node@24.13.5)(tsx@4.23.13))
       '@vitest/pretty-format': 3.2.7
       '@vitest/runner': 3.2.7
       '@vitest/snapshot': 3.2.7
@@ -1958,8 +2000,8 @@ snapshots:
       tinyglobby: 0.2.17
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 7.3.6(@types/node@24.13.5)
-      vite-node: 3.2.4(@types/node@24.13.5)
+      vite: 7.3.6(@types/node@24.13.5)(tsx@4.23.13)
+      vite-node: 3.2.4(@types/node@24.13.5)(tsx@4.23.13)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.13.5

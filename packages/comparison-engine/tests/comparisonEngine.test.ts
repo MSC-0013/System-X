@@ -216,4 +216,42 @@ describe('I5: Comparison Engine', () => {
     expect(report.simulation.sampleCount).toBe(50);
     expect(report.real.sampleCount).toBe(50);
   });
+
+  // ---- Complete certification truth-table (all four gates) ----
+  // Certified = StatPass AND EngPass AND P99Pass AND ThroughputPass
+  // Each gate is independently tested to prove no dimension is redundant.
+
+  it('truth-table: stat PASS + eng PASS + p99 FAIL + tput PASS → NOT CERTIFIED', () => {
+    const latencies = Array.from({ length: 50 }, (_, i) => i + 1);
+    const result = makeNormalizedResult(latencies, [...latencies]);
+
+    const criteria = {
+      ...DEFAULT_COMPARISON_CRITERIA,
+      ksAlpha: 0.0,               // stat never rejects
+      maxKsDStatistic: 1.0,       // eng always passes
+      maxP99MapePercent: -1,      // p99 impossible to pass
+      maxThroughputMapePercent: 100,
+    };
+
+    const report = generateComparisonReport(result, criteria);
+    expect(report.certified).toBe(false);
+    expect(report.verdict).toContain('p99');
+  });
+
+  it('truth-table: stat PASS + eng PASS + p99 PASS + tput FAIL → NOT CERTIFIED', () => {
+    const latencies = Array.from({ length: 50 }, (_, i) => i + 1);
+    const result = makeNormalizedResult(latencies, [...latencies]);
+
+    const criteria = {
+      ...DEFAULT_COMPARISON_CRITERIA,
+      ksAlpha: 0.0,               // stat never rejects
+      maxKsDStatistic: 1.0,       // eng always passes
+      maxP99MapePercent: 100,     // p99 always passes
+      maxThroughputMapePercent: -1, // throughput impossible to pass
+    };
+
+    const report = generateComparisonReport(result, criteria);
+    expect(report.certified).toBe(false);
+    expect(report.verdict).toContain('throughput');
+  });
 });

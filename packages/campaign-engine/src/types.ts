@@ -104,6 +104,18 @@ export interface CampaignPlan {
   readonly cells: readonly CampaignCell[];
   /** Cells excluded due to capability matrix violations. */
   readonly excludedCells: readonly ExcludedCell[];
+  /**
+   * Multiple-comparison policy applied across all cells in this campaign.
+   * When running many cells, individual alpha levels must be adjusted to
+   * control family-wise error rate (FWER) or false discovery rate (FDR).
+   */
+  readonly multipleComparisonPolicy: MultipleComparisonPolicy;
+  /**
+   * Per-cell adjusted alpha after applying multipleComparisonPolicy.
+   * For NONE: equals baseKsAlpha. For BONFERRONI: baseKsAlpha / numCells.
+   * HOLM and BENJAMINI_HOCHBERG are applied post-hoc (effectiveAlpha = baseKsAlpha here).
+   */
+  readonly effectiveAlphaPerCell: number;
 }
 
 /** A cell that was excluded with the reason. */
@@ -111,6 +123,23 @@ export interface ExcludedCell {
   readonly cell: CampaignCell;
   readonly reason: string;
 }
+
+/**
+ * Statistical multiple-comparison correction policy for campaign sweeps.
+ *
+ * When running K hypothesis tests at alpha=0.05, the probability of at
+ * least one false rejection is 1 - (1-0.05)^K, which grows with K.
+ *
+ * - NONE: no correction (use for single experiments or exploratory work)
+ * - BONFERRONI: alpha/K per cell (conservative, strong FWER control)
+ * - HOLM: step-down Bonferroni (less conservative, strong FWER control)
+ * - BENJAMINI_HOCHBERG: FDR control (recommended for discovery campaigns)
+ */
+export type MultipleComparisonPolicy =
+  | 'NONE'
+  | 'BONFERRONI'
+  | 'HOLM'
+  | 'BENJAMINI_HOCHBERG';
 
 /** Input dimensions for campaign planning. */
 export interface CampaignSpec {
@@ -120,4 +149,14 @@ export interface CampaignSpec {
   readonly loadDimensions: readonly LoadDimension[];
   /** QUORUM LAB capability matrix — validated before Cartesian product. */
   readonly quorumCapabilities: QuorumCapabilityMatrix;
+  /**
+   * Base KS test significance level per cell (before correction).
+   * Default: 0.05. After BONFERRONI correction: effectiveAlpha = baseKsAlpha / numCells.
+   */
+  readonly baseKsAlpha?: number;
+  /**
+   * Multiple-comparison correction policy for the campaign.
+   * Default: BENJAMINI_HOCHBERG (FDR control, appropriate for discovery sweeps).
+   */
+  readonly multipleComparisonPolicy?: MultipleComparisonPolicy;
 }

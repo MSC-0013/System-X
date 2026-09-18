@@ -1,4 +1,4 @@
-export { generateCampaignPlan, summarizeCampaignPlan } from './campaignEngine.js';
+export { generateCampaignPlan, summarizeCampaignPlan, computeEffectiveAlpha } from './campaignEngine.js';
 export { validateCellCapability } from './capabilityValidator.js';
 export type {
   CampaignSpec,
@@ -10,4 +10,5 @@ export type {
   LoadDimension,
   CampaignDimension,
   QuorumCapabilityMatrix,
+  MultipleComparisonPolicy,
 } from './types.js';

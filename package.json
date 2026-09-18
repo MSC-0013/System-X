@@ -8,9 +8,21 @@
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean",
-    "gate": "node --import tsx gate/integratedGate.ts"
+    "gate": "node --import tsx gate/localGate.ts",
+    "gate:local": "node --import tsx gate/localGate.ts",
+    "gate:integration": "node --import tsx gate/integrationGate.ts"
   },
   "devDependencies": {
+    "@system-x/integration-contracts": "workspace:*",
+    "@system-x/quorum-adapter": "workspace:*",
+    "@system-x/workload-compiler": "workspace:*",
+    "@system-x/fault-compiler": "workspace:*",
+    "@system-x/result-normalizer": "workspace:*",
+    "@system-x/comparison-engine": "workspace:*",
+    "@system-x/calibration-loop": "workspace:*",
+    "@system-x/campaign-engine": "workspace:*",
+    "@system-x/certification-gate": "workspace:*",
+    "tsx": "^4.19.3",
     "turbo": "^2.4.4",
     "typescript": "^5.8.2",
     "vitest": "^3.0.7",

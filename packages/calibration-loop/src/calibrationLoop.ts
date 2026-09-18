@@ -53,6 +53,7 @@ export async function runCalibrationCycle(
     experimentSpecHash,
     paramMap,
     normalizedResult,
+    config.calibrationFraction,
   );
 
   const response = await requestBlackboxCalibration(request, config);
@@ -80,51 +81,67 @@ function buildCalibrationRequest(
   experimentSpecHash: string,
   parameters: Record<string, number>,
   result: NormalizedRunResult,
+  calibrationFraction: number,
 ): BlackboxCalibrationRequest {
-  // Extract QUORUM_CLIENT samples for the empirical distribution.
-  const realSamples = result.samples.filter((s) => s.source === 'QUORUM_CLIENT');
+  // Extract QUORUM_CLIENT samples and sort by operationId for deterministic split.
+  const allRealSamples = result.samples
+    .filter((s) => s.source === 'QUORUM_CLIENT')
+    .slice()
+    .sort((a, b) => a.operationId < b.operationId ? -1 : 1);
+
   const realSummary = result.summaries.find((s) => s.source === 'QUORUM_CLIENT');
+  const n = allRealSamples.length;
 
-  const latencies = realSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
-  const n = latencies.length;
+  // ---------------------------------------------------------------------------
+  // Train/validation split — ordered by operationId (deterministic).
+  // The first calibrationFraction of samples form the calibration partition;
+  // the remainder form the held-out validation partition.
+  // Using temporal order (operationId sorts chronologically) prevents data
+  // leakage where future observations inform past calibration.
+  // ---------------------------------------------------------------------------
+  const splitIdx = Math.max(1, Math.floor(n * calibrationFraction));
+  const calSamples = allRealSamples.slice(0, splitIdx);
+  const valSamples = allRealSamples.slice(splitIdx);
 
-  // Build empirical CDF histogram from sorted latencies.
-  // We emit ~20 representative percentile buckets for shape fidelity.
-  const cdfBuckets = buildEmpiricalCdf(latencies);
+  const calLatencies = calSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
+  const valLatencies = valSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
 
-  // Quantile extraction.
-  const p = (pct: number) => latencies[Math.max(0, Math.ceil((pct / 100) * n) - 1)] ?? 0;
+  const nc = calLatencies.length;
+  const p = (arr: number[], pct: number) =>
+    arr[Math.max(0, Math.ceil((pct / 100) * arr.length) - 1)] ?? 0;
 
-  const successCount = realSamples.filter((s) => s.success).length;
-  const staleReadCount = realSamples.filter((s) => s.staleRead).length;
-  const errorRate = n > 0 ? (n - successCount) / n : 0;
-  const staleReadRate = n > 0 ? staleReadCount / n : undefined;
+  const successCount = calSamples.filter((s) => s.success).length;
+  const staleReadCount = calSamples.filter((s) => s.staleRead).length;
+  const errorRate = nc > 0 ? (nc - successCount) / nc : 0;
+  const staleReadRate = nc > 0 ? staleReadCount / nc : undefined;
 
-  // SLO breaches: operations where p99Ms is exceeded.
-  const p99Ms = p(99);
-  const sloBreachCount = latencies.filter((l) => l > p99Ms).length;
+  const p99Ms = p(calLatencies, 99);
+  const sloBreachCount = calLatencies.filter((l) => l > p99Ms).length;
 
   return {
     integrationRunId,
     experimentSpecHash,
     parameters,
     empiricalLatencyQuantiles: {
-      p50Ms: p(50),
-      p75Ms: p(75),
-      p90Ms: p(90),
-      p95Ms: p(95),
+      p50Ms: p(calLatencies, 50),
+      p75Ms: p(calLatencies, 75),
+      p90Ms: p(calLatencies, 90),
+      p95Ms: p(calLatencies, 95),
       p99Ms,
-      p999Ms: p(99.9),
-      minMs: latencies[0] ?? 0,
-      maxMs: latencies[n - 1] ?? 0,
-      meanMs: n > 0 ? latencies.reduce((s, v) => s + v, 0) / n : 0,
+      p999Ms: p(calLatencies, 99.9),
+      minMs: calLatencies[0] ?? 0,
+      maxMs: calLatencies[nc - 1] ?? 0,
+      meanMs: nc > 0 ? calLatencies.reduce((s, v) => s + v, 0) / nc : 0,
     },
-    empiricalCdfBuckets: cdfBuckets,
+    empiricalCdfBuckets: buildEmpiricalCdf(calLatencies),
+    validationCdfBuckets: buildEmpiricalCdf(valLatencies),
+    calibrationSampleCount: calLatencies.length,
+    validationSampleCount: valLatencies.length,
     targetThroughputOpsSec: realSummary?.throughputOpsSec ?? 0,
     errorRate,
     ...(staleReadRate !== undefined ? { staleReadRate } : {}),
     sloBreachCount,
-    totalOperations: n,
+    totalOperations: nc,
   };
 }
 

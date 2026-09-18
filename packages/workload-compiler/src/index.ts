@@ -1,4 +1,4 @@
-export { compileWorkload } from './workloadCompiler.js';
+export { compileWorkload, WORKLOAD_COMPILER_VERSION } from './workloadCompiler.js';
 export type {
   WorkloadCompilationRequest,
   WorkloadCompilationResult,

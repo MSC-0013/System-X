@@ -280,7 +280,7 @@ describe('I6: Calibration Loop — runCalibrationCycle', () => {
     expect(result.calibratedParameters).toEqual({ networkLatencyMs: 8 });
   });
 
-  it('sends separate calibration and validation partitions (no overfitting leakage)', async () => {
+  it('sends ONLY calibration partition to optimizer and evaluates validation partition separately (zero leakage)', async () => {
     let capturedBody: Record<string, unknown> = {};
 
     vi.stubGlobal('fetch', vi.fn().mockImplementationOnce(async (_url: string, init: RequestInit) => {
@@ -290,7 +290,7 @@ describe('I6: Calibration Loop — runCalibrationCycle', () => {
         json: async () => ({
           runId: 'bbx-run-004',
           calibratedParameters: {},
-          predictedP99Ms: 30,
+          predictedP99Ms: 34,
           predictedThroughputOpsSec: 980,
           p99MapePercent: 2,
           throughputMapePercent: 1,
@@ -302,30 +302,22 @@ describe('I6: Calibration Loop — runCalibrationCycle', () => {
 
     // 50 samples. With fraction=0.7: cal=35, val=15
     const result = makeNormalizedResult(Array.from({ length: 50 }, (_, i) => 10 + i * 0.5));
-    await runCalibrationCycle('run-004', 'k'.repeat(64), result, PARAMS, CONFIG);
+    const calResult = await runCalibrationCycle('run-004', 'k'.repeat(64), result, PARAMS, CONFIG);
 
-    const calCount = capturedBody.calibrationSampleCount as number;
-    const valCount = capturedBody.validationSampleCount as number;
-    const totalOps = capturedBody.totalOperations as number;
+    // ZERO LEAKAGE INVARIANT: The calibration request sent to the optimizer MUST NOT contain validation data.
+    expect((capturedBody as Record<string, unknown>)['validationCdfBuckets']).toBeUndefined();
+    expect((capturedBody as Record<string, unknown>)['validationSampleCount']).toBeUndefined();
 
-    // Both partitions must exist.
-    expect(capturedBody.validationCdfBuckets).toBeDefined();
-    expect(Array.isArray(capturedBody.validationCdfBuckets)).toBe(true);
+    // Calibration partition size must be 35
+    expect(capturedBody.totalOperations).toBe(35);
+    expect(capturedBody.empiricalCdfBuckets).toBeDefined();
 
-    // Partition sizes must sum to total.
-    expect(calCount + valCount).toBe(50);
-    expect(totalOps).toBe(calCount); // totalOperations = calibration partition size
-
-    // Validation must be non-empty (not same data as calibration).
-    const valBuckets = capturedBody.validationCdfBuckets as unknown[][];
-    expect(valBuckets.length).toBeGreaterThan(0);
-
-    // The two partition CDF objects must be distinct references/content.
-    const calJson = JSON.stringify(capturedBody.empiricalCdfBuckets);
-    const valJson = JSON.stringify(capturedBody.validationCdfBuckets);
-    // For 50 samples with a 0.7/0.3 split they may differ slightly; at minimum
-    // the split boundaries must differ from each other or lengths must differ.
-    expect(calCount).not.toBe(valCount); // 35 ≠ 15
-    expect(calJson).not.toBe(valJson);   // different distribution slices
+    // Held-out validation report evaluated by SYSTEM-X
+    expect(calResult.validationReport).toBeDefined();
+    expect(calResult.validationReport.sampleCount).toBe(15);
+    expect(calResult.validationReport.predictedP99Ms).toBe(34);
+    expect(typeof calResult.validationReport.validationP99Ms).toBe('number');
+    expect(typeof calResult.validationReport.validationP99MapePercent).toBe('number');
+    expect(typeof calResult.validationReport.validated).toBe('boolean');
   });
 });

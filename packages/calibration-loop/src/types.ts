@@ -76,30 +76,20 @@ export interface BlackboxCalibrationRequest {
 
   /** Total operation count in the calibration partition. */
   readonly totalOperations: number;
+}
 
-  // ---------------------------------------------------------------------------
-  // Held-out validation partition — prevents calibration overfitting.
-  //
-  // SYSTEM-X splits the QUORUM_CLIENT sample set:
-  //   [0, calibrationFraction) → calibration partition (sent as empiricalCdfBuckets)
-  //   [calibrationFraction, 1] → validation partition (sent as validationCdfBuckets)
-  //
-  // BLACKBOX-X MUST evaluate its calibrated model on validationCdfBuckets,
-  // not on the same data it calibrated against. This mirrors M6's held-out
-  // validation step and prevents apparent convergence on overfit statistics.
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Held-out validation partition CDF — bucket boundary (ms) → cumulative fraction.
-   * Must be derived from a DIFFERENT sample set than empiricalCdfBuckets.
-   */
-  readonly validationCdfBuckets: ReadonlyArray<readonly [number, number]>;
-
-  /** Number of samples in the calibration partition. */
-  readonly calibrationSampleCount: number;
-
+/** Held-out validation report evaluated by SYSTEM-X (zero leakage to optimizer). */
+export interface HeldOutValidationReport {
   /** Number of samples in the held-out validation partition. */
-  readonly validationSampleCount: number;
+  readonly sampleCount: number;
+  /** Observed p99 latency in the held-out validation partition (ms). */
+  readonly validationP99Ms: number;
+  /** Predicted p99 latency with calibrated parameters (ms). */
+  readonly predictedP99Ms: number;
+  /** MAPE on held-out validation data (percent). */
+  readonly validationP99MapePercent: number;
+  /** Whether the calibrated parameters validate on unseen data (MAPE <= 20%). */
+  readonly validated: boolean;
 }
 
 /** Response from BLACKBOX-X POST /v1/calibration/runs. */
@@ -134,6 +124,8 @@ export interface CalibrationResult {
   readonly throughputMapePercent: number;
   readonly predictedP99Ms: number;
   readonly predictedThroughputOpsSec: number;
+  /** Held-out validation partition evaluation — performed by SYSTEM-X without optimizer leakage. */
+  readonly validationReport: HeldOutValidationReport;
 }
 
 /** Configuration for the SYSTEM-X calibration loop client. */

@@ -84,7 +84,7 @@ interface GateResult {
   detail: string;
 }
 
-const TOTAL = 14;
+const TOTAL = 16;
 const results: GateResult[] = [];
 let stepCounter = 0;
 
@@ -383,7 +383,58 @@ await gate('Verify COMPLIANCE object lock retention — HEAD request', async () 
 });
 
 // ---------------------------------------------------------------------------
-// [14] Certification record hash stable
+// [14] Negative WORM test — Attempt to DELETE locked object version (MUST FAIL)
+// ---------------------------------------------------------------------------
+
+await gate('Negative WORM test — Attempt DELETE locked version (MUST FAIL)', async () => {
+  if (!uploadedArtifact || !uploadedArtifact.versionId) {
+    throw new Error('Skipped: artifact from step 11 not available or unversioned');
+  }
+
+  const objectKey = `runs/${RUN_ID}/gate-test-artifact.json`;
+  const deleteUrl = `${MINIO_URL}/${MINIO_BUCKET}/${objectKey}?versionId=${uploadedArtifact.versionId}`;
+
+  const r = await fetch(deleteUrl, { method: 'DELETE' });
+
+  // In S3 COMPLIANCE WORM mode, deleting a specific locked versionId MUST return 403 / AccessDenied / ObjectLocked
+  if (r.status === 204 || r.status === 200) {
+    throw new Error(
+      `WORM VIOLATION: DELETE on locked versionId returned HTTP ${r.status} instead of 403 AccessDenied / ObjectLocked`,
+    );
+  }
+
+  return `DELETE rejected with HTTP ${r.status} (WORM immutability enforced ✓)`;
+});
+
+// ---------------------------------------------------------------------------
+// [15] Negative WORM test — Attempt to overwrite locked object version (MUST FAIL)
+// ---------------------------------------------------------------------------
+
+await gate('Negative WORM test — Attempt overwrite locked version (MUST FAIL)', async () => {
+  if (!uploadedArtifact || !uploadedArtifact.versionId) {
+    throw new Error('Skipped: artifact from step 11 not available or unversioned');
+  }
+
+  const objectKey = `runs/${RUN_ID}/gate-test-artifact.json`;
+  const putUrl = `${MINIO_URL}/${MINIO_BUCKET}/${objectKey}?versionId=${uploadedArtifact.versionId}`;
+
+  const r = await fetch(putUrl, {
+    method: 'PUT',
+    body: '{"tampered": true}',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (r.ok) {
+    throw new Error(
+      `WORM VIOLATION: PUT over locked versionId returned HTTP ${r.status} instead of rejection`,
+    );
+  }
+
+  return `Overwrite rejected with HTTP ${r.status} (WORM immutability enforced ✓)`;
+});
+
+// ---------------------------------------------------------------------------
+// [16] Certification record hash stable
 // ---------------------------------------------------------------------------
 
 await gate('Certification record hash stable', async () => {

@@ -48,15 +48,39 @@ export async function runCalibrationCycle(
     paramMap[p.name] = p.value;
   }
 
+  // 1. Partition the QUORUM_CLIENT samples deterministically
+  const allRealSamples = normalizedResult.samples
+    .filter((s) => s.source === 'QUORUM_CLIENT')
+    .slice()
+    .sort((a, b) => (a.operationId < b.operationId ? -1 : 1));
+
+  const n = allRealSamples.length;
+  const splitIdx = Math.max(1, Math.floor(n * config.calibrationFraction));
+  const calSamples = allRealSamples.slice(0, splitIdx);
+  const valSamples = allRealSamples.slice(splitIdx);
+
+  // 2. Build calibration request containing ONLY calibration partition (zero leakage)
+  const realSummary = normalizedResult.summaries.find((s) => s.source === 'QUORUM_CLIENT');
   const request = buildCalibrationRequest(
     integrationRunId,
     experimentSpecHash,
     paramMap,
-    normalizedResult,
-    config.calibrationFraction,
+    calSamples,
+    realSummary,
   );
 
+  // 3. Send ONLY calibration data to BLACKBOX-X optimizer
   const response = await requestBlackboxCalibration(request, config);
+
+  // 4. SYSTEM-X evaluates calibrated parameters on the held-out validation partition
+  const valLatencies = valSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
+  const valP99Ms = valLatencies.length > 0
+    ? valLatencies[Math.max(0, Math.ceil(0.99 * valLatencies.length) - 1)] ?? 0
+    : 0;
+
+  const diff = Math.abs(valP99Ms - response.predictedP99Ms);
+  const validationP99MapePercent = valP99Ms > 0 ? (diff / valP99Ms) * 100 : 0;
+  const validated = validationP99MapePercent <= 20.0;
 
   return {
     integrationRunId,
@@ -69,43 +93,28 @@ export async function runCalibrationCycle(
     throughputMapePercent: response.throughputMapePercent,
     predictedP99Ms: response.predictedP99Ms,
     predictedThroughputOpsSec: response.predictedThroughputOpsSec,
+    validationReport: {
+      sampleCount: valSamples.length,
+      validationP99Ms: valP99Ms,
+      predictedP99Ms: response.predictedP99Ms,
+      validationP99MapePercent,
+      validated,
+    },
   };
 }
 
 // ---------------------------------------------------------------------------
-// Internal: build the enriched calibration request from raw samples
+// Internal: build calibration request from calibration partition ONLY
 // ---------------------------------------------------------------------------
 
 function buildCalibrationRequest(
   integrationRunId: string,
   experimentSpecHash: string,
   parameters: Record<string, number>,
-  result: NormalizedRunResult,
-  calibrationFraction: number,
+  calSamples: readonly NormalizedRunResult['samples'][number][],
+  realSummary: NormalizedRunResult['summaries'][number] | undefined,
 ): BlackboxCalibrationRequest {
-  // Extract QUORUM_CLIENT samples and sort by operationId for deterministic split.
-  const allRealSamples = result.samples
-    .filter((s) => s.source === 'QUORUM_CLIENT')
-    .slice()
-    .sort((a, b) => a.operationId < b.operationId ? -1 : 1);
-
-  const realSummary = result.summaries.find((s) => s.source === 'QUORUM_CLIENT');
-  const n = allRealSamples.length;
-
-  // ---------------------------------------------------------------------------
-  // Train/validation split — ordered by operationId (deterministic).
-  // The first calibrationFraction of samples form the calibration partition;
-  // the remainder form the held-out validation partition.
-  // Using temporal order (operationId sorts chronologically) prevents data
-  // leakage where future observations inform past calibration.
-  // ---------------------------------------------------------------------------
-  const splitIdx = Math.max(1, Math.floor(n * calibrationFraction));
-  const calSamples = allRealSamples.slice(0, splitIdx);
-  const valSamples = allRealSamples.slice(splitIdx);
-
   const calLatencies = calSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
-  const valLatencies = valSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
-
   const nc = calLatencies.length;
   const p = (arr: number[], pct: number) =>
     arr[Math.max(0, Math.ceil((pct / 100) * arr.length) - 1)] ?? 0;
@@ -134,9 +143,6 @@ function buildCalibrationRequest(
       meanMs: nc > 0 ? calLatencies.reduce((s, v) => s + v, 0) / nc : 0,
     },
     empiricalCdfBuckets: buildEmpiricalCdf(calLatencies),
-    validationCdfBuckets: buildEmpiricalCdf(valLatencies),
-    calibrationSampleCount: calLatencies.length,
-    validationSampleCount: valLatencies.length,
     targetThroughputOpsSec: realSummary?.throughputOpsSec ?? 0,
     errorRate,
     ...(staleReadRate !== undefined ? { staleReadRate } : {}),

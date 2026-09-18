@@ -4,7 +4,10 @@ import type {
   IntegratedConsistency,
   IntegratedFaultSchedule,
   IntegratedSlo,
-  SemanticOutcomeCategory
+  SemanticOutcomeCategory,
+  OperationTraceEntry,
+  KsCertificationCriteria,
+  KsCertificationEvaluation
 } from './types.js';
 
 export class ValidationError extends Error {
@@ -118,7 +121,7 @@ export function validateFaultSchedule(schedule?: IntegratedFaultSchedule): strin
     return errors;
   }
 
-  const validFaultTypes = ['PARTITION', 'DELAY', 'LOSS', 'CLOCK_SKEW', 'CRASH_RESTART'];
+  const validFaultTypes = ['PARTITION', 'DELAY', 'LOSS', 'CLOCK_SKEW', 'CRASH', 'RESTART', 'RECOVER'];
 
   for (let i = 0; i < schedule.faults.length; i++) {
     const fault = schedule.faults[i]!;
@@ -146,6 +149,9 @@ export function validateFaultSchedule(schedule?: IntegratedFaultSchedule): strin
         if (fault.parameters.lossRate < 0.0 || fault.parameters.lossRate > 1.0) {
           errors.push(`Fault [${i}]: parameters.lossRate must be between 0.0 and 1.0`);
         }
+      }
+      if (fault.type === 'RESTART' && fault.parameters.recoveryTimeoutMs !== undefined && fault.parameters.recoveryTimeoutMs <= 0) {
+        errors.push(`Fault [${i}]: parameters.recoveryTimeoutMs must be > 0`);
       }
     }
   }
@@ -229,6 +235,76 @@ export function assertValidIntegratedExperiment(spec: unknown): asserts spec is 
   if (!result.valid) {
     throw new ValidationError(`Experiment validation failed:\n - ${result.errors.join('\n - ')}`, result.errors);
   }
+}
+
+export function validateOperationTraceEntry(entry: OperationTraceEntry): string[] {
+  const errors: string[] = [];
+  if (!Number.isInteger(entry.sequence) || entry.sequence < 0) {
+    errors.push(`entry.sequence must be a non-negative integer, got ${entry.sequence}`);
+  }
+  if (!Number.isInteger(entry.logicalClientId) || entry.logicalClientId < 0) {
+    errors.push(`entry.logicalClientId must be a non-negative integer, got ${entry.logicalClientId}`);
+  }
+  if (!['GET', 'PUT', 'DELETE'].includes(entry.operation)) {
+    errors.push(`entry.operation must be GET, PUT, or DELETE, got '${entry.operation}'`);
+  }
+  if (!entry.key || typeof entry.key !== 'string') {
+    errors.push('entry.key must be a non-empty string');
+  }
+  if (entry.scheduledOffsetUs !== undefined && (typeof entry.scheduledOffsetUs !== 'number' || entry.scheduledOffsetUs < 0)) {
+    errors.push(`entry.scheduledOffsetUs must be a non-negative number, got ${entry.scheduledOffsetUs}`);
+  }
+  return errors;
+}
+
+/**
+ * Evaluates KS distribution compatibility using both statistical hypothesis testing and engineering bounds.
+ */
+export function evaluateKsCertification(
+  ksPValue: number,
+  ksStatistic: number,
+  p99Mape: number,
+  throughputMape: number,
+  criteria: KsCertificationCriteria = {
+    alpha: 0.05,
+    maxEngineeringDks: 0.05,
+    maxP99Mape: 0.15,
+    maxThroughputMape: 0.10
+  }
+): KsCertificationEvaluation {
+  const hypothesisAccepted = ksPValue >= criteria.alpha;
+  const dKsWithinEngineeringLimit = ksStatistic <= criteria.maxEngineeringDks;
+  const p99MapeWithinLimit = p99Mape <= criteria.maxP99Mape;
+  const throughputMapeWithinLimit = throughputMape <= criteria.maxThroughputMape;
+
+  const passed =
+    hypothesisAccepted &&
+    dKsWithinEngineeringLimit &&
+    p99MapeWithinLimit &&
+    throughputMapeWithinLimit;
+
+  const reasons: string[] = [];
+  if (!hypothesisAccepted) {
+    reasons.push(`KS p-value (${ksPValue.toFixed(4)}) < significance level alpha (${criteria.alpha})`);
+  }
+  if (!dKsWithinEngineeringLimit) {
+    reasons.push(`KS statistic D (${ksStatistic.toFixed(4)}) > max engineering limit (${criteria.maxEngineeringDks})`);
+  }
+  if (!p99MapeWithinLimit) {
+    reasons.push(`p99 MAPE (${(p99Mape * 100).toFixed(1)}%) > max limit (${(criteria.maxP99Mape * 100).toFixed(1)}%)`);
+  }
+  if (!throughputMapeWithinLimit) {
+    reasons.push(`Throughput MAPE (${(throughputMape * 100).toFixed(1)}%) > max limit (${(criteria.maxThroughputMape * 100).toFixed(1)}%)`);
+  }
+
+  return {
+    passed,
+    hypothesisAccepted,
+    dKsWithinEngineeringLimit,
+    p99MapeWithinLimit,
+    throughputMapeWithinLimit,
+    ...(reasons.length > 0 ? { reason: reasons.join('; ') } : {})
+  };
 }
 
 /**

@@ -20,6 +20,10 @@
       "type": "string",
       "pattern": "^[a-f0-9]{64}$"
     },
+    "traceHash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
     "blackboxRunId": {
       "type": "string"
     },
@@ -32,7 +36,24 @@
     },
     "status": {
       "type": "string",
-      "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED", "ABORTED"]
+      "enum": [
+        "PLANNED",
+        "VALIDATED",
+        "COMPILED",
+        "SIMULATED",
+        "TARGET_READY",
+        "RUNNING",
+        "OBSERVING",
+        "NORMALIZED",
+        "COMPARED",
+        "CALIBRATING",
+        "VALIDATING",
+        "CERTIFIED",
+        "FAILED",
+        "ABORTED",
+        "CANCELLED",
+        "TIMEOUT"
+      ]
     },
     "startedAt": {
       "type": "string",
@@ -41,6 +62,37 @@
     "completedAt": {
       "type": "string",
       "format": "date-time"
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "integrationRunId",
+        "experimentSpecHash",
+        "systemXVersion",
+        "blackboxVersion",
+        "blackboxGitSha",
+        "quorumVersion",
+        "quorumGitSha",
+        "schemaVersion",
+        "infrastructureProfile",
+        "createdAt"
+      ],
+      "properties": {
+        "integrationRunId": { "type": "string" },
+        "experimentSpecHash": { "type": "string" },
+        "traceHash": { "type": "string" },
+        "systemXVersion": { "type": "string" },
+        "blackboxVersion": { "type": "string" },
+        "blackboxGitSha": { "type": "string" },
+        "blackboxImageDigest": { "type": "string" },
+        "quorumVersion": { "type": "string" },
+        "quorumGitSha": { "type": "string" },
+        "quorumImageDigest": { "type": "string" },
+        "schemaVersion": { "type": "string" },
+        "infrastructureProfile": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
     },
     "metrics": {
       "type": "object",
@@ -77,15 +129,12 @@
       "items": {
         "type": "object",
         "required": [
-          "timestampMs",
           "operationId",
           "operationType",
-          "latencyMs",
           "success",
           "source"
         ],
         "properties": {
-          "timestampMs": { "type": "number" },
           "operationId": { "type": "string" },
           "operationType": { "type": "string", "enum": ["READ", "WRITE", "DELETE"] },
           "latencyMs": { "type": "number", "minimum": 0.0 },
@@ -116,13 +165,28 @@
             ]
           },
           "staleRead": { "type": "boolean" },
-          "causalAnomaly": { "type": "boolean" }
+          "causalAnomaly": { "type": "boolean" },
+          "simulationTimeUs": { "type": "number", "minimum": 0.0 },
+          "realElapsedUs": { "type": "number", "minimum": 0.0 },
+          "wallTimeMs": { "type": "number", "minimum": 0.0 },
+          "monotonicNs": { "type": "number", "minimum": 0.0 }
         },
         "additionalProperties": false
       }
     },
     "divergence": {
       "type": "object",
+      "required": [
+        "ksStatistic",
+        "ksPValue",
+        "wassersteinDistance",
+        "p50Mape",
+        "p95Mape",
+        "p99Mape",
+        "throughputMape",
+        "calibrated",
+        "certified"
+      ],
       "properties": {
         "ksStatistic": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
         "ksPValue": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
@@ -130,7 +194,28 @@
         "p50Mape": { "type": "number", "minimum": 0.0 },
         "p95Mape": { "type": "number", "minimum": 0.0 },
         "p99Mape": { "type": "number", "minimum": 0.0 },
-        "calibrated": { "type": "boolean" }
+        "throughputMape": { "type": "number", "minimum": 0.0 },
+        "calibrated": { "type": "boolean" },
+        "certified": { "type": "boolean" },
+        "certificationDetails": {
+          "type": "object",
+          "required": [
+            "passed",
+            "hypothesisAccepted",
+            "dKsWithinEngineeringLimit",
+            "p99MapeWithinLimit",
+            "throughputMapeWithinLimit"
+          ],
+          "properties": {
+            "passed": { "type": "boolean" },
+            "hypothesisAccepted": { "type": "boolean" },
+            "dKsWithinEngineeringLimit": { "type": "boolean" },
+            "p99MapeWithinLimit": { "type": "boolean" },
+            "throughputMapeWithinLimit": { "type": "boolean" },
+            "reason": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     }

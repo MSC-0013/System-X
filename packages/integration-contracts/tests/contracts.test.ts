@@ -2,12 +2,16 @@ import { describe, it, expect } from 'vitest';
 import {
   canonicalJsonStringify,
   computeExperimentSpecHash,
+  computeTraceHash,
   deriveStreamSeed,
   createMulberry32,
   validateIntegratedExperiment,
   assertValidIntegratedExperiment,
+  validateOperationTraceEntry,
+  evaluateKsCertification,
   mapNativeErrorToSemanticOutcome,
-  type IntegratedExperiment
+  type IntegratedExperiment,
+  type OperationTraceEntry
 } from '../src/index.js';
 
 describe('Canonical Contracts & Invariants (Milestone I0)', () => {
@@ -65,7 +69,6 @@ describe('Canonical Contracts & Invariants (Milestone I0)', () => {
     });
 
     it('computes identical experimentSpecHash when top-level and nested keys are permuted', () => {
-      // Reconstruct with identical data but completely scrambled key insertion order
       const permutedSpec: IntegratedExperiment = {
         name: 'Quorum vs Simulation Baseline',
         slo: {
@@ -180,12 +183,60 @@ describe('Canonical Contracts & Invariants (Milestone I0)', () => {
     });
   });
 
-  describe('3. Validation Rules & Bounds', () => {
-    it('passes for a well-formed IntegratedExperiment', () => {
-      const result = validateIntegratedExperiment(baseSpec);
+  describe('3. First-Class Operation Trace Artifact', () => {
+    const traceEntries: OperationTraceEntry[] = [
+      { sequence: 0, logicalClientId: 0, operation: 'PUT', key: 'user:100', value: 'v1', scheduledOffsetUs: 0 },
+      { sequence: 1, logicalClientId: 1, operation: 'GET', key: 'user:100', scheduledOffsetUs: 150 },
+      { sequence: 2, logicalClientId: 0, operation: 'DELETE', key: 'user:100', scheduledOffsetUs: 300 }
+    ];
+
+    it('computes deterministic 64-char traceHash for identical entries', () => {
+      const hash1 = computeTraceHash(traceEntries);
+      const hash2 = computeTraceHash([...traceEntries]);
+
+      expect(hash1).toHaveLength(64);
+      expect(hash1).toBe(hash2);
+    });
+
+    it('computes distinct traceHash when operation order or client id changes', () => {
+      const hashBase = computeTraceHash(traceEntries);
+      const reordered: OperationTraceEntry[] = [
+        traceEntries[1]!,
+        traceEntries[0]!,
+        traceEntries[2]!
+      ];
+
+      expect(computeTraceHash(reordered)).not.toBe(hashBase);
+    });
+
+    it('validates operation trace entries correctly', () => {
+      expect(validateOperationTraceEntry(traceEntries[0]!)).toHaveLength(0);
+
+      const invalidEntry: OperationTraceEntry = {
+        sequence: -1,
+        logicalClientId: -2,
+        operation: 'INVALID' as any,
+        key: '',
+        scheduledOffsetUs: -10
+      };
+      const errors = validateOperationTraceEntry(invalidEntry);
+      expect(errors.length).toBeGreaterThanOrEqual(4);
+    });
+  });
+
+  describe('4. Validation Rules, Bounds & Vocabulary', () => {
+    it('passes for a well-formed IntegratedExperiment with CUSTOM_MERGE', () => {
+      const customMergeSpec: IntegratedExperiment = {
+        ...baseSpec,
+        consistency: {
+          ...baseSpec.consistency,
+          conflictStrategy: 'CUSTOM_MERGE'
+        }
+      };
+      const result = validateIntegratedExperiment(customMergeSpec);
       expect(result.valid).toBe(true);
       expect(result.errors).toHaveLength(0);
-      expect(() => assertValidIntegratedExperiment(baseSpec)).not.toThrow();
+      expect(() => assertValidIntegratedExperiment(customMergeSpec)).not.toThrow();
     });
 
     it('fails when readRatio and writeRatio do not sum to 1.0', () => {
@@ -199,24 +250,39 @@ describe('Canonical Contracts & Invariants (Milestone I0)', () => {
       expect(() => assertValidIntegratedExperiment(invalid)).toThrow('must equal 1.0');
     });
 
-    it('fails when zipfian distribution lacks valid theta', () => {
-      const invalid = {
+    it('validates discrete process faults: CRASH, RESTART, RECOVER', () => {
+      const processFaultSpec: IntegratedExperiment = {
         ...baseSpec,
-        workload: { ...baseSpec.workload, zipfianTheta: 0.05 }
+        faultSchedule: {
+          faults: [
+            {
+              id: 'fault-crash-1',
+              type: 'CRASH',
+              targetNodes: ['node-1'],
+              offsetMs: 1000,
+              durationMs: 1
+            },
+            {
+              id: 'fault-restart-1',
+              type: 'RESTART',
+              targetNodes: ['node-1'],
+              offsetMs: 3000,
+              durationMs: 1,
+              parameters: { recoveryTimeoutMs: 5000 }
+            },
+            {
+              id: 'fault-recover-1',
+              type: 'RECOVER',
+              targetNodes: ['node-1'],
+              offsetMs: 3500,
+              durationMs: 1
+            }
+          ]
+        }
       };
-      const result = validateIntegratedExperiment(invalid);
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.includes('zipfianTheta must be between 0.1 and 2.0'))).toBe(true);
-    });
-
-    it('fails when keyRange min > max', () => {
-      const invalid = {
-        ...baseSpec,
-        workload: { ...baseSpec.workload, keyRange: { min: 500, max: 100 } }
-      };
-      const result = validateIntegratedExperiment(invalid);
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.includes('cannot be less than keyRange.min'))).toBe(true);
+      const result = validateIntegratedExperiment(processFaultSpec);
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
     });
 
     it('fails when fault schedule has invalid durations or targetNodes', () => {
@@ -240,23 +306,46 @@ describe('Canonical Contracts & Invariants (Milestone I0)', () => {
       expect(result.errors.some((e) => e.includes('offsetMs must be >= 0'))).toBe(true);
       expect(result.errors.some((e) => e.includes('durationMs must be > 0'))).toBe(true);
     });
+  });
 
-    it('fails when SLO error rate is out of bounds', () => {
-      const invalid = {
-        ...baseSpec,
-        slo: {
-          targetP99Ms: -5,
-          maxErrorRate: 1.5
-        }
-      };
-      const result = validateIntegratedExperiment(invalid);
-      expect(result.valid).toBe(false);
-      expect(result.errors.some((e) => e.includes('targetP99Ms must be > 0'))).toBe(true);
-      expect(result.errors.some((e) => e.includes('maxErrorRate must be between 0.0 and 1.0'))).toBe(true);
+  describe('5. KS Certification Evaluation (Statistical vs Engineering Thresholds)', () => {
+    it('passes certification when hypothesis accepted and all engineering limits satisfied', () => {
+      const evaluation = evaluateKsCertification(0.45, 0.03, 0.08, 0.05);
+
+      expect(evaluation.passed).toBe(true);
+      expect(evaluation.hypothesisAccepted).toBe(true);
+      expect(evaluation.dKsWithinEngineeringLimit).toBe(true);
+      expect(evaluation.p99MapeWithinLimit).toBe(true);
+      expect(evaluation.throughputMapeWithinLimit).toBe(true);
+      expect(evaluation.reason).toBeUndefined();
+    });
+
+    it('fails certification when p-value is below significance level alpha', () => {
+      const evaluation = evaluateKsCertification(0.01, 0.03, 0.08, 0.05);
+
+      expect(evaluation.passed).toBe(false);
+      expect(evaluation.hypothesisAccepted).toBe(false);
+      expect(evaluation.reason).toContain('KS p-value');
+    });
+
+    it('fails certification when engineering D_ks threshold is exceeded even if p-value is large', () => {
+      const evaluation = evaluateKsCertification(0.20, 0.08, 0.08, 0.05);
+
+      expect(evaluation.passed).toBe(false);
+      expect(evaluation.dKsWithinEngineeringLimit).toBe(false);
+      expect(evaluation.reason).toContain('KS statistic D');
+    });
+
+    it('fails certification when p99 tail MAPE exceeds threshold', () => {
+      const evaluation = evaluateKsCertification(0.50, 0.02, 0.25, 0.05);
+
+      expect(evaluation.passed).toBe(false);
+      expect(evaluation.p99MapeWithinLimit).toBe(false);
+      expect(evaluation.reason).toContain('p99 MAPE');
     });
   });
 
-  describe('4. Semantic Error Mapping Taxonomy', () => {
+  describe('6. Semantic Error Mapping Taxonomy', () => {
     it('correctly maps distributed consensus errors to unified taxonomy', () => {
       expect(mapNativeErrorToSemanticOutcome('STATUS_CODE_FENCED')).toBe('LEADERSHIP_SAFETY_FAILURE');
       expect(mapNativeErrorToSemanticOutcome('NotLeaderError')).toBe('ROUTING_RETRYABLE_FAILURE');

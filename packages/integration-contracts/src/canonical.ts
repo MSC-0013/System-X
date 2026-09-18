@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { IntegratedExperiment } from './types.js';
+import type { IntegratedExperiment, OperationTraceEntry } from './types.js';
 
 /**
  * Deterministically serializes any JavaScript value to a canonical JSON string.
@@ -97,5 +97,14 @@ export function normalizeExperimentSpec(spec: IntegratedExperiment): Record<stri
 export function computeExperimentSpecHash(spec: IntegratedExperiment): string {
   const normalized = normalizeExperimentSpec(spec);
   const canonicalJson = canonicalJsonStringify(normalized);
+  return createHash('sha256').update(canonicalJson, 'utf8').digest('hex');
+}
+
+/**
+ * Computes the 64-character SHA-256 canonical hash of an operation trace artifact.
+ * Invariant: Identical sequence of trace entries produces the identical traceHash.
+ */
+export function computeTraceHash(entries: readonly OperationTraceEntry[]): string {
+  const canonicalJson = canonicalJsonStringify(entries);
   return createHash('sha256').update(canonicalJson, 'utf8').digest('hex');
 }

@@ -16,7 +16,15 @@
           },
           "type": {
             "type": "string",
-            "enum": ["PARTITION", "DELAY", "LOSS", "CLOCK_SKEW", "CRASH_RESTART"]
+            "enum": [
+              "PARTITION",
+              "DELAY",
+              "LOSS",
+              "CLOCK_SKEW",
+              "CRASH",
+              "RESTART",
+              "RECOVER"
+            ]
           },
           "targetNodes": {
             "type": "array",
@@ -52,8 +60,9 @@
               "skewOffsetMs": {
                 "type": "integer"
               },
-              "cleanRestart": {
-                "type": "boolean"
+              "recoveryTimeoutMs": {
+                "type": "integer",
+                "minimum": 1
               }
             },
             "additionalProperties": true

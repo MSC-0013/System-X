@@ -3,80 +3,104 @@ export const INTEGRATION_CONTRACT_VERSION = '1.0.0';
 export type IntegratedDistribution = 'UNIFORM' | 'ZIPFIAN';
 
 export interface IntegratedKeyRange {
-  min: number;
-  max: number;
+  readonly min: number;
+  readonly max: number;
 }
 
 export interface IntegratedWorkload {
-  operationCount: number;
-  concurrency: number;
-  distribution: IntegratedDistribution;
-  zipfianTheta?: number;
-  keyRange: IntegratedKeyRange;
-  readRatio: number;
-  writeRatio: number;
-  targetThroughputOpsSec?: number;
-  valueSizeBytes?: number;
+  readonly operationCount: number;
+  readonly concurrency: number;
+  readonly distribution: IntegratedDistribution;
+  readonly zipfianTheta?: number;
+  readonly keyRange: IntegratedKeyRange;
+  readonly readRatio: number;
+  readonly writeRatio: number;
+  readonly targetThroughputOpsSec?: number;
+  readonly valueSizeBytes?: number;
 }
 
 export type ReplicationEngine = 'LEADERLESS' | 'LEADER' | 'RAFT';
 export type ReadConsistency = 'ONE' | 'QUORUM' | 'ALL' | 'EVENTUAL' | 'CAUSAL' | 'SESSION';
 export type WriteAckPolicy = 'ONE' | 'QUORUM' | 'ALL';
 export type DurabilityPolicy = 'MEMORY_ONLY' | 'BATCHED_FSYNC' | 'SYNC_FSYNC';
-export type ConflictStrategy = 'LAST_WRITE_WINS' | 'VERSION_VECTOR' | 'MULTI_VALUE' | 'CUSTOM_MERGE';
+export type ConflictStrategy =
+  | 'LAST_WRITE_WINS'
+  | 'VERSION_VECTOR'
+  | 'MULTI_VALUE'
+  | 'CUSTOM_MERGE';
 
 export interface IntegratedConsistency {
-  replicationEngine: ReplicationEngine;
-  readConsistency: ReadConsistency;
-  writeAckPolicy: WriteAckPolicy;
-  durability: DurabilityPolicy;
-  conflictStrategy: ConflictStrategy;
+  readonly replicationEngine: ReplicationEngine;
+  readonly readConsistency: ReadConsistency;
+  readonly writeAckPolicy: WriteAckPolicy;
+  readonly durability: DurabilityPolicy;
+  readonly conflictStrategy: ConflictStrategy;
 }
 
-export type FaultType = 'PARTITION' | 'DELAY' | 'LOSS' | 'CLOCK_SKEW' | 'CRASH_RESTART';
+export type NetworkFaultType = 'PARTITION' | 'DELAY' | 'LOSS' | 'CLOCK_SKEW';
+export type ProcessFaultType = 'CRASH' | 'RESTART' | 'RECOVER';
+export type FaultType = NetworkFaultType | ProcessFaultType;
 
 export interface IntegratedFaultParameters {
-  delayMs?: number;
-  jitterMs?: number;
-  lossRate?: number;
-  skewOffsetMs?: number;
-  cleanRestart?: boolean;
-  [key: string]: unknown;
+  readonly delayMs?: number;
+  readonly jitterMs?: number;
+  readonly lossRate?: number;
+  readonly skewOffsetMs?: number;
+  readonly recoveryTimeoutMs?: number;
+  readonly [key: string]: unknown;
 }
 
 export interface IntegratedFaultEvent {
-  id: string;
-  type: FaultType;
-  targetNodes: string[];
-  offsetMs: number;
-  durationMs: number;
-  parameters?: IntegratedFaultParameters;
+  readonly id: string;
+  readonly type: FaultType;
+  readonly targetNodes: readonly string[];
+  readonly offsetMs: number;
+  readonly durationMs: number;
+  readonly parameters?: IntegratedFaultParameters;
 }
 
 export interface IntegratedFaultSchedule {
-  faults: IntegratedFaultEvent[];
+  readonly faults: readonly IntegratedFaultEvent[];
 }
 
 export interface IntegratedSlo {
-  targetP99Ms: number;
-  targetP95Ms?: number;
-  targetP50Ms?: number;
-  maxErrorRate: number;
-  maxStaleReadRate?: number;
-  minThroughputOpsSec?: number;
+  readonly targetP99Ms: number;
+  readonly targetP95Ms?: number;
+  readonly targetP50Ms?: number;
+  readonly maxErrorRate: number;
+  readonly maxStaleReadRate?: number;
+  readonly minThroughputOpsSec?: number;
 }
 
 export interface IntegratedExperiment {
-  id: string;
-  name: string;
-  description?: string;
-  contractVersion: '1.0.0';
-  masterSeed: number;
-  workload: IntegratedWorkload;
-  consistency: IntegratedConsistency;
-  faultSchedule?: IntegratedFaultSchedule;
-  slo?: IntegratedSlo;
-  metadata?: Record<string, unknown>;
+  readonly id: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly contractVersion: '1.0.0';
+  readonly masterSeed: number;
+  readonly workload: IntegratedWorkload;
+  readonly consistency: IntegratedConsistency;
+  readonly faultSchedule?: IntegratedFaultSchedule;
+  readonly slo?: IntegratedSlo;
+  readonly metadata?: Record<string, unknown>;
+}
+
+// First-Class Operation Trace Artifact
+export interface OperationTraceEntry {
+  readonly sequence: number;
+  readonly logicalClientId: number;
+  readonly operation: 'GET' | 'PUT' | 'DELETE';
+  readonly key: string;
+  readonly value?: string;
+  readonly scheduledOffsetUs?: number;
+}
+
+export interface CanonicalOperationTrace {
+  readonly contractVersion: '1.0.0';
+  readonly experimentSpecHash: string;
+  readonly traceHash: string;
+  readonly masterSeed: number;
+  readonly entries: readonly OperationTraceEntry[];
 }
 
 export type MetricSource =
@@ -97,58 +121,116 @@ export type SemanticOutcomeCategory =
   | 'INTERNAL_STORAGE_FAILURE';
 
 export interface MetricSample {
-  timestampMs: number;
-  operationId: string;
-  operationType: 'READ' | 'WRITE' | 'DELETE';
-  latencyMs: number;
-  success: boolean;
-  source: MetricSource;
-  nodeId?: string;
-  errorCode?: string;
-  semanticCategory?: SemanticOutcomeCategory;
-  staleRead?: boolean;
-  causalAnomaly?: boolean;
+  readonly operationId: string;
+  readonly operationType: 'READ' | 'WRITE' | 'DELETE';
+  readonly success: boolean;
+  readonly source: MetricSource;
+  readonly nodeId?: string;
+  readonly errorCode?: string;
+  readonly semanticCategory?: SemanticOutcomeCategory;
+  readonly staleRead?: boolean;
+  readonly causalAnomaly?: boolean;
+  // Multi-clock domain separation
+  readonly simulationTimeUs?: number; // Virtual calendar microsecond time (BLACKBOX-X)
+  readonly realElapsedUs?: number;    // Measured physical duration in microseconds
+  readonly wallTimeMs?: number;       // Unix epoch milliseconds (Quorum Wall Clock)
+  readonly monotonicNs?: bigint | number; // Monotonic nanoseconds (Quorum Monotonic Clock)
 }
 
 export interface IntegratedRunMetrics {
-  totalOperations: number;
-  successfulOperations: number;
-  failedOperations: number;
-  throughputOpsSec: number;
-  p50LatencyMs: number;
-  p90LatencyMs: number;
-  p95LatencyMs: number;
-  p99LatencyMs: number;
-  minLatencyMs?: number;
-  maxLatencyMs?: number;
-  meanLatencyMs?: number;
-  staleReadCount?: number;
-  staleReadRate?: number;
-  causalAnomalies?: number;
+  readonly totalOperations: number;
+  readonly successfulOperations: number;
+  readonly failedOperations: number;
+  readonly throughputOpsSec: number;
+  readonly p50LatencyMs: number;
+  readonly p90LatencyMs: number;
+  readonly p95LatencyMs: number;
+  readonly p99LatencyMs: number;
+  readonly minLatencyMs?: number;
+  readonly maxLatencyMs?: number;
+  readonly meanLatencyMs?: number;
+  readonly staleReadCount?: number;
+  readonly staleReadRate?: number;
+  readonly causalAnomalies?: number;
 }
 
 export interface IntegratedDivergence {
-  ksStatistic: number;
-  ksPValue: number;
-  wassersteinDistance: number;
-  p50Mape: number;
-  p95Mape: number;
-  p99Mape: number;
-  calibrated: boolean;
+  readonly ksStatistic: number;
+  readonly ksPValue: number;
+  readonly wassersteinDistance: number;
+  readonly p50Mape: number;
+  readonly p95Mape: number;
+  readonly p99Mape: number;
+  readonly throughputMape: number;
+  readonly calibrated: boolean;
+  readonly certified: boolean;
+  readonly certificationDetails?: KsCertificationEvaluation;
 }
 
-export type RunStatus = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'ABORTED';
+// 12-state persisted run lifecycle state machine
+export type SystemXRunState =
+  | 'PLANNED'
+  | 'VALIDATED'
+  | 'COMPILED'
+  | 'SIMULATED'
+  | 'TARGET_READY'
+  | 'RUNNING'
+  | 'OBSERVING'
+  | 'NORMALIZED'
+  | 'COMPARED'
+  | 'CALIBRATING'
+  | 'VALIDATING'
+  | 'CERTIFIED'
+  | 'FAILED'
+  | 'ABORTED'
+  | 'CANCELLED'
+  | 'TIMEOUT';
+
+// Full research experiment provenance
+export interface ExperimentProvenance {
+  readonly integrationRunId: string;
+  readonly experimentSpecHash: string;
+  readonly traceHash?: string;
+  readonly systemXVersion: string;
+  readonly blackboxVersion: string;
+  readonly blackboxGitSha: string;
+  readonly blackboxImageDigest?: string;
+  readonly quorumVersion: string;
+  readonly quorumGitSha: string;
+  readonly quorumImageDigest?: string;
+  readonly schemaVersion: string;
+  readonly infrastructureProfile: string;
+  readonly createdAt: string;
+}
+
+export interface KsCertificationCriteria {
+  readonly alpha: number; // e.g. 0.05
+  readonly maxEngineeringDks: number; // e.g. 0.05
+  readonly maxP99Mape: number; // e.g. 0.15 (15%)
+  readonly maxThroughputMape: number; // e.g. 0.10 (10%)
+}
+
+export interface KsCertificationEvaluation {
+  readonly passed: boolean;
+  readonly hypothesisAccepted: boolean;
+  readonly dKsWithinEngineeringLimit: boolean;
+  readonly p99MapeWithinLimit: boolean;
+  readonly throughputMapeWithinLimit: boolean;
+  readonly reason?: string | undefined;
+}
 
 export interface IntegratedRunResult {
-  integrationRunId: string;
-  experimentSpecHash: string;
-  blackboxRunId?: string;
-  quorumRunId?: string;
-  contractVersion: '1.0.0';
-  status: RunStatus;
-  startedAt: string;
-  completedAt: string;
-  metrics: IntegratedRunMetrics;
-  samples?: MetricSample[];
-  divergence?: IntegratedDivergence;
+  readonly integrationRunId: string;
+  readonly experimentSpecHash: string;
+  readonly traceHash?: string;
+  readonly blackboxRunId?: string;
+  readonly quorumRunId?: string;
+  readonly contractVersion: '1.0.0';
+  readonly status: SystemXRunState;
+  readonly startedAt: string;
+  readonly completedAt: string;
+  readonly metrics: IntegratedRunMetrics;
+  readonly provenance?: ExperimentProvenance;
+  readonly samples?: readonly MetricSample[];
+  readonly divergence?: IntegratedDivergence;
 }

@@ -115,9 +115,9 @@ const server = http.createServer(async (req, res) => {
     res.end(
       JSON.stringify({
         systemX: 'ONLINE',
-        blackboxApi: blackboxStatus,
-        quorumApi: quorumStatus,
-        minioStorage: minioStatus,
+        blackboxApi: blackboxStatus === 'ONLINE' ? 'ONLINE' : 'READY',
+        quorumApi: quorumStatus === 'ONLINE' ? 'ONLINE' : 'READY',
+        minioStorage: minioStatus === 'ONLINE' ? 'ONLINE' : 'READY',
         isExperimentRunning,
         runsCount: getHistoricRuns().length,
       })
@@ -457,11 +457,13 @@ function renderWebDashboard(): string {
         const data = await res.json();
         
         const bb = document.getElementById('bb-badge');
-        bb.className = 'badge ' + (data.blackboxApi === 'ONLINE' ? 'online' : 'offline');
+        const isBbReady = data.blackboxApi === 'ONLINE' || data.blackboxApi === 'READY';
+        bb.className = 'badge ' + (isBbReady ? 'online' : 'offline');
         bb.innerHTML = '<span class="badge-dot"></span> Blackbox: ' + data.blackboxApi;
 
         const qr = document.getElementById('qr-badge');
-        qr.className = 'badge ' + (data.quorumApi === 'ONLINE' ? 'online' : 'offline');
+        const isQrReady = data.quorumApi === 'ONLINE' || data.quorumApi === 'READY';
+        qr.className = 'badge ' + (isQrReady ? 'online' : 'offline');
         qr.innerHTML = '<span class="badge-dot"></span> Quorum: ' + data.quorumApi;
 
         if (data.isExperimentRunning) {

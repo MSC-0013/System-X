@@ -20,9 +20,8 @@ import path from 'node:path';
 import os from 'node:os';
 import { execSync } from 'node:child_process';
 
-// --- Sovereign Cross-System Imports ---
-import { QuorumNodeApp } from '../../QUORUM LAB/apps/quorum-node/dist/index.js';
-import { SimulationRunner } from '../../BLACKBOX-X/packages/simulation-engine/dist/index.js';
+// --- Sovereign Cross-System & Standalone Cloud Adapters ---
+import { QuorumNodeApp, SimulationRunner } from './clusterAdapters.js';
 
 // --- System-X Internal Packages ---
 import {

@@ -1,0 +1,9 @@
+node_modules
+dist
+.git
+.turbo
+coverage
+tmp-*
+*.log
+.DS_Store
+Thumbs.db

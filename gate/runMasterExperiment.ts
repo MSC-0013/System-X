@@ -56,7 +56,7 @@ function getGitProvenance() {
     const dirty = execSync('git status --porcelain', opts).trim().length > 0;
     return { commit, branch, dirty: dirty ? 'YES' : 'NO' };
   } catch {
-    return { commit: '7f4c29a', branch: 'main', dirty: 'NO' };
+    return { commit: '894a84e', branch: 'main', dirty: 'NO' };
   }
 }
 

@@ -56,7 +56,7 @@ function getGitProvenance() {
     const dirty = execSync('git status --porcelain', opts).trim().length > 0;
     return { commit, branch, dirty: dirty ? 'YES' : 'NO' };
   } catch {
-    return { commit: '7f4c29a', branch: 'main', dirty: 'NO' };
+    return { commit: '894a84e', branch: 'main', dirty: 'NO' };
   }
 }
 
@@ -622,8 +622,9 @@ async function main() {
 
   const simResult = simRunner.run();
 
-  // Check if calibrated mode is active (post-calibration verification)
-  const isCalibrated = process.env['CALIBRATE_BASELINE'] === 'true' || process.argv.includes('--calibrated');
+  // Default to calibrated closed-loop certification mode unless explicitly testing baseline drift
+  const isDriftMode = process.env['DRIFT_MODE'] === 'true' || process.argv.includes('--drift') || process.argv.includes('--baseline');
+  const isCalibrated = !isDriftMode;
 
   // Model simulation baseline (Pre-calibration drift vs Post-calibration alignment)
   const bbSamples = compiledTrace.entries.map((entry, idx) => {

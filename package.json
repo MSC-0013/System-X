@@ -11,7 +11,9 @@
     "gate": "node --import tsx gate/localGate.ts",
     "gate:local": "node --import tsx gate/localGate.ts",
     "gate:integration": "node --import tsx gate/integrationGate.ts",
-    "demo:real": "node --import tsx gate/runRealDemo.ts"
+    "demo:real": "node --import tsx gate/runRealDemo.ts",
+    "serve": "node --import tsx gate/server.ts",
+    "start": "node --import tsx gate/server.ts"
   },
   "devDependencies": {
     "@system-x/integration-contracts": "workspace:*",

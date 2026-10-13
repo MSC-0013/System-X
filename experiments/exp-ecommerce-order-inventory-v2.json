@@ -1,0 +1,811 @@
+{
+  "schemaVersion": "system-x.experiment.v2",
+  "experiment": {
+    "experimentId": "exp-ecommerce-order-inventory-20260919-001",
+    "name": "E-Commerce Order Catalog & Inventory Failure Validation",
+    "description": "Production-style distributed-system validation experiment for an e-commerce order, product catalog, inventory and checkout workload.",
+    "environment": "staging",
+    "executionMode": "REAL",
+    "dryRun": false,
+    "strictMode": true,
+    "failFast": false,
+    "owner": {
+      "team": "platform-engineering",
+      "operator": "system-x-gate"
+    },
+    "purpose": [
+      "Validate quorum behavior under network partition",
+      "Measure latency degradation under network delay",
+      "Measure recovery after node crash",
+      "Compare Blackbox-X analytical predictions against real execution",
+      "Validate consistency guarantees",
+      "Calibrate simulation parameters",
+      "Validate calibration against held-out data",
+      "Generate immutable certification evidence"
+    ]
+  },
+  "preflight": {
+    "requireCleanGitTree": true,
+    "requirePinnedVersions": true,
+    "requireDeterministicSeed": true,
+    "requireTimeSynchronization": true,
+    "maxClockSkewMs": 10,
+    "requiredCapabilities": [
+      "cluster-connectivity",
+      "telemetry-stream",
+      "fault-injection",
+      "request-tracing",
+      "node-health",
+      "artifact-storage",
+      "blackbox-simulation",
+      "statistics-engine",
+      "calibration-engine"
+    ],
+    "healthChecks": {
+      "nodeReachability": true,
+      "storageWritable": true,
+      "metricsEndpoint": true,
+      "traceEndpoint": true,
+      "faultController": true,
+      "artifactStore": true,
+      "simulationEngine": true
+    }
+  },
+  "project": {
+    "projectId": "proj-ecommerce-order-catalog-001",
+    "name": "E-Commerce Order Catalog & Inventory Cluster",
+    "description": "Distributed leaderless datastore supporting product catalog, inventory and order operations.",
+    "region": "us-east",
+    "timezone": "UTC",
+    "service": "order-catalog-inventory",
+    "version": "2026.09.19"
+  },
+  "cluster": {
+    "clusterId": "cluster-prod-alpha-829",
+    "mode": "leaderless",
+    "nodes": [
+      {
+        "nodeId": "node-1.us-east.quorum",
+        "host": "node-1.us-east.quorum",
+        "zone": "us-east-1a",
+        "weight": 1,
+        "role": "replica",
+        "expectedState": "READY"
+      },
+      {
+        "nodeId": "node-2.us-east.quorum",
+        "host": "node-2.us-east.quorum",
+        "zone": "us-east-1b",
+        "weight": 1,
+        "role": "replica",
+        "expectedState": "READY"
+      },
+      {
+        "nodeId": "node-3.us-east.quorum",
+        "host": "node-3.us-east.quorum",
+        "zone": "us-east-1c",
+        "weight": 1,
+        "role": "replica",
+        "expectedState": "READY"
+      }
+    ],
+    "replication": {
+      "N": 3,
+      "W": 2,
+      "R": 2,
+      "quorumIntersectionRequired": true,
+      "readQuorum": {
+        "requiredResponses": 2,
+        "timeoutMs": 100
+      },
+      "writeQuorum": {
+        "requiredResponses": 2,
+        "timeoutMs": 150
+      },
+      "repair": {
+        "enabled": true,
+        "mode": "READ_REPAIR"
+      }
+    },
+    "consistency": {
+      "readConsistency": "QUORUM",
+      "writeConsistency": "QUORUM",
+      "conflictStrategy": "LAST_WRITE_WINS",
+      "readAfterWriteGuarantee": true,
+      "staleReadDetection": true,
+      "versionTracking": true
+    },
+    "durability": {
+      "mode": "SYNC_FSYNC",
+      "fsyncRequired": true,
+      "ackRequiresDurability": true
+    }
+  },
+  "dataset": {
+    "datasetId": "catalog-inventory-prodlike-v5",
+    "keyNamespace": "ecommerce",
+    "keyRanges": {
+      "product": {
+        "prefix": "product:",
+        "min": 100000,
+        "max": 120000
+      },
+      "inventory": {
+        "prefix": "inventory:",
+        "min": 100000,
+        "max": 120000
+      },
+      "order": {
+        "prefix": "order:",
+        "min": 1,
+        "max": 1000000
+      },
+      "customer": {
+        "prefix": "customer:",
+        "min": 1,
+        "max": 250000
+      }
+    },
+    "seed": 13371337,
+    "initialState": {
+      "products": 20000,
+      "inventoryRecords": 20000,
+      "customers": 50000,
+      "existingOrders": 100000
+    },
+    "integrity": {
+      "verifyInitialDatasetHash": true,
+      "expectedReplicationFactor": 3,
+      "verifyReplicaAgreementBeforeRun": true
+    }
+  },
+  "workload": {
+    "workloadId": "wkld-ecommerce-checkout-100k-v5",
+    "masterSeed": 13371337,
+    "duration": {
+      "mode": "operations",
+      "totalOperations": 100000
+    },
+    "concurrency": {
+      "clients": 64,
+      "connectionsPerClient": 4,
+      "maxInFlightPerClient": 8
+    },
+    "trafficPattern": {
+      "distribution": "ZIPFIAN",
+      "zipfAlpha": 1.15,
+      "hotKeyPercentage": 20,
+      "hotTrafficPercentage": 80
+    },
+    "operationMix": {
+      "GET_PRODUCT": 0.3,
+      "GET_INVENTORY": 0.15,
+      "SEARCH_PRODUCT": 0.1,
+      "GET_ORDER": 0.08,
+      "CREATE_ORDER": 0.1,
+      "UPDATE_INVENTORY": 0.1,
+      "CANCEL_ORDER": 0.04,
+      "UPDATE_PRODUCT": 0.03,
+      "CUSTOMER_READ": 0.05,
+      "CUSTOMER_UPDATE": 0.02,
+      "HEALTH_READ": 0.03
+    },
+    "requestProperties": {
+      "idempotencyEnabled": true,
+      "requestTimeoutMs": 500,
+      "retryEnabled": true,
+      "retryPolicy": {
+        "maxAttempts": 3,
+        "backoff": "EXPONENTIAL",
+        "initialBackoffMs": 5,
+        "maxBackoffMs": 100,
+        "jitter": true
+      }
+    },
+    "payloadSizes": {
+      "GET_PRODUCT": {
+        "meanBytes": 2500,
+        "p95Bytes": 5000
+      },
+      "CREATE_ORDER": {
+        "meanBytes": 1800,
+        "p95Bytes": 4200
+      },
+      "UPDATE_INVENTORY": {
+        "meanBytes": 700,
+        "p95Bytes": 1400
+      }
+    },
+    "businessScenarios": [
+      {
+        "scenarioId": "browse",
+        "weight": 0.4,
+        "operations": [
+          "GET_PRODUCT",
+          "GET_INVENTORY",
+          "SEARCH_PRODUCT"
+        ]
+      },
+      {
+        "scenarioId": "checkout",
+        "weight": 0.3,
+        "operations": [
+          "GET_PRODUCT",
+          "GET_INVENTORY",
+          "CREATE_ORDER",
+          "UPDATE_INVENTORY"
+        ]
+      },
+      {
+        "scenarioId": "order-management",
+        "weight": 0.15,
+        "operations": [
+          "GET_ORDER",
+          "CANCEL_ORDER"
+        ]
+      },
+      {
+        "scenarioId": "customer",
+        "weight": 0.1,
+        "operations": [
+          "CUSTOMER_READ",
+          "CUSTOMER_UPDATE"
+        ]
+      },
+      {
+        "scenarioId": "catalog-admin",
+        "weight": 0.05,
+        "operations": [
+          "UPDATE_PRODUCT"
+        ]
+      }
+    ]
+  },
+  "determinism": {
+    "enabled": true,
+    "prng": {
+      "algorithm": "mulberry32-v1",
+      "seedDerivation": "fnv1a64+splitmix64-v1",
+      "version": "1.0.0"
+    },
+    "hashInputs": [
+      "project",
+      "cluster",
+      "dataset",
+      "workload",
+      "faultSchedule",
+      "consistency"
+    ],
+    "requireTraceHash": true,
+    "requireFaultTimelineHash": true,
+    "requireSpecHash": true
+  },
+  "faultSchedule": {
+    "timelineId": "ftl-ecommerce-partition-delay-crash-v5",
+    "clock": {
+      "basis": "EXPERIMENT_START",
+      "units": "milliseconds"
+    },
+    "events": [
+      {
+        "eventId": "fault-001",
+        "offsetMs": 1000,
+        "type": "NETWORK_PARTITION",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 8000,
+        "severity": "HIGH",
+        "direction": "BIDIRECTIONAL"
+      },
+      {
+        "eventId": "fault-002",
+        "offsetMs": 2500,
+        "type": "NETWORK_DELAY",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 5000,
+        "delayMs": 25,
+        "jitterMs": 5,
+        "severity": "MEDIUM"
+      },
+      {
+        "eventId": "fault-003",
+        "offsetMs": 5000,
+        "type": "PACKET_LOSS",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 3000,
+        "lossPercent": 5,
+        "severity": "MEDIUM"
+      },
+      {
+        "eventId": "fault-004",
+        "offsetMs": 12000,
+        "type": "NODE_CRASH",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 7000,
+        "severity": "CRITICAL"
+      },
+      {
+        "eventId": "fault-005",
+        "offsetMs": 20000,
+        "type": "NODE_RECOVERY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "severity": "INFO"
+      },
+      {
+        "eventId": "fault-006",
+        "offsetMs": 23000,
+        "type": "NETWORK_DELAY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 4000,
+        "delayMs": 10,
+        "jitterMs": 3,
+        "severity": "LOW"
+      }
+    ],
+    "safety": {
+      "requireSortedTimeline": true,
+      "rejectOverlappingInvalidFaults": false,
+      "requireUniqueEventIds": true,
+      "requireTargetNodesExist": true
+    }
+  },
+  "blackbox": {
+    "engine": "BLACKBOX-X",
+    "version": "2.0.0",
+    "simulation": {
+      "mode": "DISCRETE_EVENT",
+      "includeNetwork": true,
+      "includeQueueing": true,
+      "includeDisk": true,
+      "includeRetries": true,
+      "includeQuorum": true,
+      "includeFaults": true
+    },
+    "initialParameters": {
+      "networkLatencyMs": 3.2,
+      "networkJitterMs": 0.8,
+      "diskFlushMs": 2,
+      "batchWindowMs": 10,
+      "queueServiceRate": 5000,
+      "retryBackoffMs": 5,
+      "quorumTimeoutMs": 100
+    },
+    "predictionTargets": [
+      "p50Latency",
+      "p95Latency",
+      "p99Latency",
+      "throughput",
+      "successRate",
+      "errorRate",
+      "queueDepth",
+      "retries",
+      "quorumLatency"
+    ]
+  },
+  "telemetry": {
+    "collectionMode": "REAL_TIME",
+    "sampleEveryMs": 100,
+    "requestMetrics": {
+      "enabled": true,
+      "fields": [
+        "requestId",
+        "operationId",
+        "operationType",
+        "key",
+        "startTime",
+        "endTime",
+        "latencyUs",
+        "success",
+        "errorCode",
+        "retryCount",
+        "attemptCount",
+        "selectedNodes",
+        "acknowledgedNodes",
+        "readResponses",
+        "writeResponses",
+        "quorumSatisfied",
+        "consistencyVersion"
+      ]
+    },
+    "nodeMetrics": {
+      "enabled": true,
+      "fields": [
+        "cpuPercent",
+        "memoryPercent",
+        "networkIngressBytes",
+        "networkEgressBytes",
+        "diskReadBytes",
+        "diskWriteBytes",
+        "diskLatencyMs",
+        "openConnections",
+        "queueDepth",
+        "replicationLagMs",
+        "requestRate",
+        "errorRate"
+      ]
+    },
+    "systemMetrics": {
+      "enabled": true,
+      "fields": [
+        "throughputOpsSec",
+        "successRate",
+        "failureRate",
+        "retryRate",
+        "timeoutRate",
+        "p50",
+        "p90",
+        "p95",
+        "p99",
+        "p999"
+      ]
+    },
+    "tracing": {
+      "enabled": true,
+      "sampling": 1,
+      "propagateTraceId": true,
+      "recordSpanEvents": true
+    }
+  },
+  "consistencyValidation": {
+    "enabled": true,
+    "checks": [
+      "READ_AFTER_WRITE",
+      "STALE_READ",
+      "LOST_WRITE",
+      "DUPLICATE_WRITE",
+      "WRITE_QUORUM",
+      "READ_QUORUM",
+      "CONFLICT_DETECTION",
+      "CONFLICT_RESOLUTION",
+      "VERSION_MONOTONICITY",
+      "REPLICATION_CONVERGENCE"
+    ],
+    "staleRead": {
+      "enabled": true,
+      "maxAllowedVersionLag": 0
+    },
+    "readAfterWrite": {
+      "enabled": true,
+      "maxAllowedDelayMs": 500
+    },
+    "convergence": {
+      "enabled": true,
+      "maxRecoveryWindowMs": 10000
+    }
+  },
+  "slo": {
+    "availabilityPercent": {
+      "target": 99,
+      "operator": ">="
+    },
+    "latencyMs": {
+      "p50": {
+        "target": 10,
+        "operator": "<="
+      },
+      "p95": {
+        "target": 25,
+        "operator": "<="
+      },
+      "p99": {
+        "target": 50,
+        "operator": "<="
+      }
+    },
+    "throughputOpsSec": {
+      "target": 500,
+      "operator": ">="
+    },
+    "errorRatePercent": {
+      "target": 1,
+      "operator": "<="
+    },
+    "quorumViolationCount": {
+      "target": 0,
+      "operator": "=="
+    },
+    "lostWriteCount": {
+      "target": 0,
+      "operator": "=="
+    }
+  },
+  "comparison": {
+    "enabled": true,
+    "engines": {
+      "baseline": "BLACKBOX_SIMULATION",
+      "empirical": "QUORUM_REAL_EXECUTION"
+    },
+    "statistics": {
+      "ksTest": {
+        "enabled": true,
+        "alpha": 0.05
+      },
+      "wasserstein": {
+        "enabled": true,
+        "maxDistanceMs": 2
+      },
+      "mape": {
+        "enabled": true,
+        "metrics": [
+          "p50Latency",
+          "p95Latency",
+          "p99Latency",
+          "throughput",
+          "successRate"
+        ]
+      }
+    },
+    "engineeringThresholds": {
+      "maxP99MapePercent": 25,
+      "maxP95MapePercent": 20,
+      "maxThroughputMapePercent": 30,
+      "maxSuccessRateDifferencePercent": 1,
+      "maxWassersteinMs": 2
+    },
+    "requireAllGates": true
+  },
+  "calibration": {
+    "enabled": true,
+    "objective": "MINIMIZE_P99_MAE",
+    "parameters": [
+      {
+        "name": "networkLatencyMs",
+        "initial": 3.2,
+        "min": 0.1,
+        "max": 50,
+        "step": 0.1
+      },
+      {
+        "name": "networkJitterMs",
+        "initial": 0.8,
+        "min": 0,
+        "max": 20,
+        "step": 0.1
+      },
+      {
+        "name": "diskFlushMs",
+        "initial": 2,
+        "min": 0.1,
+        "max": 100,
+        "step": 0.1
+      },
+      {
+        "name": "batchWindowMs",
+        "initial": 10,
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      {
+        "name": "quorumTimeoutMs",
+        "initial": 100,
+        "min": 10,
+        "max": 1000,
+        "step": 5
+      }
+    ],
+    "optimizer": {
+      "algorithm": "ADAPTIVE_SEARCH",
+      "maxIterations": 20,
+      "convergenceTolerance": 0.01,
+      "patience": 3
+    },
+    "dataSplit": {
+      "strategy": "TEMPORAL",
+      "calibrationFraction": 0.7,
+      "validationFraction": 0.3,
+      "shuffle": false,
+      "preventLeakage": true,
+      "requireZeroOverlap": true
+    },
+    "validation": {
+      "enabled": true,
+      "heldOutOnly": true,
+      "metrics": [
+        "p99Latency",
+        "throughput",
+        "successRate"
+      ]
+    }
+  },
+  "reporting": {
+    "generateHtml": true,
+    "generateJson": true,
+    "generateCsv": true,
+    "generateMarkdown": true,
+    "include": {
+      "executiveSummary": true,
+      "clusterTopology": true,
+      "workloadProfile": true,
+      "operationMix": true,
+      "keyDistribution": true,
+      "faultTimeline": true,
+      "faultImpact": true,
+      "nodeHealth": true,
+      "latencyDistribution": true,
+      "latencyPercentiles": true,
+      "latencyOverTime": true,
+      "throughputOverTime": true,
+      "errorAnalysis": true,
+      "retryAnalysis": true,
+      "quorumAnalysis": true,
+      "consistencyAnalysis": true,
+      "recoveryAnalysis": true,
+      "sloAnalysis": true,
+      "simulationComparison": true,
+      "ksTest": true,
+      "wasserstein": true,
+      "mape": true,
+      "calibrationHistory": true,
+      "validationResults": true,
+      "artifactLineage": true,
+      "reproducibility": true,
+      "certification": true
+    },
+    "charts": [
+      "operation-mix",
+      "workload-key-frequency",
+      "request-rate",
+      "latency-timeseries",
+      "latency-histogram",
+      "latency-cdf",
+      "latency-boxplot",
+      "throughput-timeseries",
+      "per-node-throughput",
+      "per-node-latency",
+      "error-rate-timeseries",
+      "retry-rate-timeseries",
+      "queue-depth-timeseries",
+      "replication-lag-timeseries",
+      "fault-impact",
+      "recovery-curve",
+      "simulation-vs-real",
+      "calibration-convergence",
+      "parameter-search",
+      "slo-budget"
+    ]
+  },
+  "artifacts": {
+    "root": "s3://system-x-artifacts/experiments/exp-ecommerce-order-catalog-20260919-001",
+    "files": [
+      "experiment.json",
+      "project.json",
+      "cluster.json",
+      "dataset.json",
+      "workload-spec.json",
+      "workload-trace.json",
+      "fault-schedule.json",
+      "fault-timeline.json",
+      "blackbox-predictions.json",
+      "quorum-raw-telemetry.json",
+      "normalized-telemetry.json",
+      "consistency-results.json",
+      "comparison-report.json",
+      "calibration-history.json",
+      "validation-results.json",
+      "certification-record.json",
+      "summary.json",
+      "report.html",
+      "report.md"
+    ],
+    "checksums": {
+      "algorithm": "SHA-256",
+      "required": true
+    },
+    "immutability": {
+      "enabled": true,
+      "mode": "COMPLIANCE",
+      "retentionDays": 90
+    },
+    "lineage": {
+      "enabled": true,
+      "requireParentReferences": true
+    }
+  },
+  "certification": {
+    "enabled": true,
+    "gates": [
+      {
+        "id": "G1",
+        "name": "Deterministic Workload",
+        "condition": "TRACE_HASH_VERIFIED"
+      },
+      {
+        "id": "G2",
+        "name": "Fault Timeline Integrity",
+        "condition": "FAULT_HASH_VERIFIED"
+      },
+      {
+        "id": "G3",
+        "name": "Telemetry Integrity",
+        "condition": "ALL_REQUIRED_FIELDS_PRESENT"
+      },
+      {
+        "id": "G4",
+        "name": "Statistical Fidelity",
+        "condition": "STATISTICAL_THRESHOLDS_PASS"
+      },
+      {
+        "id": "G5",
+        "name": "Engineering Bounds",
+        "condition": "SLO_THRESHOLDS_PASS"
+      },
+      {
+        "id": "G6",
+        "name": "Consistency Correctness",
+        "condition": "CONSISTENCY_CHECKS_PASS"
+      },
+      {
+        "id": "G7",
+        "name": "Calibration Integrity",
+        "condition": "ZERO_LEAKAGE_AND_CONVERGED"
+      },
+      {
+        "id": "G8",
+        "name": "Artifact Integrity",
+        "condition": "SHA256_AND_LINEAGE_VERIFIED"
+      }
+    ],
+    "failCertificationOn": [
+      "LOST_WRITE",
+      "QUORUM_VIOLATION",
+      "ARTIFACT_HASH_MISMATCH",
+      "VALIDATION_LEAKAGE",
+      "INVALID_TRACE_HASH",
+      "INVALID_FAULT_HASH"
+    ]
+  },
+  "reproducibility": {
+    "enabled": true,
+    "capture": [
+      "gitCommit",
+      "gitBranch",
+      "compilerVersions",
+      "runtimeVersions",
+      "operatingSystem",
+      "cpu",
+      "memory",
+      "environmentVariablesHash",
+      "dependencyLockHash",
+      "experimentSpecHash",
+      "workloadTraceHash",
+      "faultTimelineHash"
+    ],
+    "rerun": {
+      "enabled": true,
+      "rerunCount": 2,
+      "requireEquivalentTrace": true,
+      "requireEquivalentFaultTimeline": true
+    }
+  },
+  "exitCriteria": {
+    "experimentCompleteWhen": [
+      "all_workload_operations_completed",
+      "all_fault_events_processed",
+      "recovery_window_completed",
+      "telemetry_flushed",
+      "consistency_validation_completed",
+      "comparison_completed",
+      "calibration_completed",
+      "held_out_validation_completed",
+      "artifacts_committed"
+    ],
+    "successRequires": [
+      "no_critical_infrastructure_failure",
+      "all_required_artifacts_present",
+      "all_hashes_valid",
+      "no_validation_leakage"
+    ]
+  }
+}

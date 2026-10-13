@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SYSTEM-X Verification Report — run-mu83pwn2</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 32px 48px; line-height: 1.5; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 28px; }
+    .badge { display: inline-block; padding: 6px 14px; border-radius: 9999px; font-weight: 700; font-size: 13px; text-transform: uppercase; }
+    .badge-pass { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 28px; }
+    .card { background: var(--card-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card h3 { margin-top: 0; margin-bottom: 12px; font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-val { font-size: 26px; font-weight: 800; color: var(--text); }
+    .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    th { background: #f1f5f9; color: var(--text-muted); font-weight: 600; }
+    .section-title { font-size: 18px; font-weight: 700; margin: 32px 0 16px 0; border-left: 4px solid var(--primary); padding-left: 12px; }
+    .chart-container { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: center; }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1 style="margin: 0; font-size: 26px;">SYSTEM-X — Distributed Systems Validation Report</h1>
+      <p style="margin: 4px 0 0 0; color: var(--text-muted); font-size: 14px;">Closed-loop empirical benchmark, statistical verification & calibration lineage</p>
+    </div>
+    <div>
+      <span class="badge badge-pass">NOT CERTIFIED [DRIFT DETECTED]</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Overall Status</h3>
+      <div class="stat-val" style="color: var(--success);">REJECTED</div>
+      <div class="stat-sub">Confidence: 99.8% (All 8 Gates Passed)</div>
+    </div>
+    <div class="card">
+      <h3>Empirical P99 Latency</h3>
+      <div class="stat-val">23.78 ms</div>
+      <div class="stat-sub">Simulation Predicted: 5.25 ms (MAPE: 77.91%)</div>
+    </div>
+    <div class="card">
+      <h3>Statistical Divergence</h3>
+      <div class="stat-val">0.0000</div>
+      <div class="stat-sub">KS p-value (α = 0.05) | Wasserstein: 3.212 ms</div>
+    </div>
+    <div class="card">
+      <h3>Quorum Invariant</h3>
+      <div class="stat-val" style="color: var(--primary);">N=3, W=2, R=2</div>
+      <div class="stat-sub">Read-After-Write Quorum Guaranteed (0 Violations)</div>
+    </div>
+  </div>
+
+  <div class="section-title">1. Latency vs Time (Fault Degradation & Failover Timeline)</div>
+  <div class="chart-container">
+    <img src="graphs/latency-timeseries.svg" style="max-width: 100%; height: auto;" alt="Latency Timeseries" />
+  </div>
+
+  <div class="section-title">2. Cumulative Distribution Function (CDF) Alignment</div>
+  <div class="chart-container">
+    <img src="graphs/latency-cdf.svg" style="max-width: 100%; height: auto;" alt="Latency CDF" />
+  </div>
+
+  <div class="section-title">3. Workload Zipfian Key Access Distribution</div>
+  <div class="chart-container">
+    <img src="graphs/workload-distribution.svg" style="max-width: 100%; height: auto;" alt="Workload Distribution" />
+  </div>
+
+  <div class="section-title">4. Per-Node Cluster Telemetry</div>
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>Node</th>
+          <th>Total Ops</th>
+          <th>Reads</th>
+          <th>Writes</th>
+          <th>Success Rate</th>
+          <th>P50 Latency</th>
+          <th>P95 Latency</th>
+          <th>P99 Latency</th>
+          <th>Errors</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>node-1</strong></td>
+          <td>37</td>
+          <td>24</td>
+          <td>13</td>
+          <td>100.0%</td>
+          <td>2.70 ms</td>
+          <td>14.89 ms</td>
+          <td>23.78 ms</td>
+          <td>0</td>
+        </tr><tr>
+          <td><strong>node-2</strong></td>
+          <td>36</td>
+          <td>23</td>
+          <td>13</td>
+          <td>100.0%</td>
+          <td>3.79 ms</td>
+          <td>10.05 ms</td>
+          <td>11.67 ms</td>
+          <td>0</td>
+        </tr><tr>
+          <td><strong>node-3</strong></td>
+          <td>36</td>
+          <td>29</td>
+          <td>7</td>
+          <td>100.0%</td>
+          <td>6.97 ms</td>
+          <td>20.18 ms</td>
+          <td>29.73 ms</td>
+          <td>0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">5. Cryptographic Lineage & WORM Storage</div>
+  <div class="card">
+    <p><strong>Certification Record Hash:</strong> <code>ccde0ec03671b7bf97ca3aad2158d0e73d2e0d745fc430447532c02606e87267</code></p>
+    <p><strong>Workload Trace Hash:</strong> <code>315eb5314e6c38007e1cf971ed088fa46b2b176417389cefe81a775acfda9d0b</code></p>
+    <p><strong>Fault Timeline Hash:</strong> <code>256d82af157701499fd51ceb093bf8738b667007b43d80789ba0e4027ca8b120</code></p>
+    <p><strong>WORM Object Lock:</strong> <code>COMPLIANCE Mode (Retained 90 Days)</code></p>
+  </div>
+</body>
+</html>

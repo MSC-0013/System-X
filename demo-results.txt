@@ -1,0 +1,242 @@
+﻿
+==============================================================================
+       SYSTEM-X ΓÇö DISTRIBUTED SYSTEM CLOSED-LOOP VALIDATION
+==============================================================================
+[NODE node-2] Recovery complete: snapshot=false, replayed=0, lastSeq=0
+[NODE node-1] Recovery complete: snapshot=false, replayed=0, lastSeq=0
+[NODE node-3] Recovery complete: snapshot=false, replayed=0, lastSeq=0
+
+SYSTEM-X ΓÇö DISTRIBUTED SYSTEM VALIDATION REPORT
+==============================================================================
+
+RUN SUMMARY
+------------------------------------------------------------------------------
+Run ID                 : run-mu83q7p9
+Project                : E-Commerce Order Catalog & Inventory Cluster
+Environment            : local / production-parity
+Experiment Version     : system-x-v2.4.0
+Workload Compiler      : workload-compiler-v1.0.0
+Fault Compiler         : fault-compiler-v1.0.0
+Result Normalizer      : result-normalizer-v1.0.0
+
+START                  : 2026-09-19T08:04:31.485Z
+END                    : 2026-09-19T08:04:32.660Z
+DURATION               : 1.175 sec
+
+OVERALL VERDICT        : NOT CERTIFIED [FAIL]
+Confidence             : HIGH (99.8% Empirical / Statistical Convergence)
+==============================================================================
+
+EXPERIMENT IDENTITY & REPRODUCIBILITY
+------------------------------------------------------------------------------
+Project ID              : proj-ecommerce-catalog
+Run ID                  : run-mu83q7p9
+Master Seed             : 1337
+Spec Hash               : 99787c21858caa52e1ad60e8b28a0e8f...
+Workload Trace Hash     : 315eb5314e6c38007e1cf971ed088fa4...
+Fault Timeline Hash     : 256d82af157701499fd51ceb093bf873...
+
+Git Commit              : f21ad7b
+Git Branch              : main
+Dirty Working Tree      : YES
+
+Node.js                 : v24.12.0
+OS                      : Windows_NT x64 (10.0.26200)
+CPU                     : 13th Gen Intel(R) Core(TM) i5-13420H (12 vCPUs)
+Memory                  : 15.6 GB
+Reproducibility Formula : seed(1337) + specHash + compiler(v1.0.0) => Identical Trace
+
+CLUSTER TOPOLOGY & CONSISTENCY INVARIANTS
+------------------------------------------------------------------------------
+                   +----------------------+
+                   |    QUORUM CLUSTER    |
+                   |       N = 3          |
+                   +----------+-----------+
+                              |
+             +----------------+----------------+
+             |                |                |
+             V                V                V
+          NODE-1           NODE-2           NODE-3
+          us-east          us-east          us-east
+          PORT: 57292    PORT: 57291    PORT: 57293
+          HEALTHY          HEALTHY          HEALTHY
+          Reads:  24       Reads:  23       Reads:  29
+          Writes: 13       Writes: 13       Writes: 7 
+
+Replication Engine       : LEADERLESS
+Read Consistency (R)     : 2
+Write Consistency (W)    : 2
+Local Durability         : SYNC_FSYNC (Write-Ahead Log)
+Conflict Resolution      : LAST_WRITE_WINS (Vector Clocks + Dot)
+Quorum Condition         : W + R > N (2 + 2 > 3) => GUARANTEED QUORUM INTERSECTION
+
+WORKLOAD PROFILE & ACCESS PATTERNS
+------------------------------------------------------------------------------
+Requested Operations     : 150
+Compiled Operations      : 109
+Concurrency              : 8 logical clients
+Distribution             : ZIPFIAN (Zipfian Skew)
+Key Range                : 1000 - 2000
+
+GET Operations           : 76 (69.7%)
+PUT Operations           : 33 (30.3%)
+
+OPERATION MIX:
+GET  ========================----------- 69.7%
+PUT  ===========------------------------ 30.3%
+
+TOP HOTTEST KEYS (Zipfian Evidence):
+------------------------------------------------------------------------------
+Key              Operations       Percentage
+------------------------------------------------------------------------------
+k0000000000      9                8.3%
+k0000000002      7                6.4%
+k0000000001      7                6.4%
+k0000000005      4                3.7%
+k0000000009      3                2.8%
+
+FAULT INJECTION TIMELINE & SYSTEM RESILIENCE
+------------------------------------------------------------------------------
+0ms        100ms     250ms               800ms     1500ms
+|----------|---------|-------------------|---------|------------->
+
+           [ PARTITION NODE-2 ]
+           <------- 800ms ------->
+
+                     [ DELAY NODE-3 ]
+                     <---- 500ms ---->
+
+                                                   [ CRASH / RECOVER ]
+                                                   NODE-2
+
+NODE-1   ------------------------------------------------------------- (SURVIVING COORD)
+NODE-2   ---------X=======================XXXXXXXXXXXXXXXXXXXXXXXXXXXX (PARTITION + CRASH)
+NODE-3   -------------------~~~~~~~~~~~~~----------------------------- (NETWORK DELAY)
+
+Fault Events Executed    : 3
+Operations Rerouted      : 12 (Surviving quorum maintained availability)
+Failed Operations        : 0 (Zero lost writes under dynamic failover)
+
+PER-NODE CLUSTER TELEMETRY
+==============================================================================
+Node         Ops     Reads   Writes   Success   p50      p95      p99     Errors
+------------------------------------------------------------------------------
+node-1       37      24      13       100.0%     3.47ms   17.82ms   28.53ms  0
+node-2       36      23      13       100.0%     3.65ms   15.23ms   18.02ms  0
+node-3       36      29      7        100.0%     11.87ms   32.23ms   37.29ms  0
+==============================================================================
+
+NODE HEALTH STATUS:
+node-1   [#########################] 100.0% [ONLINE]
+node-2   [#########################] 100.0% [RECOVERED]
+node-3   [#########################] 100.0% [ONLINE]
+
+LATENCY DISTRIBUTION VIEW (Blackbox-X Analytical vs Quorum Lab Empirical)
+------------------------------------------------------------------------------
+Metric          Blackbox-X Simulation    Quorum Lab Empirical     Delta
+------------------------------------------------------------------------------
+p50 Latency       2.77 ms                   5.13 ms                  +2.35 ms
+p90 Latency       5.11 ms                   18.02 ms                  +12.90 ms
+p95 Latency       5.19 ms                   23.56 ms                  +18.37 ms
+p99 Latency       5.25 ms                   32.23 ms                  +26.98 ms
+Mean Latency      3.40 ms                   8.42 ms                  +5.03 ms
+
+LATENCY PERCENTILE COMPARISON:
+p50
+Blackbox  ============------------- 2.77ms
+Real      =====================---- 5.13ms
+
+p95
+Blackbox  ======================--- 5.19ms
+Real      ========================= 23.56ms
+
+p99
+Blackbox  ======================--- 5.25ms
+Real      ========================= 32.23ms
+
+QUORUM BEHAVIOR & CONSISTENCY INVARIANTS
+==============================================================================
+Metric                                Value        Target      Status
+------------------------------------------------------------------------------
+Total Reads Evaluated                 76           N/A         INFO
+Total Writes Evaluated                33           N/A         INFO
+Read Quorum Violations                0            0           [PASS]
+Write Quorum Violations               0            0           [PASS]
+Split-Brain Writes                    0            0           [PASS]
+Lost Writes                           0            0           [PASS]
+Read-After-Write Violations           0            0           [PASS]
+Stale Reads Detected                  0            <= 1        [PASS]
+Conflict Events                       0            N/A         RESOLVED
+Conflict Resolution Engine            LAST_WRITE_WINS (LWW)    [PASS]
+==============================================================================
+
+PRODUCTION SERVICE LEVEL OBJECTIVES (SLO / SLA)
+==============================================================================
+SLO Metric                            Target       Observed    Status
+------------------------------------------------------------------------------
+Availability                          >= 99.0%     100.0%      [PASS]
+p50 Latency                           < 10.0 ms    5.13 ms     [PASS]
+p95 Latency                           < 15.0 ms    23.56 ms     [PASS]
+p99 Latency                           < 25.0 ms    32.23 ms     [PASS]
+Error Rate                            < 1.0%       0.00%       [PASS]
+==============================================================================
+
+STATISTICAL FIDELITY & HYPOTHESIS TESTING
+==============================================================================
+Statistical Test                      Value        Threshold   Verdict
+------------------------------------------------------------------------------
+Kolmogorov-Smirnov (KS) p-value       0.0000       >= 0.05     FAIL (Drift Detected)
+KS D-Statistic (Max CDF Deviation)    0.4954       <= 0.20     FAIL
+Wasserstein-1 (Earth Mover's) Dist    5.097 ms     <= 0.50 ms  FAIL
+p99 Latency MAPE                      83.70%        <= 25.0%    FAIL
+Throughput MAPE                       52.96%        <= 30.0%    FAIL
+95% Confidence Interval for P99       [-0.14ms, +0.28ms]       PASS
+==============================================================================
+
+CLOSED-LOOP CALIBRATION (ZERO DATA-LEAKAGE)
+------------------------------------------------------------------------------
+Total Empirical Telemetry Samples     : 109
+Calibration Partition (70%)           : 76 samples (Tuning optimizer)
+Validation Partition (30% Held-Out)   : 33 samples (Zero-leakage test set)
+Validation Leakage                    : 0 samples (VERIFIED ISOLATION)
+
+Parameter Optimization:
+  networkLatencyMs                    : 5.00 ms -> 3.20 ms (-36.0%)
+  batchWindowMs                       : 10.0 ms -> 15.0 ms (+50.0%)
+
+Prediction Model Accuracy:
+  Baseline P99 MAPE                   : 9.49%
+  Calibrated P99 MAPE                 : 4.10%
+  Accuracy Improvement                : +56.8% Model Alignment
+
+FINAL CERTIFICATION MATRIX
+==============================================================================
+Gate   Verification Dimension                   Criterion      Status
+------------------------------------------------------------------------------
+G1     Deterministic Workload Trace             Seed Hashed    [PASS]
+G2     Monotonic Fault Timeline Integrity       Time-Sorted    [PASS]
+G3     Live Distributed Quorum Interlock        W+R > N        [PASS]
+G4     Statistical Fidelity (KS + Wasserstein)  p >= 0.05      [DRIFT]
+G5     Engineering Bounds & SLA Conformance     P99 < 25ms     [EXCEEDED]
+G6     Validation Partition Zero-Leakage        0 Overlap      [PASS]
+G7     Calibration Loop Convergence             4 Iterations   [PASS]
+G8     Immutable Cryptographic Lineage          WORM Hash      [PASS]
+==============================================================================
+
+FINAL VERDICT: NOT CERTIFIED [FAIL]
+Certification Hash: 7e8d40ca1538792d741c048cfb9ba1ce656af44daa1bee1fca138d35516db11b
+
+GENERATED ARTIFACT BUNDLE
+==============================================================================
+File Location: C:\MSC\Main project\main portfolio integration project\system-x\artifacts\run-mu83q7p9
+  Γö£ΓöÇΓöÇ report.html                    (Interactive Executive Dashboard)
+  Γö£ΓöÇΓöÇ summary.json                   (Full Machine-Readable Metrics)
+  Γö£ΓöÇΓöÇ certification.json             (Cryptographic Lineage Manifest)
+  Γö£ΓöÇΓöÇ workload/trace.json            (Deterministic 150-Op Trace)
+  Γö£ΓöÇΓöÇ faults/timeline.json           (Monotonic Fault Sequence)
+  Γö£ΓöÇΓöÇ telemetry/normalized.json      (Normalized Empirical Datasets)
+  Γö£ΓöÇΓöÇ graphs/latency-timeseries.svg  (Latency vs Time Vector Chart)
+  Γö£ΓöÇΓöÇ graphs/latency-cdf.svg         (Analytical vs Empirical CDF Chart)
+  ΓööΓöÇΓöÇ graphs/workload-distribution.svg (Zipfian Key Access Vector Chart)
+==============================================================================
+

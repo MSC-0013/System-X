@@ -1,0 +1,40 @@
+{
+  "events": [
+    {
+      "kind": "NETWORK",
+      "faultId": "f-1",
+      "faultType": "PARTITION",
+      "targetNodes": [
+        "node-2"
+      ],
+      "startOffsetMs": 100,
+      "durationMs": 800,
+      "parameters": {}
+    },
+    {
+      "kind": "NETWORK",
+      "faultId": "f-2",
+      "faultType": "DELAY",
+      "targetNodes": [
+        "node-3"
+      ],
+      "startOffsetMs": 250,
+      "durationMs": 500,
+      "parameters": {}
+    },
+    {
+      "kind": "CRASH",
+      "faultId": "f-3",
+      "targetNodes": [
+        "node-2"
+      ],
+      "startOffsetMs": 1500
+    }
+  ],
+  "timelineHash": "256d82af157701499fd51ceb093bf8738b667007b43d80789ba0e4027ca8b120",
+  "affectedNodes": [
+    "node-2",
+    "node-3"
+  ],
+  "experimentSpecHash": "66b778441036365726f61c8b9dd91d8824387706d42abf88bad95215b622591f"
+}

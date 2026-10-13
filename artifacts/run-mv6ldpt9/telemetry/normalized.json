@@ -1,0 +1,4926 @@
+{
+  "integrationRunId": "run-mv6ldpt9",
+  "experimentSpecHash": "66b778441036365726f61c8b9dd91d8824387706d42abf88bad95215b622591f",
+  "samples": [
+    {
+      "operationId": "bb-0",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.45,
+      "timestampMs": 0,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-1",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.481,
+      "timestampMs": 15,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-2",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.512,
+      "timestampMs": 30,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-3",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.543,
+      "timestampMs": 45,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-4",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.574,
+      "timestampMs": 60,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-5",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.605,
+      "timestampMs": 75,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-6",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.636,
+      "timestampMs": 90,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-7",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.667,
+      "timestampMs": 105,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-8",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.698,
+      "timestampMs": 120,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-9",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.729,
+      "timestampMs": 135,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-10",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.76,
+      "timestampMs": 150,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-11",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.791,
+      "timestampMs": 165,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-12",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.822,
+      "timestampMs": 180,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-13",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.253,
+      "timestampMs": 195,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-14",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.884,
+      "timestampMs": 210,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-15",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.465,
+      "timestampMs": 225,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-16",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.896,
+      "timestampMs": 240,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-17",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.527,
+      "timestampMs": 255,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-18",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.558,
+      "timestampMs": 270,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-19",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.589,
+      "timestampMs": 285,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-20",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.62,
+      "timestampMs": 300,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-21",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.651,
+      "timestampMs": 315,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-22",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.082,
+      "timestampMs": 330,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-23",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.713,
+      "timestampMs": 345,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-24",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.744,
+      "timestampMs": 360,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-25",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.175,
+      "timestampMs": 375,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-26",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.806,
+      "timestampMs": 390,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-27",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.837,
+      "timestampMs": 405,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-28",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.268,
+      "timestampMs": 420,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-29",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.899,
+      "timestampMs": 435,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-30",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.48,
+      "timestampMs": 450,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-31",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.511,
+      "timestampMs": 465,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-32",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.542,
+      "timestampMs": 480,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-33",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.973,
+      "timestampMs": 495,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-34",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.004,
+      "timestampMs": 510,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-35",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.635,
+      "timestampMs": 525,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-36",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.066,
+      "timestampMs": 540,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-37",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.697,
+      "timestampMs": 555,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-38",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.128,
+      "timestampMs": 570,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-39",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.159,
+      "timestampMs": 585,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-40",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.79,
+      "timestampMs": 600,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-41",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.821,
+      "timestampMs": 615,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-42",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.252,
+      "timestampMs": 630,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-43",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.883,
+      "timestampMs": 645,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-44",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.464,
+      "timestampMs": 660,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-45",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.495,
+      "timestampMs": 675,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-46",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.926,
+      "timestampMs": 690,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-47",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.957,
+      "timestampMs": 705,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-48",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.988,
+      "timestampMs": 720,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-49",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.619,
+      "timestampMs": 735,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-50",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.05,
+      "timestampMs": 750,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-51",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.681,
+      "timestampMs": 765,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-52",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.712,
+      "timestampMs": 780,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-53",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.743,
+      "timestampMs": 795,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-54",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.774,
+      "timestampMs": 810,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-55",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.805,
+      "timestampMs": 825,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-56",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.836,
+      "timestampMs": 840,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-57",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.867,
+      "timestampMs": 855,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-58",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.298,
+      "timestampMs": 870,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-59",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.479,
+      "timestampMs": 885,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-60",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.51,
+      "timestampMs": 900,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-61",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.541,
+      "timestampMs": 915,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-62",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.572,
+      "timestampMs": 930,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-63",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.603,
+      "timestampMs": 945,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-64",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.634,
+      "timestampMs": 960,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-65",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.665,
+      "timestampMs": 975,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-66",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.696,
+      "timestampMs": 990,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-67",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.727,
+      "timestampMs": 1005,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-68",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.158,
+      "timestampMs": 1020,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-69",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.789,
+      "timestampMs": 1035,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-70",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.82,
+      "timestampMs": 1050,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-71",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.851,
+      "timestampMs": 1065,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-72",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.882,
+      "timestampMs": 1080,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-73",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.463,
+      "timestampMs": 1095,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-74",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.494,
+      "timestampMs": 1110,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-75",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.525,
+      "timestampMs": 1125,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-76",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.556,
+      "timestampMs": 1140,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-77",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.587,
+      "timestampMs": 1155,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-78",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.618,
+      "timestampMs": 1170,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-79",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.049,
+      "timestampMs": 1185,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-80",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.68,
+      "timestampMs": 1200,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-81",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.111,
+      "timestampMs": 1215,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-82",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.742,
+      "timestampMs": 1230,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-83",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.173,
+      "timestampMs": 1245,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-84",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.204,
+      "timestampMs": 1260,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-85",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.835,
+      "timestampMs": 1275,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-86",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.866,
+      "timestampMs": 1290,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-87",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.897,
+      "timestampMs": 1305,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-88",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.478,
+      "timestampMs": 1320,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-89",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.509,
+      "timestampMs": 1335,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-90",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.94,
+      "timestampMs": 1350,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-91",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.571,
+      "timestampMs": 1365,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-92",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.602,
+      "timestampMs": 1380,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-93",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.633,
+      "timestampMs": 1395,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-94",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.064,
+      "timestampMs": 1410,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-95",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.695,
+      "timestampMs": 1425,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-96",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.726,
+      "timestampMs": 1440,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-97",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.757,
+      "timestampMs": 1455,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-98",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.788,
+      "timestampMs": 1470,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-99",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.819,
+      "timestampMs": 1485,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-100",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.85,
+      "timestampMs": 1500,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-101",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.881,
+      "timestampMs": 1515,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-102",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.462,
+      "timestampMs": 1530,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-103",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.493,
+      "timestampMs": 1545,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-104",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.524,
+      "timestampMs": 1560,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-105",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.555,
+      "timestampMs": 1575,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-106",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.586,
+      "timestampMs": 1590,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-107",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.017,
+      "timestampMs": 1605,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-108",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.648,
+      "timestampMs": 1620,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-109",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.679,
+      "timestampMs": 1635,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-110",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.11,
+      "timestampMs": 1650,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-111",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.141,
+      "timestampMs": 1665,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-112",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.772,
+      "timestampMs": 1680,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-113",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.803,
+      "timestampMs": 1695,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-114",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.234,
+      "timestampMs": 1710,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-115",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.865,
+      "timestampMs": 1725,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-116",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.296,
+      "timestampMs": 1740,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-117",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.477,
+      "timestampMs": 1755,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-118",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.908,
+      "timestampMs": 1770,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-119",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.539,
+      "timestampMs": 1785,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-120",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.57,
+      "timestampMs": 1800,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-121",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.601,
+      "timestampMs": 1815,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-122",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.632,
+      "timestampMs": 1830,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-123",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.663,
+      "timestampMs": 1845,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-124",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.694,
+      "timestampMs": 1860,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-125",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.725,
+      "timestampMs": 1875,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-126",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.756,
+      "timestampMs": 1890,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-127",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.787,
+      "timestampMs": 1905,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-128",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.818,
+      "timestampMs": 1920,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-129",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.849,
+      "timestampMs": 1935,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-130",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.88,
+      "timestampMs": 1950,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-131",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.461,
+      "timestampMs": 1965,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-132",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.892,
+      "timestampMs": 1980,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-133",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.923,
+      "timestampMs": 1995,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-134",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.554,
+      "timestampMs": 2010,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-135",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.585,
+      "timestampMs": 2025,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-136",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.016,
+      "timestampMs": 2040,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-137",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.647,
+      "timestampMs": 2055,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-138",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.678,
+      "timestampMs": 2070,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-139",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.709,
+      "timestampMs": 2085,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-140",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.74,
+      "timestampMs": 2100,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-141",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.171,
+      "timestampMs": 2115,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-142",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.802,
+      "timestampMs": 2130,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-143",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.833,
+      "timestampMs": 2145,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-144",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.864,
+      "timestampMs": 2160,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-145",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.895,
+      "timestampMs": 2175,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-146",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.476,
+      "timestampMs": 2190,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-147",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.507,
+      "timestampMs": 2205,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-148",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.938,
+      "timestampMs": 2220,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-149",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.569,
+      "timestampMs": 2235,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-150",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.6,
+      "timestampMs": 2250,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-151",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.031,
+      "timestampMs": 2265,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-152",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.062,
+      "timestampMs": 2280,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-153",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.693,
+      "timestampMs": 2295,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-154",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.124,
+      "timestampMs": 2310,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-155",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.755,
+      "timestampMs": 2325,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-156",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.186,
+      "timestampMs": 2340,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-157",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.817,
+      "timestampMs": 2355,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-158",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.848,
+      "timestampMs": 2370,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-159",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.879,
+      "timestampMs": 2385,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-160",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.86,
+      "timestampMs": 2400,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-161",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.891,
+      "timestampMs": 2415,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-162",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.522,
+      "timestampMs": 2430,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-163",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.553,
+      "timestampMs": 2445,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-164",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.984,
+      "timestampMs": 2460,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-165",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.615,
+      "timestampMs": 2475,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-166",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.046,
+      "timestampMs": 2490,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-167",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.677,
+      "timestampMs": 2505,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-168",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.108,
+      "timestampMs": 2520,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-169",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.139,
+      "timestampMs": 2535,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-170",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.17,
+      "timestampMs": 2550,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-171",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.801,
+      "timestampMs": 2565,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-172",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.832,
+      "timestampMs": 2580,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-173",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.263,
+      "timestampMs": 2595,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-174",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.894,
+      "timestampMs": 2610,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-175",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.875,
+      "timestampMs": 2625,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-176",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.506,
+      "timestampMs": 2640,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-177",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.537,
+      "timestampMs": 2655,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-178",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.568,
+      "timestampMs": 2670,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-179",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.999,
+      "timestampMs": 2685,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-180",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.63,
+      "timestampMs": 2700,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-181",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.661,
+      "timestampMs": 2715,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-182",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.092,
+      "timestampMs": 2730,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-183",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.123,
+      "timestampMs": 2745,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-184",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.754,
+      "timestampMs": 2760,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-185",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.185,
+      "timestampMs": 2775,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-186",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.816,
+      "timestampMs": 2790,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-187",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.847,
+      "timestampMs": 2805,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-188",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.278,
+      "timestampMs": 2820,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-189",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.459,
+      "timestampMs": 2835,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-190",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.49,
+      "timestampMs": 2850,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-191",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.921,
+      "timestampMs": 2865,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-192",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.552,
+      "timestampMs": 2880,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-193",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.583,
+      "timestampMs": 2895,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-194",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.614,
+      "timestampMs": 2910,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-195",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.045,
+      "timestampMs": 2925,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-196",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.676,
+      "timestampMs": 2940,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-197",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.707,
+      "timestampMs": 2955,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-198",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.138,
+      "timestampMs": 2970,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-199",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.169,
+      "timestampMs": 2985,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-200",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.2,
+      "timestampMs": 3000,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-201",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.231,
+      "timestampMs": 3015,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-202",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.862,
+      "timestampMs": 3030,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-203",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.293,
+      "timestampMs": 3045,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-204",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.474,
+      "timestampMs": 3060,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-205",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.905,
+      "timestampMs": 3075,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-206",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.936,
+      "timestampMs": 3090,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-207",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.567,
+      "timestampMs": 3105,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-208",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.998,
+      "timestampMs": 3120,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-209",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.629,
+      "timestampMs": 3135,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-210",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.66,
+      "timestampMs": 3150,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-211",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.091,
+      "timestampMs": 3165,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-212",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.722,
+      "timestampMs": 3180,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-213",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.753,
+      "timestampMs": 3195,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-214",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.184,
+      "timestampMs": 3210,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-215",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.215,
+      "timestampMs": 3225,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-216",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.246,
+      "timestampMs": 3240,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-217",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.277,
+      "timestampMs": 3255,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-218",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.458,
+      "timestampMs": 3270,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-219",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.489,
+      "timestampMs": 3285,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-220",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.52,
+      "timestampMs": 3300,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-221",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.551,
+      "timestampMs": 3315,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-222",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.982,
+      "timestampMs": 3330,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-223",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.613,
+      "timestampMs": 3345,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-224",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.044,
+      "timestampMs": 3360,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-225",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.075,
+      "timestampMs": 3375,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-226",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.106,
+      "timestampMs": 3390,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-227",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.737,
+      "timestampMs": 3405,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-228",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.768,
+      "timestampMs": 3420,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-229",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.799,
+      "timestampMs": 3435,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-230",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.23,
+      "timestampMs": 3450,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-231",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.261,
+      "timestampMs": 3465,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-232",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.892,
+      "timestampMs": 3480,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-233",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.473,
+      "timestampMs": 3495,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-234",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.504,
+      "timestampMs": 3510,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-235",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.535,
+      "timestampMs": 3525,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-236",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.566,
+      "timestampMs": 3540,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-237",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.597,
+      "timestampMs": 3555,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-238",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.628,
+      "timestampMs": 3570,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-239",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.659,
+      "timestampMs": 3585,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-240",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.09,
+      "timestampMs": 3600,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-241",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.721,
+      "timestampMs": 3615,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-242",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.752,
+      "timestampMs": 3630,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-243",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.183,
+      "timestampMs": 3645,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-244",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.814,
+      "timestampMs": 3660,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-245",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.245,
+      "timestampMs": 3675,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-246",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.276,
+      "timestampMs": 3690,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-247",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.857,
+      "timestampMs": 3705,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-248",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.888,
+      "timestampMs": 3720,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-249",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.519,
+      "timestampMs": 3735,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-250",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 4.95,
+      "timestampMs": 3750,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-251",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.581,
+      "timestampMs": 3765,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-252",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 5.012,
+      "timestampMs": 3780,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-253",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.643,
+      "timestampMs": 3795,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-254",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.674,
+      "timestampMs": 3810,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "bb-255",
+      "operationType": "READ",
+      "success": true,
+      "source": "BLACKBOX_SIMULATION",
+      "latencyMs": 2.705,
+      "timestampMs": 3825,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-0",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 21.726,
+      "timestampMs": 1791890571839,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-1",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.125,
+      "timestampMs": 1791890571844,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-2",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 5.503,
+      "timestampMs": 1791890571848,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-3",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 3.585,
+      "timestampMs": 1791890571850,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-4",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 3.334,
+      "timestampMs": 1791890571853,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-5",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.738,
+      "timestampMs": 1791890571854,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-6",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.526,
+      "timestampMs": 1791890571855,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-7",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.908,
+      "timestampMs": 1791890571857,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-8",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.598,
+      "timestampMs": 1791890571859,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-9",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.666,
+      "timestampMs": 1791890571860,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-10",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.423,
+      "timestampMs": 1791890571861,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-11",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.431,
+      "timestampMs": 1791890571863,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-12",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.376,
+      "timestampMs": 1791890571864,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-13",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 23.795,
+      "timestampMs": 1791890571886,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-14",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.412,
+      "timestampMs": 1791890571888,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-15",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.425,
+      "timestampMs": 1791890571889,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-16",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 7.913,
+      "timestampMs": 1791890571896,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-17",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.255,
+      "timestampMs": 1791890571897,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-18",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.215,
+      "timestampMs": 1791890571898,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-19",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.259,
+      "timestampMs": 1791890571899,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-20",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 3.037,
+      "timestampMs": 1791890571901,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-21",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.372,
+      "timestampMs": 1791890571902,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-22",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 12.164,
+      "timestampMs": 1791890571913,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-23",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.556,
+      "timestampMs": 1791890571914,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-24",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.329,
+      "timestampMs": 1791890571915,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-25",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 7.203,
+      "timestampMs": 1791890571921,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-26",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.222,
+      "timestampMs": 1791890571922,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-27",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.45,
+      "timestampMs": 1791890571924,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-28",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 9.809,
+      "timestampMs": 1791890571932,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-29",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.418,
+      "timestampMs": 1791890571933,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-30",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.335,
+      "timestampMs": 1791890571935,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-31",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.192,
+      "timestampMs": 1791890571936,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-32",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.169,
+      "timestampMs": 1791890571937,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-33",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 7.494,
+      "timestampMs": 1791890571943,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-34",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.936,
+      "timestampMs": 1791890571949,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-35",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.393,
+      "timestampMs": 1791890571950,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-36",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 7.042,
+      "timestampMs": 1791890571956,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-37",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.298,
+      "timestampMs": 1791890571957,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-38",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 7.668,
+      "timestampMs": 1791890571963,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-39",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 7.074,
+      "timestampMs": 1791890571969,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-40",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.819,
+      "timestampMs": 1791890571971,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-41",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.52,
+      "timestampMs": 1791890571972,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-42",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.095,
+      "timestampMs": 1791890571979,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-43",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.323,
+      "timestampMs": 1791890571980,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-44",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.264,
+      "timestampMs": 1791890571981,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-45",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.834,
+      "timestampMs": 1791890571983,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-46",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.562,
+      "timestampMs": 1791890571990,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-47",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.592,
+      "timestampMs": 1791890571998,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-48",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.894,
+      "timestampMs": 1791890572005,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-49",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.557,
+      "timestampMs": 1791890572007,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-50",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 9.211,
+      "timestampMs": 1791890572015,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-51",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.683,
+      "timestampMs": 1791890572016,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-52",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.748,
+      "timestampMs": 1791890572018,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-53",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.417,
+      "timestampMs": 1791890572019,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-54",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.551,
+      "timestampMs": 1791890572020,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-55",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.21,
+      "timestampMs": 1791890572021,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-56",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.08,
+      "timestampMs": 1791890572022,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-57",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.234,
+      "timestampMs": 1791890572023,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-58",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.644,
+      "timestampMs": 1791890572031,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-59",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.597,
+      "timestampMs": 1791890572032,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-60",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.482,
+      "timestampMs": 1791890572033,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-61",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.107,
+      "timestampMs": 1791890572034,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-62",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.392,
+      "timestampMs": 1791890572036,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-63",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.285,
+      "timestampMs": 1791890572037,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-64",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.286,
+      "timestampMs": 1791890572038,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-65",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.073,
+      "timestampMs": 1791890572039,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-66",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.151,
+      "timestampMs": 1791890572040,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-67",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.344,
+      "timestampMs": 1791890572041,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-68",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.529,
+      "timestampMs": 1791890572048,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-69",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.404,
+      "timestampMs": 1791890572049,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-70",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.581,
+      "timestampMs": 1791890572051,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-71",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.704,
+      "timestampMs": 1791890572052,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-72",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.076,
+      "timestampMs": 1791890572053,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-73",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.063,
+      "timestampMs": 1791890572054,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-74",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.126,
+      "timestampMs": 1791890572055,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-75",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.284,
+      "timestampMs": 1791890572056,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-76",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.805,
+      "timestampMs": 1791890572058,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-77",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.27,
+      "timestampMs": 1791890572059,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-78",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.129,
+      "timestampMs": 1791890572060,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-79",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.276,
+      "timestampMs": 1791890572067,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-80",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.246,
+      "timestampMs": 1791890572068,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-81",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.366,
+      "timestampMs": 1791890572075,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-82",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.358,
+      "timestampMs": 1791890572076,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-83",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 11.509,
+      "timestampMs": 1791890572086,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-84",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.86,
+      "timestampMs": 1791890572094,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-85",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.637,
+      "timestampMs": 1791890572095,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-86",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 16.82,
+      "timestampMs": 1791890572111,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-87",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.352,
+      "timestampMs": 1791890572112,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-88",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.842,
+      "timestampMs": 1791890572114,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-89",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 14.226,
+      "timestampMs": 1791890572127,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-90",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.655,
+      "timestampMs": 1791890572134,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-91",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.16,
+      "timestampMs": 1791890572135,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-92",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 7.259,
+      "timestampMs": 1791890572141,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-93",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.124,
+      "timestampMs": 1791890572142,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-94",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.584,
+      "timestampMs": 1791890572150,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-95",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.414,
+      "timestampMs": 1791890572157,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-96",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.882,
+      "timestampMs": 1791890572159,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-97",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 3.239,
+      "timestampMs": 1791890572161,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-98",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 13.558,
+      "timestampMs": 1791890572173,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-99",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 4.337,
+      "timestampMs": 1791890572176,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-100",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.159,
+      "timestampMs": 1791890572177,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-101",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 12.098,
+      "timestampMs": 1791890572188,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-102",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.448,
+      "timestampMs": 1791890572189,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-103",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.203,
+      "timestampMs": 1791890572190,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-104",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 16.783,
+      "timestampMs": 1791890572206,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-105",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 3.054,
+      "timestampMs": 1791890572208,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-106",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.529,
+      "timestampMs": 1791890572209,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-107",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 18.16,
+      "timestampMs": 1791890572226,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-108",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 3.125,
+      "timestampMs": 1791890572228,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-109",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.438,
+      "timestampMs": 1791890572229,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-110",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 11.328,
+      "timestampMs": 1791890572239,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-111",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.054,
+      "timestampMs": 1791890572246,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-112",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.647,
+      "timestampMs": 1791890572248,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-113",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 24.239,
+      "timestampMs": 1791890572271,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-114",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 9.669,
+      "timestampMs": 1791890572279,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-115",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.598,
+      "timestampMs": 1791890572281,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-116",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 14.315,
+      "timestampMs": 1791890572294,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-117",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 3.289,
+      "timestampMs": 1791890572296,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-118",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 9.393,
+      "timestampMs": 1791890572304,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-119",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 15.493,
+      "timestampMs": 1791890572318,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-120",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 3.525,
+      "timestampMs": 1791890572321,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-121",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.433,
+      "timestampMs": 1791890572322,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-122",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 12.394,
+      "timestampMs": 1791890572333,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-123",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.479,
+      "timestampMs": 1791890572334,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-124",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.231,
+      "timestampMs": 1791890572335,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-125",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 15.86,
+      "timestampMs": 1791890572350,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-126",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.976,
+      "timestampMs": 1791890572352,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-127",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 3.132,
+      "timestampMs": 1791890572354,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-128",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 10.645,
+      "timestampMs": 1791890572363,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-129",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.91,
+      "timestampMs": 1791890572365,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-130",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.436,
+      "timestampMs": 1791890572366,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-131",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 15.342,
+      "timestampMs": 1791890572380,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-132",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 12.132,
+      "timestampMs": 1791890572391,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-133",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.812,
+      "timestampMs": 1791890572399,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-134",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 13.796,
+      "timestampMs": 1791890572412,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-135",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.294,
+      "timestampMs": 1791890572413,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-136",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.161,
+      "timestampMs": 1791890572420,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-137",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 7.541,
+      "timestampMs": 1791890572426,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-138",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.517,
+      "timestampMs": 1791890572427,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-139",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.227,
+      "timestampMs": 1791890572428,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-140",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 14.55,
+      "timestampMs": 1791890572442,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-141",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.458,
+      "timestampMs": 1791890572449,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-142",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.118,
+      "timestampMs": 1791890572450,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-143",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 7.919,
+      "timestampMs": 1791890572457,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-144",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.233,
+      "timestampMs": 1791890572458,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-145",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.282,
+      "timestampMs": 1791890572459,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-146",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 15.158,
+      "timestampMs": 1791890572473,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-147",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 4.043,
+      "timestampMs": 1791890572476,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-148",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.605,
+      "timestampMs": 1791890572483,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-149",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 6.19,
+      "timestampMs": 1791890572488,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-150",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.061,
+      "timestampMs": 1791890572489,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-151",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.606,
+      "timestampMs": 1791890572496,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-152",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 14.705,
+      "timestampMs": 1791890572510,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-153",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.167,
+      "timestampMs": 1791890572511,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-154",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.402,
+      "timestampMs": 1791890572518,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-155",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 20.029,
+      "timestampMs": 1791890572537,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-156",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 9.542,
+      "timestampMs": 1791890572545,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-157",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.589,
+      "timestampMs": 1791890572547,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-158",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.356,
+      "timestampMs": 1791890572554,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-159",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.847,
+      "timestampMs": 1791890572555,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-160",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 9.143,
+      "timestampMs": 1791890572563,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-161",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 13.449,
+      "timestampMs": 1791890572576,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-162",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.176,
+      "timestampMs": 1791890572577,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-163",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.227,
+      "timestampMs": 1791890572578,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-164",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.772,
+      "timestampMs": 1791890572585,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-165",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.031,
+      "timestampMs": 1791890572586,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-166",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.072,
+      "timestampMs": 1791890572593,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-167",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.055,
+      "timestampMs": 1791890572594,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-168",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 7.891,
+      "timestampMs": 1791890572600,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-169",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.072,
+      "timestampMs": 1791890572607,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-170",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.28,
+      "timestampMs": 1791890572614,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-171",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.131,
+      "timestampMs": 1791890572615,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-172",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.171,
+      "timestampMs": 1791890572616,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-173",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.304,
+      "timestampMs": 1791890572623,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-174",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.205,
+      "timestampMs": 1791890572624,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-175",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.197,
+      "timestampMs": 1791890572631,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-176",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.377,
+      "timestampMs": 1791890572633,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-177",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.45,
+      "timestampMs": 1791890572634,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-178",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.216,
+      "timestampMs": 1791890572635,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-179",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.404,
+      "timestampMs": 1791890572642,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-180",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.415,
+      "timestampMs": 1791890572643,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-181",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.03,
+      "timestampMs": 1791890572644,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-182",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.18,
+      "timestampMs": 1791890572651,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-183",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 7.905,
+      "timestampMs": 1791890572658,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-184",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.211,
+      "timestampMs": 1791890572659,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-185",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.114,
+      "timestampMs": 1791890572666,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-186",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.01,
+      "timestampMs": 1791890572667,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-187",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 1.949,
+      "timestampMs": 1791890572667,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-188",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 7.937,
+      "timestampMs": 1791890572674,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-189",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.089,
+      "timestampMs": 1791890572675,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-190",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 1.995,
+      "timestampMs": 1791890572676,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-191",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.595,
+      "timestampMs": 1791890572683,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-192",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.274,
+      "timestampMs": 1791890572684,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-193",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.031,
+      "timestampMs": 1791890572685,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-194",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.029,
+      "timestampMs": 1791890572686,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-195",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.201,
+      "timestampMs": 1791890572693,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-196",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.456,
+      "timestampMs": 1791890572694,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-197",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.139,
+      "timestampMs": 1791890572695,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-198",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.501,
+      "timestampMs": 1791890572702,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-199",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.181,
+      "timestampMs": 1791890572709,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-200",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 6.816,
+      "timestampMs": 1791890572715,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-201",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 6.469,
+      "timestampMs": 1791890572720,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-202",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 1.941,
+      "timestampMs": 1791890572721,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-203",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.414,
+      "timestampMs": 1791890572728,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-204",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.601,
+      "timestampMs": 1791890572730,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-205",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.949,
+      "timestampMs": 1791890572736,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-206",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 6.673,
+      "timestampMs": 1791890572741,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-207",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.32,
+      "timestampMs": 1791890572742,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-208",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.773,
+      "timestampMs": 1791890572748,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-209",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 1.923,
+      "timestampMs": 1791890572748,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-210",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.09,
+      "timestampMs": 1791890572749,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-211",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.736,
+      "timestampMs": 1791890572755,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-212",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 1.899,
+      "timestampMs": 1791890572756,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-213",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.422,
+      "timestampMs": 1791890572757,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-214",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 7.135,
+      "timestampMs": 1791890572763,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-215",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 6.343,
+      "timestampMs": 1791890572768,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-216",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 7.083,
+      "timestampMs": 1791890572774,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-217",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.992,
+      "timestampMs": 1791890572780,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-218",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.174,
+      "timestampMs": 1791890572781,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-219",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.396,
+      "timestampMs": 1791890572782,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-220",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 1.991,
+      "timestampMs": 1791890572783,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-221",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.102,
+      "timestampMs": 1791890572783,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-222",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.753,
+      "timestampMs": 1791890572791,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-223",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.431,
+      "timestampMs": 1791890572792,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-224",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 8.232,
+      "timestampMs": 1791890572799,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-225",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 6.787,
+      "timestampMs": 1791890572805,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-226",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 6.813,
+      "timestampMs": 1791890572811,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-227",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.092,
+      "timestampMs": 1791890572811,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-228",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.016,
+      "timestampMs": 1791890572812,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-229",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 1.891,
+      "timestampMs": 1791890572813,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-230",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 6.858,
+      "timestampMs": 1791890572819,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-231",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 6.971,
+      "timestampMs": 1791890572824,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-232",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.165,
+      "timestampMs": 1791890572825,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-233",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 1.938,
+      "timestampMs": 1791890572826,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-234",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 1.946,
+      "timestampMs": 1791890572827,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-235",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 1.877,
+      "timestampMs": 1791890572828,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-236",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 1.853,
+      "timestampMs": 1791890572828,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-237",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.001,
+      "timestampMs": 1791890572829,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-238",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.043,
+      "timestampMs": 1791890572830,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-239",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 1.904,
+      "timestampMs": 1791890572831,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-240",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 6.976,
+      "timestampMs": 1791890572836,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-241",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.035,
+      "timestampMs": 1791890572837,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-242",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.017,
+      "timestampMs": 1791890572838,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-243",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 6.638,
+      "timestampMs": 1791890572843,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-244",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.069,
+      "timestampMs": 1791890572844,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-245",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 6.599,
+      "timestampMs": 1791890572850,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-246",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 9.638,
+      "timestampMs": 1791890572858,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-247",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 7.078,
+      "timestampMs": 1791890572864,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-248",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 7.666,
+      "timestampMs": 1791890572871,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-249",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 2.326,
+      "timestampMs": 1791890572872,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-250",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 8.198,
+      "timestampMs": 1791890572879,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-251",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.416,
+      "timestampMs": 1791890572880,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-252",
+      "operationType": "WRITE",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 8.089,
+      "timestampMs": 1791890572887,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-253",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-2",
+      "latencyMs": 2.268,
+      "timestampMs": 1791890572888,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-254",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-3",
+      "latencyMs": 2.136,
+      "timestampMs": 1791890572889,
+      "errorClass": "NONE"
+    },
+    {
+      "operationId": "qr-255",
+      "operationType": "READ",
+      "success": true,
+      "source": "QUORUM_CLIENT",
+      "nodeId": "node-1",
+      "latencyMs": 11.519,
+      "timestampMs": 1791890572899,
+      "errorClass": "NONE"
+    }
+  ],
+  "summaries": [
+    {
+      "source": "BLACKBOX_SIMULATION",
+      "totalSamples": 256,
+      "successCount": 256,
+      "failureCount": 0,
+      "successRate": 1,
+      "staleReadCount": 0,
+      "causalAnomalyCount": 0,
+      "p50Ms": 2.768,
+      "p90Ms": 5.171,
+      "p95Ms": 5.245,
+      "p99Ms": 5.293,
+      "minMs": 2.45,
+      "maxMs": 5.298,
+      "meanMs": 3.4335546875000014,
+      "throughputOpsSec": 66.9281045751634,
+      "errorBreakdown": {
+        "NONE": 256,
+        "TIMEOUT": 0,
+        "NETWORK": 0,
+        "OVERLOAD": 0,
+        "CONSISTENCY": 0,
+        "SAFETY": 0,
+        "INTERNAL": 0,
+        "UNKNOWN": 0
+      }
+    },
+    {
+      "source": "QUORUM_CLIENT",
+      "totalSamples": 256,
+      "successCount": 256,
+      "failureCount": 0,
+      "successRate": 1,
+      "staleReadCount": 0,
+      "causalAnomalyCount": 0,
+      "p50Ms": 2.704,
+      "p90Ms": 10.645,
+      "p95Ms": 14.55,
+      "p99Ms": 21.726,
+      "minMs": 1.853,
+      "maxMs": 24.239,
+      "meanMs": 5.414355468749999,
+      "throughputOpsSec": 241.50943396226415,
+      "errorBreakdown": {
+        "NONE": 256,
+        "TIMEOUT": 0,
+        "NETWORK": 0,
+        "OVERLOAD": 0,
+        "CONSISTENCY": 0,
+        "SAFETY": 0,
+        "INTERNAL": 0,
+        "UNKNOWN": 0
+      }
+    }
+  ]
+}

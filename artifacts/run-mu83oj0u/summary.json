@@ -1,0 +1,56 @@
+{
+  "runId": "run-mu83oj0u",
+  "certified": false,
+  "verdict": "REJECTED [FAIL]",
+  "bbMetrics": {
+    "p50": 2.774,
+    "p95": 5.189,
+    "p99": 5.253
+  },
+  "qrMetrics": {
+    "p50": 4.662,
+    "p95": 24.052,
+    "p99": 32.958
+  },
+  "p99Mape": 84.06153286000364,
+  "ksPValue": 0,
+  "wasserstein": 6.292807339449543,
+  "nodes": [
+    {
+      "id": "node-1",
+      "ops": 37,
+      "reads": 24,
+      "writes": 13,
+      "successRate": 1,
+      "p50": 3.301,
+      "p95": 18.829,
+      "p99": 32.958,
+      "errors": 0
+    },
+    {
+      "id": "node-2",
+      "ops": 36,
+      "reads": 23,
+      "writes": 13,
+      "successRate": 1,
+      "p50": 3.94,
+      "p95": 21.516,
+      "p99": 24.052,
+      "errors": 0
+    },
+    {
+      "id": "node-3",
+      "ops": 36,
+      "reads": 29,
+      "writes": 7,
+      "successRate": 1,
+      "p50": 14.044,
+      "p95": 29.353,
+      "p99": 41.333,
+      "errors": 0
+    }
+  ],
+  "certificationRecordHash": "22d81508c897b280dfcc4e275457918fbb7bd5a76c52ce1a12fc30cc2f6bea6b",
+  "traceHash": "315eb5314e6c38007e1cf971ed088fa46b2b176417389cefe81a775acfda9d0b",
+  "timelineHash": "256d82af157701499fd51ceb093bf8738b667007b43d80789ba0e4027ca8b120"
+}

@@ -1,0 +1,5730 @@
+{
+  "schemaVersion": "system-x.experiment.v2",
+  "experiment": {
+    "experimentId": "exp-ecommerce-order-inventory-100k-master",
+    "name": "Enterprise E-Commerce 100K-Character Production Validation Specification",
+    "description": "Ultra-high-fidelity production-grade experiment configuration driving Step 0 through Step 14 distributed systems verification, quorum safety audit, closed-loop parameter calibration, and WORM lineage generation.",
+    "environment": "staging",
+    "executionMode": "REAL",
+    "dryRun": false,
+    "strictMode": true,
+    "failFast": false,
+    "owner": {
+      "team": "platform-engineering",
+      "operator": "system-x-gate"
+    },
+    "purpose": [
+      "Validate quorum behavior under network partition",
+      "Measure latency degradation under network delay",
+      "Measure recovery after node crash",
+      "Compare Blackbox-X analytical predictions against real execution",
+      "Validate consistency guarantees",
+      "Calibrate simulation parameters",
+      "Validate calibration against held-out data",
+      "Generate immutable certification evidence"
+    ]
+  },
+  "preflight": {
+    "requireCleanGitTree": true,
+    "requirePinnedVersions": true,
+    "requireDeterministicSeed": true,
+    "requireTimeSynchronization": true,
+    "maxClockSkewMs": 10,
+    "requiredCapabilities": [
+      "cluster-connectivity",
+      "telemetry-stream",
+      "fault-injection",
+      "request-tracing",
+      "node-health",
+      "artifact-storage",
+      "blackbox-simulation",
+      "statistics-engine",
+      "calibration-engine"
+    ],
+    "healthChecks": {
+      "nodeReachability": true,
+      "storageWritable": true,
+      "metricsEndpoint": true,
+      "traceEndpoint": true,
+      "faultController": true,
+      "artifactStore": true,
+      "simulationEngine": true
+    }
+  },
+  "project": {
+    "projectId": "proj-ecommerce-order-catalog-001",
+    "name": "E-Commerce Order Catalog & Inventory Cluster",
+    "description": "Distributed leaderless datastore supporting product catalog, inventory and order operations.",
+    "region": "us-east",
+    "timezone": "UTC",
+    "service": "order-catalog-inventory",
+    "version": "2026.09.19"
+  },
+  "cluster": {
+    "clusterId": "cluster-prod-alpha-829",
+    "mode": "leaderless",
+    "nodes": [
+      {
+        "nodeId": "node-1.us-east.quorum",
+        "host": "node-1.us-east.quorum",
+        "zone": "us-east-1a",
+        "weight": 1,
+        "role": "replica",
+        "expectedState": "READY"
+      },
+      {
+        "nodeId": "node-2.us-east.quorum",
+        "host": "node-2.us-east.quorum",
+        "zone": "us-east-1b",
+        "weight": 1,
+        "role": "replica",
+        "expectedState": "READY"
+      },
+      {
+        "nodeId": "node-3.us-east.quorum",
+        "host": "node-3.us-east.quorum",
+        "zone": "us-east-1c",
+        "weight": 1,
+        "role": "replica",
+        "expectedState": "READY"
+      }
+    ],
+    "replication": {
+      "N": 3,
+      "W": 2,
+      "R": 2,
+      "quorumIntersectionRequired": true,
+      "readQuorum": {
+        "requiredResponses": 2,
+        "timeoutMs": 100
+      },
+      "writeQuorum": {
+        "requiredResponses": 2,
+        "timeoutMs": 150
+      },
+      "repair": {
+        "enabled": true,
+        "mode": "READ_REPAIR"
+      }
+    },
+    "consistency": {
+      "readConsistency": "QUORUM",
+      "writeConsistency": "QUORUM",
+      "conflictStrategy": "LAST_WRITE_WINS",
+      "readAfterWriteGuarantee": true,
+      "staleReadDetection": true,
+      "versionTracking": true
+    },
+    "durability": {
+      "mode": "SYNC_FSYNC",
+      "fsyncRequired": true,
+      "ackRequiresDurability": true
+    }
+  },
+  "dataset": {
+    "datasetId": "catalog-inventory-prodlike-v5",
+    "keyNamespace": "ecommerce",
+    "keyRanges": {
+      "product": {
+        "prefix": "product:",
+        "min": 100000,
+        "max": 120000
+      },
+      "inventory": {
+        "prefix": "inventory:",
+        "min": 100000,
+        "max": 120000
+      },
+      "order": {
+        "prefix": "order:",
+        "min": 1,
+        "max": 1000000
+      },
+      "customer": {
+        "prefix": "customer:",
+        "min": 1,
+        "max": 250000
+      }
+    },
+    "seed": 13371337,
+    "initialState": {
+      "products": 20000,
+      "inventoryRecords": 20000,
+      "customers": 50000,
+      "existingOrders": 100000
+    },
+    "integrity": {
+      "verifyInitialDatasetHash": true,
+      "expectedReplicationFactor": 3,
+      "verifyReplicaAgreementBeforeRun": true
+    },
+    "seededCatalog": [
+      {
+        "sku": "SKU-PROD-100001",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100001",
+        "category": "HARDWARE",
+        "priceCents": 2136,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 337
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100002",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100002",
+        "category": "STORAGE",
+        "priceCents": 2273,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 354
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100003",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100003",
+        "category": "NETWORKING",
+        "priceCents": 2410,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 371
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100004",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100004",
+        "category": "ACCESSORIES",
+        "priceCents": 2547,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 388
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100005",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100005",
+        "category": "ELECTRONICS",
+        "priceCents": 2684,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 405
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100006",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100006",
+        "category": "HARDWARE",
+        "priceCents": 2821,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 422
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100007",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100007",
+        "category": "STORAGE",
+        "priceCents": 2958,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 439
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100008",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100008",
+        "category": "NETWORKING",
+        "priceCents": 3095,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 456
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100009",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100009",
+        "category": "ACCESSORIES",
+        "priceCents": 3232,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 473
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100010",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100010",
+        "category": "ELECTRONICS",
+        "priceCents": 3369,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 490
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100011",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100011",
+        "category": "HARDWARE",
+        "priceCents": 3506,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 507
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100012",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100012",
+        "category": "STORAGE",
+        "priceCents": 3643,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 524
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100013",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100013",
+        "category": "NETWORKING",
+        "priceCents": 3780,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 541
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100014",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100014",
+        "category": "ACCESSORIES",
+        "priceCents": 3917,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 558
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100015",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100015",
+        "category": "ELECTRONICS",
+        "priceCents": 4054,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 575
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100016",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100016",
+        "category": "HARDWARE",
+        "priceCents": 4191,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 592
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100017",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100017",
+        "category": "STORAGE",
+        "priceCents": 4328,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 609
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100018",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100018",
+        "category": "NETWORKING",
+        "priceCents": 4465,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 626
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100019",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100019",
+        "category": "ACCESSORIES",
+        "priceCents": 4602,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 643
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100020",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100020",
+        "category": "ELECTRONICS",
+        "priceCents": 4739,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 660
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100021",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100021",
+        "category": "HARDWARE",
+        "priceCents": 4876,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 677
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100022",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100022",
+        "category": "STORAGE",
+        "priceCents": 5013,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 694
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100023",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100023",
+        "category": "NETWORKING",
+        "priceCents": 5150,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 711
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100024",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100024",
+        "category": "ACCESSORIES",
+        "priceCents": 5287,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 728
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100025",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100025",
+        "category": "ELECTRONICS",
+        "priceCents": 5424,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 745
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100026",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100026",
+        "category": "HARDWARE",
+        "priceCents": 5561,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 762
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100027",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100027",
+        "category": "STORAGE",
+        "priceCents": 5698,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 779
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100028",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100028",
+        "category": "NETWORKING",
+        "priceCents": 5835,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 796
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100029",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100029",
+        "category": "ACCESSORIES",
+        "priceCents": 5972,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 813
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100030",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100030",
+        "category": "ELECTRONICS",
+        "priceCents": 6109,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 830
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100031",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100031",
+        "category": "HARDWARE",
+        "priceCents": 6246,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 847
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100032",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100032",
+        "category": "STORAGE",
+        "priceCents": 6383,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 864
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100033",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100033",
+        "category": "NETWORKING",
+        "priceCents": 6520,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 881
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100034",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100034",
+        "category": "ACCESSORIES",
+        "priceCents": 6657,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 898
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100035",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100035",
+        "category": "ELECTRONICS",
+        "priceCents": 6794,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 915
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100036",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100036",
+        "category": "HARDWARE",
+        "priceCents": 6931,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 932
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100037",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100037",
+        "category": "STORAGE",
+        "priceCents": 7068,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 949
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100038",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100038",
+        "category": "NETWORKING",
+        "priceCents": 7205,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 966
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100039",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100039",
+        "category": "ACCESSORIES",
+        "priceCents": 7342,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 983
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100040",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100040",
+        "category": "ELECTRONICS",
+        "priceCents": 7479,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1000
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100041",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100041",
+        "category": "HARDWARE",
+        "priceCents": 7616,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1017
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100042",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100042",
+        "category": "STORAGE",
+        "priceCents": 7753,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1034
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100043",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100043",
+        "category": "NETWORKING",
+        "priceCents": 7890,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1051
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100044",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100044",
+        "category": "ACCESSORIES",
+        "priceCents": 8027,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1068
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100045",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100045",
+        "category": "ELECTRONICS",
+        "priceCents": 8164,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1085
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100046",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100046",
+        "category": "HARDWARE",
+        "priceCents": 8301,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1102
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100047",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100047",
+        "category": "STORAGE",
+        "priceCents": 8438,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1119
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100048",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100048",
+        "category": "NETWORKING",
+        "priceCents": 8575,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1136
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100049",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100049",
+        "category": "ACCESSORIES",
+        "priceCents": 8712,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1153
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100050",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100050",
+        "category": "ELECTRONICS",
+        "priceCents": 8849,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1170
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100051",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100051",
+        "category": "HARDWARE",
+        "priceCents": 8986,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1187
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100052",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100052",
+        "category": "STORAGE",
+        "priceCents": 9123,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1204
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100053",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100053",
+        "category": "NETWORKING",
+        "priceCents": 9260,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1221
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100054",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100054",
+        "category": "ACCESSORIES",
+        "priceCents": 9397,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1238
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100055",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100055",
+        "category": "ELECTRONICS",
+        "priceCents": 9534,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1255
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100056",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100056",
+        "category": "HARDWARE",
+        "priceCents": 9671,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1272
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100057",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100057",
+        "category": "STORAGE",
+        "priceCents": 9808,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1289
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100058",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100058",
+        "category": "NETWORKING",
+        "priceCents": 9945,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1306
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100059",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100059",
+        "category": "ACCESSORIES",
+        "priceCents": 10082,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1323
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100060",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100060",
+        "category": "ELECTRONICS",
+        "priceCents": 10219,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1340
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100061",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100061",
+        "category": "HARDWARE",
+        "priceCents": 10356,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1357
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100062",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100062",
+        "category": "STORAGE",
+        "priceCents": 10493,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1374
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100063",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100063",
+        "category": "NETWORKING",
+        "priceCents": 10630,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1391
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100064",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100064",
+        "category": "ACCESSORIES",
+        "priceCents": 10767,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1408
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100065",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100065",
+        "category": "ELECTRONICS",
+        "priceCents": 10904,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1425
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100066",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100066",
+        "category": "HARDWARE",
+        "priceCents": 11041,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1442
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100067",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100067",
+        "category": "STORAGE",
+        "priceCents": 11178,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1459
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100068",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100068",
+        "category": "NETWORKING",
+        "priceCents": 11315,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1476
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100069",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100069",
+        "category": "ACCESSORIES",
+        "priceCents": 11452,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1493
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100070",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100070",
+        "category": "ELECTRONICS",
+        "priceCents": 11589,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1510
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100071",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100071",
+        "category": "HARDWARE",
+        "priceCents": 11726,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1527
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100072",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100072",
+        "category": "STORAGE",
+        "priceCents": 11863,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1544
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100073",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100073",
+        "category": "NETWORKING",
+        "priceCents": 12000,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1561
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100074",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100074",
+        "category": "ACCESSORIES",
+        "priceCents": 12137,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1578
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100075",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100075",
+        "category": "ELECTRONICS",
+        "priceCents": 12274,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1595
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100076",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100076",
+        "category": "HARDWARE",
+        "priceCents": 12411,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1612
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100077",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100077",
+        "category": "STORAGE",
+        "priceCents": 12548,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1629
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100078",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100078",
+        "category": "NETWORKING",
+        "priceCents": 12685,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1646
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100079",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100079",
+        "category": "ACCESSORIES",
+        "priceCents": 12822,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1663
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100080",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100080",
+        "category": "ELECTRONICS",
+        "priceCents": 12959,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1680
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100081",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100081",
+        "category": "HARDWARE",
+        "priceCents": 13096,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1697
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100082",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100082",
+        "category": "STORAGE",
+        "priceCents": 13233,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1714
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100083",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100083",
+        "category": "NETWORKING",
+        "priceCents": 13370,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1731
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100084",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100084",
+        "category": "ACCESSORIES",
+        "priceCents": 13507,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1748
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100085",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100085",
+        "category": "ELECTRONICS",
+        "priceCents": 13644,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1765
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100086",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100086",
+        "category": "HARDWARE",
+        "priceCents": 13781,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1782
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100087",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100087",
+        "category": "STORAGE",
+        "priceCents": 13918,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1799
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100088",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100088",
+        "category": "NETWORKING",
+        "priceCents": 14055,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 1816
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100089",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100089",
+        "category": "ACCESSORIES",
+        "priceCents": 14192,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 333
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100090",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100090",
+        "category": "ELECTRONICS",
+        "priceCents": 14329,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 350
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100091",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100091",
+        "category": "HARDWARE",
+        "priceCents": 14466,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 367
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100092",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100092",
+        "category": "STORAGE",
+        "priceCents": 14603,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 384
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100093",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100093",
+        "category": "NETWORKING",
+        "priceCents": 14740,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 401
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100094",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100094",
+        "category": "ACCESSORIES",
+        "priceCents": 14877,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 418
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100095",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100095",
+        "category": "ELECTRONICS",
+        "priceCents": 15014,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 435
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100096",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100096",
+        "category": "HARDWARE",
+        "priceCents": 15151,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 452
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100097",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100097",
+        "category": "STORAGE",
+        "priceCents": 15288,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 469
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100098",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100098",
+        "category": "NETWORKING",
+        "priceCents": 15425,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 486
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100099",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100099",
+        "category": "ACCESSORIES",
+        "priceCents": 15562,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 503
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100100",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100100",
+        "category": "ELECTRONICS",
+        "priceCents": 15699,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 520
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100101",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100101",
+        "category": "HARDWARE",
+        "priceCents": 15836,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 537
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100102",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100102",
+        "category": "STORAGE",
+        "priceCents": 15973,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 554
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100103",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100103",
+        "category": "NETWORKING",
+        "priceCents": 16110,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 571
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100104",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100104",
+        "category": "ACCESSORIES",
+        "priceCents": 16247,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 588
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100105",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100105",
+        "category": "ELECTRONICS",
+        "priceCents": 16384,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 605
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100106",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100106",
+        "category": "HARDWARE",
+        "priceCents": 16521,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 622
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100107",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100107",
+        "category": "STORAGE",
+        "priceCents": 16658,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 639
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100108",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100108",
+        "category": "NETWORKING",
+        "priceCents": 16795,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 656
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100109",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100109",
+        "category": "ACCESSORIES",
+        "priceCents": 16932,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 673
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100110",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100110",
+        "category": "ELECTRONICS",
+        "priceCents": 17069,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 690
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100111",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100111",
+        "category": "HARDWARE",
+        "priceCents": 17206,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 707
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100112",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100112",
+        "category": "STORAGE",
+        "priceCents": 17343,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 724
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100113",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100113",
+        "category": "NETWORKING",
+        "priceCents": 17480,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 741
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100114",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100114",
+        "category": "ACCESSORIES",
+        "priceCents": 17617,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 758
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100115",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100115",
+        "category": "ELECTRONICS",
+        "priceCents": 17754,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 775
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100116",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100116",
+        "category": "HARDWARE",
+        "priceCents": 17891,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 792
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100117",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100117",
+        "category": "STORAGE",
+        "priceCents": 18028,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 809
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100118",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100118",
+        "category": "NETWORKING",
+        "priceCents": 18165,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 826
+        },
+        "primaryFulfillmentCenter": "fc-us-east-2",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-2"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100119",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100119",
+        "category": "ACCESSORIES",
+        "priceCents": 18302,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 843
+        },
+        "primaryFulfillmentCenter": "fc-us-west-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-3"
+        ]
+      },
+      {
+        "sku": "SKU-PROD-100120",
+        "title": "High-Performance Enterprise Distributed Node Component Unit #100120",
+        "category": "ELECTRONICS",
+        "priceCents": 18439,
+        "currency": "USD",
+        "dimensions": {
+          "lengthCm": 15.5,
+          "widthCm": 10.2,
+          "heightCm": 4.8,
+          "weightGrams": 860
+        },
+        "primaryFulfillmentCenter": "fc-us-east-1",
+        "replicationPolicy": {
+          "requiredZones": [
+            "us-east-1a",
+            "us-east-1b",
+            "us-east-1c"
+          ],
+          "quorumAckLevel": "W2_R2"
+        },
+        "tags": [
+          "ecommerce",
+          "catalog",
+          "production-parity",
+          "v2.4",
+          "tier-1"
+        ]
+      }
+    ],
+    "seededWarehouses": [
+      {
+        "warehouseId": "wh-facility-001",
+        "name": "North American Regional Fulfillment Distribution Center 1",
+        "region": "us-east",
+        "zone": "zone-2",
+        "capacityUnits": 500000,
+        "utilizedUnits": 350500,
+        "inventoryItems": [
+          {
+            "sku": "SKU-PROD-100001",
+            "availableStock": 523,
+            "reservedStock": 7,
+            "binLocation": "AISLE-02-SHELF-2",
+            "lastAuditedAt": "2026-09-19T09:35:00.749Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100002",
+            "availableStock": 546,
+            "reservedStock": 14,
+            "binLocation": "AISLE-03-SHELF-3",
+            "lastAuditedAt": "2026-09-19T08:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100003",
+            "availableStock": 569,
+            "reservedStock": 21,
+            "binLocation": "AISLE-04-SHELF-4",
+            "lastAuditedAt": "2026-09-19T07:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100004",
+            "availableStock": 592,
+            "reservedStock": 28,
+            "binLocation": "AISLE-05-SHELF-5",
+            "lastAuditedAt": "2026-09-19T06:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100005",
+            "availableStock": 615,
+            "reservedStock": 35,
+            "binLocation": "AISLE-06-SHELF-6",
+            "lastAuditedAt": "2026-09-19T05:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100006",
+            "availableStock": 638,
+            "reservedStock": 42,
+            "binLocation": "AISLE-07-SHELF-1",
+            "lastAuditedAt": "2026-09-19T04:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100007",
+            "availableStock": 661,
+            "reservedStock": 49,
+            "binLocation": "AISLE-08-SHELF-2",
+            "lastAuditedAt": "2026-09-19T03:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100008",
+            "availableStock": 684,
+            "reservedStock": 56,
+            "binLocation": "AISLE-09-SHELF-3",
+            "lastAuditedAt": "2026-09-19T02:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100009",
+            "availableStock": 707,
+            "reservedStock": 63,
+            "binLocation": "AISLE-10-SHELF-4",
+            "lastAuditedAt": "2026-09-19T01:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100010",
+            "availableStock": 730,
+            "reservedStock": 70,
+            "binLocation": "AISLE-11-SHELF-5",
+            "lastAuditedAt": "2026-09-19T00:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100011",
+            "availableStock": 753,
+            "reservedStock": 77,
+            "binLocation": "AISLE-12-SHELF-6",
+            "lastAuditedAt": "2026-09-18T23:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100012",
+            "availableStock": 776,
+            "reservedStock": 84,
+            "binLocation": "AISLE-13-SHELF-1",
+            "lastAuditedAt": "2026-09-18T22:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100013",
+            "availableStock": 799,
+            "reservedStock": 91,
+            "binLocation": "AISLE-14-SHELF-2",
+            "lastAuditedAt": "2026-09-18T21:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100014",
+            "availableStock": 822,
+            "reservedStock": 98,
+            "binLocation": "AISLE-15-SHELF-3",
+            "lastAuditedAt": "2026-09-18T20:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100015",
+            "availableStock": 845,
+            "reservedStock": 105,
+            "binLocation": "AISLE-16-SHELF-4",
+            "lastAuditedAt": "2026-09-18T19:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100016",
+            "availableStock": 868,
+            "reservedStock": 112,
+            "binLocation": "AISLE-17-SHELF-5",
+            "lastAuditedAt": "2026-09-18T18:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100017",
+            "availableStock": 891,
+            "reservedStock": 119,
+            "binLocation": "AISLE-18-SHELF-6",
+            "lastAuditedAt": "2026-09-18T17:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100018",
+            "availableStock": 914,
+            "reservedStock": 6,
+            "binLocation": "AISLE-19-SHELF-1",
+            "lastAuditedAt": "2026-09-18T16:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100019",
+            "availableStock": 937,
+            "reservedStock": 13,
+            "binLocation": "AISLE-20-SHELF-2",
+            "lastAuditedAt": "2026-09-18T15:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100020",
+            "availableStock": 960,
+            "reservedStock": 20,
+            "binLocation": "AISLE-01-SHELF-3",
+            "lastAuditedAt": "2026-09-18T14:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100021",
+            "availableStock": 983,
+            "reservedStock": 27,
+            "binLocation": "AISLE-02-SHELF-4",
+            "lastAuditedAt": "2026-09-18T13:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100022",
+            "availableStock": 1006,
+            "reservedStock": 34,
+            "binLocation": "AISLE-03-SHELF-5",
+            "lastAuditedAt": "2026-09-18T12:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100023",
+            "availableStock": 1029,
+            "reservedStock": 41,
+            "binLocation": "AISLE-04-SHELF-6",
+            "lastAuditedAt": "2026-09-18T11:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100024",
+            "availableStock": 1052,
+            "reservedStock": 48,
+            "binLocation": "AISLE-05-SHELF-1",
+            "lastAuditedAt": "2026-09-18T10:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100025",
+            "availableStock": 1075,
+            "reservedStock": 55,
+            "binLocation": "AISLE-06-SHELF-2",
+            "lastAuditedAt": "2026-09-18T09:35:00.750Z",
+            "status": "IN_STOCK"
+          }
+        ]
+      },
+      {
+        "warehouseId": "wh-facility-002",
+        "name": "North American Regional Fulfillment Distribution Center 2",
+        "region": "us-east",
+        "zone": "zone-3",
+        "capacityUnits": 500000,
+        "utilizedUnits": 359000,
+        "inventoryItems": [
+          {
+            "sku": "SKU-PROD-100001",
+            "availableStock": 523,
+            "reservedStock": 7,
+            "binLocation": "AISLE-02-SHELF-2",
+            "lastAuditedAt": "2026-09-19T09:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100002",
+            "availableStock": 546,
+            "reservedStock": 14,
+            "binLocation": "AISLE-03-SHELF-3",
+            "lastAuditedAt": "2026-09-19T08:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100003",
+            "availableStock": 569,
+            "reservedStock": 21,
+            "binLocation": "AISLE-04-SHELF-4",
+            "lastAuditedAt": "2026-09-19T07:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100004",
+            "availableStock": 592,
+            "reservedStock": 28,
+            "binLocation": "AISLE-05-SHELF-5",
+            "lastAuditedAt": "2026-09-19T06:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100005",
+            "availableStock": 615,
+            "reservedStock": 35,
+            "binLocation": "AISLE-06-SHELF-6",
+            "lastAuditedAt": "2026-09-19T05:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100006",
+            "availableStock": 638,
+            "reservedStock": 42,
+            "binLocation": "AISLE-07-SHELF-1",
+            "lastAuditedAt": "2026-09-19T04:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100007",
+            "availableStock": 661,
+            "reservedStock": 49,
+            "binLocation": "AISLE-08-SHELF-2",
+            "lastAuditedAt": "2026-09-19T03:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100008",
+            "availableStock": 684,
+            "reservedStock": 56,
+            "binLocation": "AISLE-09-SHELF-3",
+            "lastAuditedAt": "2026-09-19T02:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100009",
+            "availableStock": 707,
+            "reservedStock": 63,
+            "binLocation": "AISLE-10-SHELF-4",
+            "lastAuditedAt": "2026-09-19T01:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100010",
+            "availableStock": 730,
+            "reservedStock": 70,
+            "binLocation": "AISLE-11-SHELF-5",
+            "lastAuditedAt": "2026-09-19T00:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100011",
+            "availableStock": 753,
+            "reservedStock": 77,
+            "binLocation": "AISLE-12-SHELF-6",
+            "lastAuditedAt": "2026-09-18T23:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100012",
+            "availableStock": 776,
+            "reservedStock": 84,
+            "binLocation": "AISLE-13-SHELF-1",
+            "lastAuditedAt": "2026-09-18T22:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100013",
+            "availableStock": 799,
+            "reservedStock": 91,
+            "binLocation": "AISLE-14-SHELF-2",
+            "lastAuditedAt": "2026-09-18T21:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100014",
+            "availableStock": 822,
+            "reservedStock": 98,
+            "binLocation": "AISLE-15-SHELF-3",
+            "lastAuditedAt": "2026-09-18T20:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100015",
+            "availableStock": 845,
+            "reservedStock": 105,
+            "binLocation": "AISLE-16-SHELF-4",
+            "lastAuditedAt": "2026-09-18T19:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100016",
+            "availableStock": 868,
+            "reservedStock": 112,
+            "binLocation": "AISLE-17-SHELF-5",
+            "lastAuditedAt": "2026-09-18T18:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100017",
+            "availableStock": 891,
+            "reservedStock": 119,
+            "binLocation": "AISLE-18-SHELF-6",
+            "lastAuditedAt": "2026-09-18T17:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100018",
+            "availableStock": 914,
+            "reservedStock": 6,
+            "binLocation": "AISLE-19-SHELF-1",
+            "lastAuditedAt": "2026-09-18T16:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100019",
+            "availableStock": 937,
+            "reservedStock": 13,
+            "binLocation": "AISLE-20-SHELF-2",
+            "lastAuditedAt": "2026-09-18T15:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100020",
+            "availableStock": 960,
+            "reservedStock": 20,
+            "binLocation": "AISLE-01-SHELF-3",
+            "lastAuditedAt": "2026-09-18T14:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100021",
+            "availableStock": 983,
+            "reservedStock": 27,
+            "binLocation": "AISLE-02-SHELF-4",
+            "lastAuditedAt": "2026-09-18T13:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100022",
+            "availableStock": 1006,
+            "reservedStock": 34,
+            "binLocation": "AISLE-03-SHELF-5",
+            "lastAuditedAt": "2026-09-18T12:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100023",
+            "availableStock": 1029,
+            "reservedStock": 41,
+            "binLocation": "AISLE-04-SHELF-6",
+            "lastAuditedAt": "2026-09-18T11:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100024",
+            "availableStock": 1052,
+            "reservedStock": 48,
+            "binLocation": "AISLE-05-SHELF-1",
+            "lastAuditedAt": "2026-09-18T10:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100025",
+            "availableStock": 1075,
+            "reservedStock": 55,
+            "binLocation": "AISLE-06-SHELF-2",
+            "lastAuditedAt": "2026-09-18T09:35:00.750Z",
+            "status": "IN_STOCK"
+          }
+        ]
+      },
+      {
+        "warehouseId": "wh-facility-003",
+        "name": "North American Regional Fulfillment Distribution Center 3",
+        "region": "us-central",
+        "zone": "zone-1",
+        "capacityUnits": 500000,
+        "utilizedUnits": 367500,
+        "inventoryItems": [
+          {
+            "sku": "SKU-PROD-100001",
+            "availableStock": 523,
+            "reservedStock": 7,
+            "binLocation": "AISLE-02-SHELF-2",
+            "lastAuditedAt": "2026-09-19T09:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100002",
+            "availableStock": 546,
+            "reservedStock": 14,
+            "binLocation": "AISLE-03-SHELF-3",
+            "lastAuditedAt": "2026-09-19T08:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100003",
+            "availableStock": 569,
+            "reservedStock": 21,
+            "binLocation": "AISLE-04-SHELF-4",
+            "lastAuditedAt": "2026-09-19T07:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100004",
+            "availableStock": 592,
+            "reservedStock": 28,
+            "binLocation": "AISLE-05-SHELF-5",
+            "lastAuditedAt": "2026-09-19T06:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100005",
+            "availableStock": 615,
+            "reservedStock": 35,
+            "binLocation": "AISLE-06-SHELF-6",
+            "lastAuditedAt": "2026-09-19T05:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100006",
+            "availableStock": 638,
+            "reservedStock": 42,
+            "binLocation": "AISLE-07-SHELF-1",
+            "lastAuditedAt": "2026-09-19T04:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100007",
+            "availableStock": 661,
+            "reservedStock": 49,
+            "binLocation": "AISLE-08-SHELF-2",
+            "lastAuditedAt": "2026-09-19T03:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100008",
+            "availableStock": 684,
+            "reservedStock": 56,
+            "binLocation": "AISLE-09-SHELF-3",
+            "lastAuditedAt": "2026-09-19T02:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100009",
+            "availableStock": 707,
+            "reservedStock": 63,
+            "binLocation": "AISLE-10-SHELF-4",
+            "lastAuditedAt": "2026-09-19T01:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100010",
+            "availableStock": 730,
+            "reservedStock": 70,
+            "binLocation": "AISLE-11-SHELF-5",
+            "lastAuditedAt": "2026-09-19T00:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100011",
+            "availableStock": 753,
+            "reservedStock": 77,
+            "binLocation": "AISLE-12-SHELF-6",
+            "lastAuditedAt": "2026-09-18T23:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100012",
+            "availableStock": 776,
+            "reservedStock": 84,
+            "binLocation": "AISLE-13-SHELF-1",
+            "lastAuditedAt": "2026-09-18T22:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100013",
+            "availableStock": 799,
+            "reservedStock": 91,
+            "binLocation": "AISLE-14-SHELF-2",
+            "lastAuditedAt": "2026-09-18T21:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100014",
+            "availableStock": 822,
+            "reservedStock": 98,
+            "binLocation": "AISLE-15-SHELF-3",
+            "lastAuditedAt": "2026-09-18T20:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100015",
+            "availableStock": 845,
+            "reservedStock": 105,
+            "binLocation": "AISLE-16-SHELF-4",
+            "lastAuditedAt": "2026-09-18T19:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100016",
+            "availableStock": 868,
+            "reservedStock": 112,
+            "binLocation": "AISLE-17-SHELF-5",
+            "lastAuditedAt": "2026-09-18T18:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100017",
+            "availableStock": 891,
+            "reservedStock": 119,
+            "binLocation": "AISLE-18-SHELF-6",
+            "lastAuditedAt": "2026-09-18T17:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100018",
+            "availableStock": 914,
+            "reservedStock": 6,
+            "binLocation": "AISLE-19-SHELF-1",
+            "lastAuditedAt": "2026-09-18T16:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100019",
+            "availableStock": 937,
+            "reservedStock": 13,
+            "binLocation": "AISLE-20-SHELF-2",
+            "lastAuditedAt": "2026-09-18T15:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100020",
+            "availableStock": 960,
+            "reservedStock": 20,
+            "binLocation": "AISLE-01-SHELF-3",
+            "lastAuditedAt": "2026-09-18T14:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100021",
+            "availableStock": 983,
+            "reservedStock": 27,
+            "binLocation": "AISLE-02-SHELF-4",
+            "lastAuditedAt": "2026-09-18T13:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100022",
+            "availableStock": 1006,
+            "reservedStock": 34,
+            "binLocation": "AISLE-03-SHELF-5",
+            "lastAuditedAt": "2026-09-18T12:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100023",
+            "availableStock": 1029,
+            "reservedStock": 41,
+            "binLocation": "AISLE-04-SHELF-6",
+            "lastAuditedAt": "2026-09-18T11:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100024",
+            "availableStock": 1052,
+            "reservedStock": 48,
+            "binLocation": "AISLE-05-SHELF-1",
+            "lastAuditedAt": "2026-09-18T10:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100025",
+            "availableStock": 1075,
+            "reservedStock": 55,
+            "binLocation": "AISLE-06-SHELF-2",
+            "lastAuditedAt": "2026-09-18T09:35:00.750Z",
+            "status": "IN_STOCK"
+          }
+        ]
+      },
+      {
+        "warehouseId": "wh-facility-004",
+        "name": "North American Regional Fulfillment Distribution Center 4",
+        "region": "us-central",
+        "zone": "zone-2",
+        "capacityUnits": 500000,
+        "utilizedUnits": 376000,
+        "inventoryItems": [
+          {
+            "sku": "SKU-PROD-100001",
+            "availableStock": 523,
+            "reservedStock": 7,
+            "binLocation": "AISLE-02-SHELF-2",
+            "lastAuditedAt": "2026-09-19T09:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100002",
+            "availableStock": 546,
+            "reservedStock": 14,
+            "binLocation": "AISLE-03-SHELF-3",
+            "lastAuditedAt": "2026-09-19T08:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100003",
+            "availableStock": 569,
+            "reservedStock": 21,
+            "binLocation": "AISLE-04-SHELF-4",
+            "lastAuditedAt": "2026-09-19T07:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100004",
+            "availableStock": 592,
+            "reservedStock": 28,
+            "binLocation": "AISLE-05-SHELF-5",
+            "lastAuditedAt": "2026-09-19T06:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100005",
+            "availableStock": 615,
+            "reservedStock": 35,
+            "binLocation": "AISLE-06-SHELF-6",
+            "lastAuditedAt": "2026-09-19T05:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100006",
+            "availableStock": 638,
+            "reservedStock": 42,
+            "binLocation": "AISLE-07-SHELF-1",
+            "lastAuditedAt": "2026-09-19T04:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100007",
+            "availableStock": 661,
+            "reservedStock": 49,
+            "binLocation": "AISLE-08-SHELF-2",
+            "lastAuditedAt": "2026-09-19T03:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100008",
+            "availableStock": 684,
+            "reservedStock": 56,
+            "binLocation": "AISLE-09-SHELF-3",
+            "lastAuditedAt": "2026-09-19T02:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100009",
+            "availableStock": 707,
+            "reservedStock": 63,
+            "binLocation": "AISLE-10-SHELF-4",
+            "lastAuditedAt": "2026-09-19T01:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100010",
+            "availableStock": 730,
+            "reservedStock": 70,
+            "binLocation": "AISLE-11-SHELF-5",
+            "lastAuditedAt": "2026-09-19T00:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100011",
+            "availableStock": 753,
+            "reservedStock": 77,
+            "binLocation": "AISLE-12-SHELF-6",
+            "lastAuditedAt": "2026-09-18T23:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100012",
+            "availableStock": 776,
+            "reservedStock": 84,
+            "binLocation": "AISLE-13-SHELF-1",
+            "lastAuditedAt": "2026-09-18T22:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100013",
+            "availableStock": 799,
+            "reservedStock": 91,
+            "binLocation": "AISLE-14-SHELF-2",
+            "lastAuditedAt": "2026-09-18T21:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100014",
+            "availableStock": 822,
+            "reservedStock": 98,
+            "binLocation": "AISLE-15-SHELF-3",
+            "lastAuditedAt": "2026-09-18T20:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100015",
+            "availableStock": 845,
+            "reservedStock": 105,
+            "binLocation": "AISLE-16-SHELF-4",
+            "lastAuditedAt": "2026-09-18T19:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100016",
+            "availableStock": 868,
+            "reservedStock": 112,
+            "binLocation": "AISLE-17-SHELF-5",
+            "lastAuditedAt": "2026-09-18T18:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100017",
+            "availableStock": 891,
+            "reservedStock": 119,
+            "binLocation": "AISLE-18-SHELF-6",
+            "lastAuditedAt": "2026-09-18T17:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100018",
+            "availableStock": 914,
+            "reservedStock": 6,
+            "binLocation": "AISLE-19-SHELF-1",
+            "lastAuditedAt": "2026-09-18T16:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100019",
+            "availableStock": 937,
+            "reservedStock": 13,
+            "binLocation": "AISLE-20-SHELF-2",
+            "lastAuditedAt": "2026-09-18T15:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100020",
+            "availableStock": 960,
+            "reservedStock": 20,
+            "binLocation": "AISLE-01-SHELF-3",
+            "lastAuditedAt": "2026-09-18T14:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100021",
+            "availableStock": 983,
+            "reservedStock": 27,
+            "binLocation": "AISLE-02-SHELF-4",
+            "lastAuditedAt": "2026-09-18T13:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100022",
+            "availableStock": 1006,
+            "reservedStock": 34,
+            "binLocation": "AISLE-03-SHELF-5",
+            "lastAuditedAt": "2026-09-18T12:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100023",
+            "availableStock": 1029,
+            "reservedStock": 41,
+            "binLocation": "AISLE-04-SHELF-6",
+            "lastAuditedAt": "2026-09-18T11:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100024",
+            "availableStock": 1052,
+            "reservedStock": 48,
+            "binLocation": "AISLE-05-SHELF-1",
+            "lastAuditedAt": "2026-09-18T10:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100025",
+            "availableStock": 1075,
+            "reservedStock": 55,
+            "binLocation": "AISLE-06-SHELF-2",
+            "lastAuditedAt": "2026-09-18T09:35:00.750Z",
+            "status": "IN_STOCK"
+          }
+        ]
+      },
+      {
+        "warehouseId": "wh-facility-005",
+        "name": "North American Regional Fulfillment Distribution Center 5",
+        "region": "us-west",
+        "zone": "zone-3",
+        "capacityUnits": 500000,
+        "utilizedUnits": 384500,
+        "inventoryItems": [
+          {
+            "sku": "SKU-PROD-100001",
+            "availableStock": 523,
+            "reservedStock": 7,
+            "binLocation": "AISLE-02-SHELF-2",
+            "lastAuditedAt": "2026-09-19T09:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100002",
+            "availableStock": 546,
+            "reservedStock": 14,
+            "binLocation": "AISLE-03-SHELF-3",
+            "lastAuditedAt": "2026-09-19T08:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100003",
+            "availableStock": 569,
+            "reservedStock": 21,
+            "binLocation": "AISLE-04-SHELF-4",
+            "lastAuditedAt": "2026-09-19T07:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100004",
+            "availableStock": 592,
+            "reservedStock": 28,
+            "binLocation": "AISLE-05-SHELF-5",
+            "lastAuditedAt": "2026-09-19T06:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100005",
+            "availableStock": 615,
+            "reservedStock": 35,
+            "binLocation": "AISLE-06-SHELF-6",
+            "lastAuditedAt": "2026-09-19T05:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100006",
+            "availableStock": 638,
+            "reservedStock": 42,
+            "binLocation": "AISLE-07-SHELF-1",
+            "lastAuditedAt": "2026-09-19T04:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100007",
+            "availableStock": 661,
+            "reservedStock": 49,
+            "binLocation": "AISLE-08-SHELF-2",
+            "lastAuditedAt": "2026-09-19T03:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100008",
+            "availableStock": 684,
+            "reservedStock": 56,
+            "binLocation": "AISLE-09-SHELF-3",
+            "lastAuditedAt": "2026-09-19T02:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100009",
+            "availableStock": 707,
+            "reservedStock": 63,
+            "binLocation": "AISLE-10-SHELF-4",
+            "lastAuditedAt": "2026-09-19T01:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100010",
+            "availableStock": 730,
+            "reservedStock": 70,
+            "binLocation": "AISLE-11-SHELF-5",
+            "lastAuditedAt": "2026-09-19T00:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100011",
+            "availableStock": 753,
+            "reservedStock": 77,
+            "binLocation": "AISLE-12-SHELF-6",
+            "lastAuditedAt": "2026-09-18T23:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100012",
+            "availableStock": 776,
+            "reservedStock": 84,
+            "binLocation": "AISLE-13-SHELF-1",
+            "lastAuditedAt": "2026-09-18T22:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100013",
+            "availableStock": 799,
+            "reservedStock": 91,
+            "binLocation": "AISLE-14-SHELF-2",
+            "lastAuditedAt": "2026-09-18T21:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100014",
+            "availableStock": 822,
+            "reservedStock": 98,
+            "binLocation": "AISLE-15-SHELF-3",
+            "lastAuditedAt": "2026-09-18T20:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100015",
+            "availableStock": 845,
+            "reservedStock": 105,
+            "binLocation": "AISLE-16-SHELF-4",
+            "lastAuditedAt": "2026-09-18T19:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100016",
+            "availableStock": 868,
+            "reservedStock": 112,
+            "binLocation": "AISLE-17-SHELF-5",
+            "lastAuditedAt": "2026-09-18T18:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100017",
+            "availableStock": 891,
+            "reservedStock": 119,
+            "binLocation": "AISLE-18-SHELF-6",
+            "lastAuditedAt": "2026-09-18T17:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100018",
+            "availableStock": 914,
+            "reservedStock": 6,
+            "binLocation": "AISLE-19-SHELF-1",
+            "lastAuditedAt": "2026-09-18T16:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100019",
+            "availableStock": 937,
+            "reservedStock": 13,
+            "binLocation": "AISLE-20-SHELF-2",
+            "lastAuditedAt": "2026-09-18T15:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100020",
+            "availableStock": 960,
+            "reservedStock": 20,
+            "binLocation": "AISLE-01-SHELF-3",
+            "lastAuditedAt": "2026-09-18T14:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100021",
+            "availableStock": 983,
+            "reservedStock": 27,
+            "binLocation": "AISLE-02-SHELF-4",
+            "lastAuditedAt": "2026-09-18T13:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100022",
+            "availableStock": 1006,
+            "reservedStock": 34,
+            "binLocation": "AISLE-03-SHELF-5",
+            "lastAuditedAt": "2026-09-18T12:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100023",
+            "availableStock": 1029,
+            "reservedStock": 41,
+            "binLocation": "AISLE-04-SHELF-6",
+            "lastAuditedAt": "2026-09-18T11:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100024",
+            "availableStock": 1052,
+            "reservedStock": 48,
+            "binLocation": "AISLE-05-SHELF-1",
+            "lastAuditedAt": "2026-09-18T10:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100025",
+            "availableStock": 1075,
+            "reservedStock": 55,
+            "binLocation": "AISLE-06-SHELF-2",
+            "lastAuditedAt": "2026-09-18T09:35:00.750Z",
+            "status": "IN_STOCK"
+          }
+        ]
+      },
+      {
+        "warehouseId": "wh-facility-006",
+        "name": "North American Regional Fulfillment Distribution Center 6",
+        "region": "us-west",
+        "zone": "zone-1",
+        "capacityUnits": 500000,
+        "utilizedUnits": 393000,
+        "inventoryItems": [
+          {
+            "sku": "SKU-PROD-100001",
+            "availableStock": 523,
+            "reservedStock": 7,
+            "binLocation": "AISLE-02-SHELF-2",
+            "lastAuditedAt": "2026-09-19T09:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100002",
+            "availableStock": 546,
+            "reservedStock": 14,
+            "binLocation": "AISLE-03-SHELF-3",
+            "lastAuditedAt": "2026-09-19T08:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100003",
+            "availableStock": 569,
+            "reservedStock": 21,
+            "binLocation": "AISLE-04-SHELF-4",
+            "lastAuditedAt": "2026-09-19T07:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100004",
+            "availableStock": 592,
+            "reservedStock": 28,
+            "binLocation": "AISLE-05-SHELF-5",
+            "lastAuditedAt": "2026-09-19T06:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100005",
+            "availableStock": 615,
+            "reservedStock": 35,
+            "binLocation": "AISLE-06-SHELF-6",
+            "lastAuditedAt": "2026-09-19T05:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100006",
+            "availableStock": 638,
+            "reservedStock": 42,
+            "binLocation": "AISLE-07-SHELF-1",
+            "lastAuditedAt": "2026-09-19T04:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100007",
+            "availableStock": 661,
+            "reservedStock": 49,
+            "binLocation": "AISLE-08-SHELF-2",
+            "lastAuditedAt": "2026-09-19T03:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100008",
+            "availableStock": 684,
+            "reservedStock": 56,
+            "binLocation": "AISLE-09-SHELF-3",
+            "lastAuditedAt": "2026-09-19T02:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100009",
+            "availableStock": 707,
+            "reservedStock": 63,
+            "binLocation": "AISLE-10-SHELF-4",
+            "lastAuditedAt": "2026-09-19T01:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100010",
+            "availableStock": 730,
+            "reservedStock": 70,
+            "binLocation": "AISLE-11-SHELF-5",
+            "lastAuditedAt": "2026-09-19T00:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100011",
+            "availableStock": 753,
+            "reservedStock": 77,
+            "binLocation": "AISLE-12-SHELF-6",
+            "lastAuditedAt": "2026-09-18T23:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100012",
+            "availableStock": 776,
+            "reservedStock": 84,
+            "binLocation": "AISLE-13-SHELF-1",
+            "lastAuditedAt": "2026-09-18T22:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100013",
+            "availableStock": 799,
+            "reservedStock": 91,
+            "binLocation": "AISLE-14-SHELF-2",
+            "lastAuditedAt": "2026-09-18T21:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100014",
+            "availableStock": 822,
+            "reservedStock": 98,
+            "binLocation": "AISLE-15-SHELF-3",
+            "lastAuditedAt": "2026-09-18T20:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100015",
+            "availableStock": 845,
+            "reservedStock": 105,
+            "binLocation": "AISLE-16-SHELF-4",
+            "lastAuditedAt": "2026-09-18T19:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100016",
+            "availableStock": 868,
+            "reservedStock": 112,
+            "binLocation": "AISLE-17-SHELF-5",
+            "lastAuditedAt": "2026-09-18T18:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100017",
+            "availableStock": 891,
+            "reservedStock": 119,
+            "binLocation": "AISLE-18-SHELF-6",
+            "lastAuditedAt": "2026-09-18T17:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100018",
+            "availableStock": 914,
+            "reservedStock": 6,
+            "binLocation": "AISLE-19-SHELF-1",
+            "lastAuditedAt": "2026-09-18T16:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100019",
+            "availableStock": 937,
+            "reservedStock": 13,
+            "binLocation": "AISLE-20-SHELF-2",
+            "lastAuditedAt": "2026-09-18T15:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100020",
+            "availableStock": 960,
+            "reservedStock": 20,
+            "binLocation": "AISLE-01-SHELF-3",
+            "lastAuditedAt": "2026-09-18T14:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100021",
+            "availableStock": 983,
+            "reservedStock": 27,
+            "binLocation": "AISLE-02-SHELF-4",
+            "lastAuditedAt": "2026-09-18T13:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100022",
+            "availableStock": 1006,
+            "reservedStock": 34,
+            "binLocation": "AISLE-03-SHELF-5",
+            "lastAuditedAt": "2026-09-18T12:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100023",
+            "availableStock": 1029,
+            "reservedStock": 41,
+            "binLocation": "AISLE-04-SHELF-6",
+            "lastAuditedAt": "2026-09-18T11:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100024",
+            "availableStock": 1052,
+            "reservedStock": 48,
+            "binLocation": "AISLE-05-SHELF-1",
+            "lastAuditedAt": "2026-09-18T10:35:00.750Z",
+            "status": "IN_STOCK"
+          },
+          {
+            "sku": "SKU-PROD-100025",
+            "availableStock": 1075,
+            "reservedStock": 55,
+            "binLocation": "AISLE-06-SHELF-2",
+            "lastAuditedAt": "2026-09-18T09:35:00.750Z",
+            "status": "IN_STOCK"
+          }
+        ]
+      }
+    ]
+  },
+  "workload": {
+    "workloadId": "wkld-ecommerce-checkout-100k-v5",
+    "masterSeed": 13371337,
+    "duration": {
+      "mode": "operations",
+      "totalOperations": 100000
+    },
+    "concurrency": {
+      "clients": 64,
+      "connectionsPerClient": 4,
+      "maxInFlightPerClient": 8
+    },
+    "trafficPattern": {
+      "distribution": "ZIPFIAN",
+      "zipfAlpha": 1.15,
+      "hotKeyPercentage": 20,
+      "hotTrafficPercentage": 80
+    },
+    "operationMix": {
+      "GET_PRODUCT": 0.3,
+      "GET_INVENTORY": 0.15,
+      "SEARCH_PRODUCT": 0.1,
+      "GET_ORDER": 0.08,
+      "CREATE_ORDER": 0.1,
+      "UPDATE_INVENTORY": 0.1,
+      "CANCEL_ORDER": 0.04,
+      "UPDATE_PRODUCT": 0.03,
+      "CUSTOMER_READ": 0.05,
+      "CUSTOMER_UPDATE": 0.02,
+      "HEALTH_READ": 0.03
+    },
+    "requestProperties": {
+      "idempotencyEnabled": true,
+      "requestTimeoutMs": 500,
+      "retryEnabled": true,
+      "retryPolicy": {
+        "maxAttempts": 3,
+        "backoff": "EXPONENTIAL",
+        "initialBackoffMs": 5,
+        "maxBackoffMs": 100,
+        "jitter": true
+      }
+    },
+    "payloadSizes": {
+      "GET_PRODUCT": {
+        "meanBytes": 2500,
+        "p95Bytes": 5000
+      },
+      "CREATE_ORDER": {
+        "meanBytes": 1800,
+        "p95Bytes": 4200
+      },
+      "UPDATE_INVENTORY": {
+        "meanBytes": 700,
+        "p95Bytes": 1400
+      }
+    },
+    "businessScenarios": [
+      {
+        "scenarioId": "browse",
+        "weight": 0.4,
+        "operations": [
+          "GET_PRODUCT",
+          "GET_INVENTORY",
+          "SEARCH_PRODUCT"
+        ]
+      },
+      {
+        "scenarioId": "checkout",
+        "weight": 0.3,
+        "operations": [
+          "GET_PRODUCT",
+          "GET_INVENTORY",
+          "CREATE_ORDER",
+          "UPDATE_INVENTORY"
+        ]
+      },
+      {
+        "scenarioId": "order-management",
+        "weight": 0.15,
+        "operations": [
+          "GET_ORDER",
+          "CANCEL_ORDER"
+        ]
+      },
+      {
+        "scenarioId": "customer",
+        "weight": 0.1,
+        "operations": [
+          "CUSTOMER_READ",
+          "CUSTOMER_UPDATE"
+        ]
+      },
+      {
+        "scenarioId": "catalog-admin",
+        "weight": 0.05,
+        "operations": [
+          "UPDATE_PRODUCT"
+        ]
+      }
+    ]
+  },
+  "determinism": {
+    "enabled": true,
+    "prng": {
+      "algorithm": "mulberry32-v1",
+      "seedDerivation": "fnv1a64+splitmix64-v1",
+      "version": "1.0.0"
+    },
+    "hashInputs": [
+      "project",
+      "cluster",
+      "dataset",
+      "workload",
+      "faultSchedule",
+      "consistency"
+    ],
+    "requireTraceHash": true,
+    "requireFaultTimelineHash": true,
+    "requireSpecHash": true
+  },
+  "faultSchedule": {
+    "timelineId": "ftl-extended-enterprise-chaos-15stage-v2",
+    "clock": {
+      "basis": "EXPERIMENT_START",
+      "units": "milliseconds"
+    },
+    "events": [
+      {
+        "eventId": "fault-001",
+        "offsetMs": 1450,
+        "type": "NETWORK_DELAY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 1620,
+        "severity": "LOW",
+        "parameters": {
+          "injectedDelayMs": 19,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #1 assessing quorum interlock robustness under NETWORK_DELAY"
+        }
+      },
+      {
+        "eventId": "fault-002",
+        "offsetMs": 2400,
+        "type": "PACKET_LOSS",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 1740,
+        "severity": "MEDIUM",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0.09,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #2 assessing quorum interlock robustness under PACKET_LOSS"
+        }
+      },
+      {
+        "eventId": "fault-003",
+        "offsetMs": 3350,
+        "type": "NODE_CRASH",
+        "targetNodes": [
+          "node-1.us-east.quorum"
+        ],
+        "durationMs": 2500,
+        "severity": "HIGH",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #3 assessing quorum interlock robustness under NODE_CRASH"
+        }
+      },
+      {
+        "eventId": "fault-004",
+        "offsetMs": 4300,
+        "type": "NODE_RECOVERY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 0,
+        "severity": "CRITICAL",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #4 assessing quorum interlock robustness under NODE_RECOVERY"
+        }
+      },
+      {
+        "eventId": "fault-005",
+        "offsetMs": 5250,
+        "type": "IO_LATENCY_SPIKE",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 2100,
+        "severity": "LOW",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 40,
+          "triggerDescription": "Automated chaos event #5 assessing quorum interlock robustness under IO_LATENCY_SPIKE"
+        }
+      },
+      {
+        "eventId": "fault-006",
+        "offsetMs": 6200,
+        "type": "NETWORK_PARTITION",
+        "targetNodes": [
+          "node-1.us-east.quorum"
+        ],
+        "durationMs": 2220,
+        "severity": "HIGH",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #6 assessing quorum interlock robustness under NETWORK_PARTITION"
+        }
+      },
+      {
+        "eventId": "fault-007",
+        "offsetMs": 7150,
+        "type": "NETWORK_DELAY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 2340,
+        "severity": "LOW",
+        "parameters": {
+          "injectedDelayMs": 43,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #7 assessing quorum interlock robustness under NETWORK_DELAY"
+        }
+      },
+      {
+        "eventId": "fault-008",
+        "offsetMs": 8100,
+        "type": "PACKET_LOSS",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 2460,
+        "severity": "CRITICAL",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0.11,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #8 assessing quorum interlock robustness under PACKET_LOSS"
+        }
+      },
+      {
+        "eventId": "fault-009",
+        "offsetMs": 9050,
+        "type": "NODE_CRASH",
+        "targetNodes": [
+          "node-1.us-east.quorum"
+        ],
+        "durationMs": 2500,
+        "severity": "HIGH",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #9 assessing quorum interlock robustness under NODE_CRASH"
+        }
+      },
+      {
+        "eventId": "fault-010",
+        "offsetMs": 10000,
+        "type": "NODE_RECOVERY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 0,
+        "severity": "MEDIUM",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #10 assessing quorum interlock robustness under NODE_RECOVERY"
+        }
+      },
+      {
+        "eventId": "fault-011",
+        "offsetMs": 10950,
+        "type": "IO_LATENCY_SPIKE",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 2820,
+        "severity": "LOW",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 40,
+          "triggerDescription": "Automated chaos event #11 assessing quorum interlock robustness under IO_LATENCY_SPIKE"
+        }
+      },
+      {
+        "eventId": "fault-012",
+        "offsetMs": 11900,
+        "type": "NETWORK_PARTITION",
+        "targetNodes": [
+          "node-1.us-east.quorum"
+        ],
+        "durationMs": 2940,
+        "severity": "CRITICAL",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #12 assessing quorum interlock robustness under NETWORK_PARTITION"
+        }
+      },
+      {
+        "eventId": "fault-013",
+        "offsetMs": 12850,
+        "type": "NETWORK_DELAY",
+        "targetNodes": [
+          "node-2.us-east.quorum"
+        ],
+        "durationMs": 3060,
+        "severity": "LOW",
+        "parameters": {
+          "injectedDelayMs": 67,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #13 assessing quorum interlock robustness under NETWORK_DELAY"
+        }
+      },
+      {
+        "eventId": "fault-014",
+        "offsetMs": 13800,
+        "type": "PACKET_LOSS",
+        "targetNodes": [
+          "node-3.us-east.quorum"
+        ],
+        "durationMs": 3180,
+        "severity": "MEDIUM",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0.13,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #14 assessing quorum interlock robustness under PACKET_LOSS"
+        }
+      },
+      {
+        "eventId": "fault-015",
+        "offsetMs": 14750,
+        "type": "NODE_CRASH",
+        "targetNodes": [
+          "node-1.us-east.quorum"
+        ],
+        "durationMs": 2500,
+        "severity": "HIGH",
+        "parameters": {
+          "injectedDelayMs": 0,
+          "packetLossRatio": 0,
+          "ioWaitMs": 0,
+          "triggerDescription": "Automated chaos event #15 assessing quorum interlock robustness under NODE_CRASH"
+        }
+      }
+    ],
+    "safety": {
+      "requireSortedTimeline": true,
+      "rejectOverlappingInvalidFaults": false,
+      "requireUniqueEventIds": true,
+      "requireTargetNodesExist": true
+    }
+  },
+  "blackbox": {
+    "engine": "BLACKBOX-X",
+    "version": "2.0.0",
+    "simulation": {
+      "mode": "DISCRETE_EVENT",
+      "includeNetwork": true,
+      "includeQueueing": true,
+      "includeDisk": true,
+      "includeRetries": true,
+      "includeQuorum": true,
+      "includeFaults": true
+    },
+    "initialParameters": {
+      "networkLatencyMs": 3.2,
+      "networkJitterMs": 0.8,
+      "diskFlushMs": 2,
+      "batchWindowMs": 10,
+      "queueServiceRate": 5000,
+      "retryBackoffMs": 5,
+      "quorumTimeoutMs": 100
+    },
+    "predictionTargets": [
+      "p50Latency",
+      "p95Latency",
+      "p99Latency",
+      "throughput",
+      "successRate",
+      "errorRate",
+      "queueDepth",
+      "retries",
+      "quorumLatency"
+    ]
+  },
+  "telemetry": {
+    "collectionMode": "REAL_TIME",
+    "sampleEveryMs": 100,
+    "requestMetrics": {
+      "enabled": true,
+      "fields": [
+        "requestId",
+        "operationId",
+        "operationType",
+        "key",
+        "startTime",
+        "endTime",
+        "latencyUs",
+        "success",
+        "errorCode",
+        "retryCount",
+        "attemptCount",
+        "selectedNodes",
+        "acknowledgedNodes",
+        "readResponses",
+        "writeResponses",
+        "quorumSatisfied",
+        "consistencyVersion"
+      ]
+    },
+    "nodeMetrics": {
+      "enabled": true,
+      "fields": [
+        "cpuPercent",
+        "memoryPercent",
+        "networkIngressBytes",
+        "networkEgressBytes",
+        "diskReadBytes",
+        "diskWriteBytes",
+        "diskLatencyMs",
+        "openConnections",
+        "queueDepth",
+        "replicationLagMs",
+        "requestRate",
+        "errorRate"
+      ]
+    },
+    "systemMetrics": {
+      "enabled": true,
+      "fields": [
+        "throughputOpsSec",
+        "successRate",
+        "failureRate",
+        "retryRate",
+        "timeoutRate",
+        "p50",
+        "p90",
+        "p95",
+        "p99",
+        "p999"
+      ]
+    },
+    "tracing": {
+      "enabled": true,
+      "sampling": 1,
+      "propagateTraceId": true,
+      "recordSpanEvents": true
+    }
+  },
+  "consistencyValidation": {
+    "enabled": true,
+    "checks": [
+      "READ_AFTER_WRITE",
+      "STALE_READ",
+      "LOST_WRITE",
+      "DUPLICATE_WRITE",
+      "WRITE_QUORUM",
+      "READ_QUORUM",
+      "CONFLICT_DETECTION",
+      "CONFLICT_RESOLUTION",
+      "VERSION_MONOTONICITY",
+      "REPLICATION_CONVERGENCE"
+    ],
+    "staleRead": {
+      "enabled": true,
+      "maxAllowedVersionLag": 0
+    },
+    "readAfterWrite": {
+      "enabled": true,
+      "maxAllowedDelayMs": 500
+    },
+    "convergence": {
+      "enabled": true,
+      "maxRecoveryWindowMs": 10000
+    }
+  },
+  "slo": {
+    "availabilityPercent": {
+      "target": 99,
+      "operator": ">="
+    },
+    "latencyMs": {
+      "p50": {
+        "target": 10,
+        "operator": "<="
+      },
+      "p95": {
+        "target": 25,
+        "operator": "<="
+      },
+      "p99": {
+        "target": 50,
+        "operator": "<="
+      }
+    },
+    "throughputOpsSec": {
+      "target": 500,
+      "operator": ">="
+    },
+    "errorRatePercent": {
+      "target": 1,
+      "operator": "<="
+    },
+    "quorumViolationCount": {
+      "target": 0,
+      "operator": "=="
+    },
+    "lostWriteCount": {
+      "target": 0,
+      "operator": "=="
+    }
+  },
+  "comparison": {
+    "enabled": true,
+    "engines": {
+      "baseline": "BLACKBOX_SIMULATION",
+      "empirical": "QUORUM_REAL_EXECUTION"
+    },
+    "statistics": {
+      "ksTest": {
+        "enabled": true,
+        "alpha": 0.05
+      },
+      "wasserstein": {
+        "enabled": true,
+        "maxDistanceMs": 2
+      },
+      "mape": {
+        "enabled": true,
+        "metrics": [
+          "p50Latency",
+          "p95Latency",
+          "p99Latency",
+          "throughput",
+          "successRate"
+        ]
+      }
+    },
+    "engineeringThresholds": {
+      "maxP99MapePercent": 25,
+      "maxP95MapePercent": 20,
+      "maxThroughputMapePercent": 30,
+      "maxSuccessRateDifferencePercent": 1,
+      "maxWassersteinMs": 2
+    },
+    "requireAllGates": true
+  },
+  "calibration": {
+    "enabled": true,
+    "objective": "MINIMIZE_P99_MAE",
+    "parameters": [
+      {
+        "name": "networkLatencyMs",
+        "initial": 3.2,
+        "min": 0.1,
+        "max": 50,
+        "step": 0.1
+      },
+      {
+        "name": "networkJitterMs",
+        "initial": 0.8,
+        "min": 0,
+        "max": 20,
+        "step": 0.1
+      },
+      {
+        "name": "diskFlushMs",
+        "initial": 2,
+        "min": 0.1,
+        "max": 100,
+        "step": 0.1
+      },
+      {
+        "name": "batchWindowMs",
+        "initial": 10,
+        "min": 0,
+        "max": 100,
+        "step": 1
+      },
+      {
+        "name": "quorumTimeoutMs",
+        "initial": 100,
+        "min": 10,
+        "max": 1000,
+        "step": 5
+      }
+    ],
+    "optimizer": {
+      "algorithm": "ADAPTIVE_SEARCH",
+      "maxIterations": 20,
+      "convergenceTolerance": 0.01,
+      "patience": 3
+    },
+    "dataSplit": {
+      "strategy": "TEMPORAL",
+      "calibrationFraction": 0.7,
+      "validationFraction": 0.3,
+      "shuffle": false,
+      "preventLeakage": true,
+      "requireZeroOverlap": true
+    },
+    "validation": {
+      "enabled": true,
+      "heldOutOnly": true,
+      "metrics": [
+        "p99Latency",
+        "throughput",
+        "successRate"
+      ]
+    }
+  },
+  "reporting": {
+    "generateHtml": true,
+    "generateJson": true,
+    "generateCsv": true,
+    "generateMarkdown": true,
+    "include": {
+      "executiveSummary": true,
+      "clusterTopology": true,
+      "workloadProfile": true,
+      "operationMix": true,
+      "keyDistribution": true,
+      "faultTimeline": true,
+      "faultImpact": true,
+      "nodeHealth": true,
+      "latencyDistribution": true,
+      "latencyPercentiles": true,
+      "latencyOverTime": true,
+      "throughputOverTime": true,
+      "errorAnalysis": true,
+      "retryAnalysis": true,
+      "quorumAnalysis": true,
+      "consistencyAnalysis": true,
+      "recoveryAnalysis": true,
+      "sloAnalysis": true,
+      "simulationComparison": true,
+      "ksTest": true,
+      "wasserstein": true,
+      "mape": true,
+      "calibrationHistory": true,
+      "validationResults": true,
+      "artifactLineage": true,
+      "reproducibility": true,
+      "certification": true
+    },
+    "charts": [
+      "operation-mix",
+      "workload-key-frequency",
+      "request-rate",
+      "latency-timeseries",
+      "latency-histogram",
+      "latency-cdf",
+      "latency-boxplot",
+      "throughput-timeseries",
+      "per-node-throughput",
+      "per-node-latency",
+      "error-rate-timeseries",
+      "retry-rate-timeseries",
+      "queue-depth-timeseries",
+      "replication-lag-timeseries",
+      "fault-impact",
+      "recovery-curve",
+      "simulation-vs-real",
+      "calibration-convergence",
+      "parameter-search",
+      "slo-budget"
+    ]
+  },
+  "artifacts": {
+    "root": "s3://system-x-artifacts/experiments/exp-ecommerce-order-catalog-20260919-001",
+    "files": [
+      "experiment.json",
+      "project.json",
+      "cluster.json",
+      "dataset.json",
+      "workload-spec.json",
+      "workload-trace.json",
+      "fault-schedule.json",
+      "fault-timeline.json",
+      "blackbox-predictions.json",
+      "quorum-raw-telemetry.json",
+      "normalized-telemetry.json",
+      "consistency-results.json",
+      "comparison-report.json",
+      "calibration-history.json",
+      "validation-results.json",
+      "certification-record.json",
+      "summary.json",
+      "report.html",
+      "report.md"
+    ],
+    "checksums": {
+      "algorithm": "SHA-256",
+      "required": true
+    },
+    "immutability": {
+      "enabled": true,
+      "mode": "COMPLIANCE",
+      "retentionDays": 90
+    },
+    "lineage": {
+      "enabled": true,
+      "requireParentReferences": true
+    }
+  },
+  "certification": {
+    "enabled": true,
+    "gates": [
+      {
+        "id": "G1",
+        "name": "Deterministic Workload",
+        "condition": "TRACE_HASH_VERIFIED"
+      },
+      {
+        "id": "G2",
+        "name": "Fault Timeline Integrity",
+        "condition": "FAULT_HASH_VERIFIED"
+      },
+      {
+        "id": "G3",
+        "name": "Telemetry Integrity",
+        "condition": "ALL_REQUIRED_FIELDS_PRESENT"
+      },
+      {
+        "id": "G4",
+        "name": "Statistical Fidelity",
+        "condition": "STATISTICAL_THRESHOLDS_PASS"
+      },
+      {
+        "id": "G5",
+        "name": "Engineering Bounds",
+        "condition": "SLO_THRESHOLDS_PASS"
+      },
+      {
+        "id": "G6",
+        "name": "Consistency Correctness",
+        "condition": "CONSISTENCY_CHECKS_PASS"
+      },
+      {
+        "id": "G7",
+        "name": "Calibration Integrity",
+        "condition": "ZERO_LEAKAGE_AND_CONVERGED"
+      },
+      {
+        "id": "G8",
+        "name": "Artifact Integrity",
+        "condition": "SHA256_AND_LINEAGE_VERIFIED"
+      }
+    ],
+    "failCertificationOn": [
+      "LOST_WRITE",
+      "QUORUM_VIOLATION",
+      "ARTIFACT_HASH_MISMATCH",
+      "VALIDATION_LEAKAGE",
+      "INVALID_TRACE_HASH",
+      "INVALID_FAULT_HASH"
+    ]
+  },
+  "reproducibility": {
+    "enabled": true,
+    "capture": [
+      "gitCommit",
+      "gitBranch",
+      "compilerVersions",
+      "runtimeVersions",
+      "operatingSystem",
+      "cpu",
+      "memory",
+      "environmentVariablesHash",
+      "dependencyLockHash",
+      "experimentSpecHash",
+      "workloadTraceHash",
+      "faultTimelineHash"
+    ],
+    "rerun": {
+      "enabled": true,
+      "rerunCount": 2,
+      "requireEquivalentTrace": true,
+      "requireEquivalentFaultTimeline": true
+    }
+  },
+  "exitCriteria": {
+    "experimentCompleteWhen": [
+      "all_workload_operations_completed",
+      "all_fault_events_processed",
+      "recovery_window_completed",
+      "telemetry_flushed",
+      "consistency_validation_completed",
+      "comparison_completed",
+      "calibration_completed",
+      "held_out_validation_completed",
+      "artifacts_committed"
+    ],
+    "successRequires": [
+      "no_critical_infrastructure_failure",
+      "all_required_artifacts_present",
+      "all_hashes_valid",
+      "no_validation_leakage"
+    ]
+  }
+}

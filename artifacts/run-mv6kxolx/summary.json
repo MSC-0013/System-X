@@ -1,0 +1,56 @@
+{
+  "runId": "run-mv6kxolx",
+  "certified": false,
+  "verdict": "NOT CERTIFIED [DRIFT DETECTED]",
+  "bbMetrics": {
+    "p50": 2.774,
+    "p95": 5.189,
+    "p99": 5.253
+  },
+  "qrMetrics": {
+    "p50": 10.006,
+    "p95": 38.735,
+    "p99": 60.621
+  },
+  "p99Mape": 91.33468599990103,
+  "ksPValue": 0,
+  "wasserstein": 10.768330275229356,
+  "nodes": [
+    {
+      "id": "node-1",
+      "ops": 37,
+      "reads": 24,
+      "writes": 13,
+      "successRate": 1,
+      "p50": 11.23,
+      "p95": 44.555,
+      "p99": 96.685,
+      "errors": 0
+    },
+    {
+      "id": "node-2",
+      "ops": 36,
+      "reads": 23,
+      "writes": 13,
+      "successRate": 1,
+      "p50": 12.132,
+      "p95": 33.52,
+      "p99": 38.735,
+      "errors": 0
+    },
+    {
+      "id": "node-3",
+      "ops": 36,
+      "reads": 29,
+      "writes": 7,
+      "successRate": 1,
+      "p50": 8.053,
+      "p95": 56.954,
+      "p99": 60.621,
+      "errors": 0
+    }
+  ],
+  "certificationRecordHash": "38c30a0749a0955a3bdb537fac05d0f88f5c5819dbf606d15c749ec2e604cc19",
+  "traceHash": "315eb5314e6c38007e1cf971ed088fa46b2b176417389cefe81a775acfda9d0b",
+  "timelineHash": "256d82af157701499fd51ceb093bf8738b667007b43d80789ba0e4027ca8b120"
+}

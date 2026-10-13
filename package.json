@@ -10,7 +10,8 @@
     "clean": "turbo run clean",
     "gate": "node --import tsx gate/localGate.ts",
     "gate:local": "node --import tsx gate/localGate.ts",
-    "gate:integration": "node --import tsx gate/integrationGate.ts"
+    "gate:integration": "node --import tsx gate/integrationGate.ts",
+    "demo:real": "node --import tsx gate/runRealDemo.ts"
   },
   "devDependencies": {
     "@system-x/integration-contracts": "workspace:*",

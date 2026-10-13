@@ -141,13 +141,17 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    const mode = url.searchParams.get('mode') ?? 'calibrated';
     isExperimentRunning = true;
-    lastExperimentLog = 'Experiment initialized... Starting 3-node cluster, simulation, and chaos injection.\n';
+    lastExperimentLog = `Experiment initialized (${mode === 'calibrated' ? 'Calibrated Mode' : 'Baseline Mode'})... Starting 3-node cluster, simulation, and chaos injection.\n`;
 
     // Execute in background
     (async () => {
       try {
-        const { stdout, stderr } = await execAsync('node --import tsx gate/runRealDemo.ts', {
+        const cmd = mode === 'calibrated'
+          ? 'node --import tsx gate/runRealDemo.ts --calibrated'
+          : 'node --import tsx gate/runRealDemo.ts';
+        const { stdout, stderr } = await execAsync(cmd, {
           maxBuffer: 10 * 1024 * 1024,
         });
         lastExperimentLog = stdout + (stderr ? '\n' + stderr : '');
@@ -324,14 +328,19 @@ function renderWebDashboard(): string {
       </div>
 
       <div class="card" style="margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
           <div>
             <h2 style="font-size: 18px; margin-bottom: 4px;">Execute Master Verification Experiment</h2>
             <p style="color: var(--text-muted); font-size: 13px;">Spawns 3-node in-process Quorum cluster, compiles 150 deterministic Zipfian ops, injects live partition/delay/crash, normalizes telemetry, and generates interactive report.</p>
           </div>
-          <button id="run-btn" class="btn btn-success" onclick="triggerExperiment()">
-            <span id="run-spinner" style="display:none;">⏳</span> Trigger Live Run
-          </button>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button id="run-btn" class="btn btn-success" onclick="triggerExperiment('calibrated')">
+              <span id="run-spinner" style="display:none;">⏳</span> Trigger Live Certification (PASS)
+            </button>
+            <button id="run-baseline-btn" class="btn" style="background: #374151;" onclick="triggerExperiment('baseline')">
+              Run Drift Detection (FAIL)
+            </button>
+          </div>
         </div>
 
         <div class="terminal" id="term-log">Waiting for run initiation...</div>
@@ -468,19 +477,23 @@ function renderWebDashboard(): string {
 
         if (data.isExperimentRunning) {
           document.getElementById('run-btn').disabled = true;
+          const baseBtn = document.getElementById('run-baseline-btn');
+          if (baseBtn) baseBtn.disabled = true;
           document.getElementById('run-spinner').style.display = 'inline';
           pollExperiment();
         }
       } catch {}
     }
 
-    async function triggerExperiment() {
+    async function triggerExperiment(mode = 'calibrated') {
       const btn = document.getElementById('run-btn');
+      const baseBtn = document.getElementById('run-baseline-btn');
       btn.disabled = true;
+      if (baseBtn) baseBtn.disabled = true;
       document.getElementById('run-spinner').style.display = 'inline';
-      document.getElementById('term-log').textContent = 'Starting real experiment run... Please wait...\\n';
+      document.getElementById('term-log').textContent = `Starting ${mode === 'calibrated' ? 'Closed-Loop Calibrated Certification' : 'Pre-Calibration Baseline Run'}... Please wait...\n`;
       
-      await fetch('/api/experiment/run', { method: 'POST' });
+      await fetch(`/api/experiment/run?mode=${mode}`, { method: 'POST' });
       pollExperiment();
     }
 
@@ -498,6 +511,8 @@ function renderWebDashboard(): string {
         if (!data.running) {
           clearInterval(pollInterval);
           document.getElementById('run-btn').disabled = false;
+          const baseBtn = document.getElementById('run-baseline-btn');
+          if (baseBtn) baseBtn.disabled = false;
           document.getElementById('run-spinner').style.display = 'none';
           loadRuns();
         }

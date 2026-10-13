@@ -1,6 +1,9 @@
 FROM node:24-alpine
 WORKDIR /app
 
+# Install git for repository provenance checks
+RUN apk add --no-cache git
+
 # Install pnpm
 RUN npm install -g pnpm@12
 

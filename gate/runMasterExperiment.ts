@@ -50,9 +50,10 @@ import type { ArtifactRecord, CertificationLineage } from '@system-x/certificati
 // -----------------------------------------------------------------------------
 function getGitProvenance() {
   try {
-    const commit = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-    const branch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();
-    const dirty = execSync('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
+    const opts = { encoding: 'utf8' as const, stdio: ['pipe', 'pipe', 'ignore'] as any };
+    const commit = execSync('git rev-parse --short HEAD', opts).trim();
+    const branch = execSync('git rev-parse --abbrev-ref HEAD', opts).trim();
+    const dirty = execSync('git status --porcelain', opts).trim().length > 0;
     return { commit, branch, dirty: dirty ? 'YES' : 'NO' };
   } catch {
     return { commit: '7f4c29a', branch: 'main', dirty: 'NO' };

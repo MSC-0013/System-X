@@ -29,32 +29,13 @@ if (!fs.existsSync(ARTIFACTS_DIR)) {
 let isExperimentRunning = false;
 let lastExperimentLog = '';
 
-async function checkHealth(url: string, timeoutMs = 1200): Promise<'ONLINE' | 'OFFLINE'> {
-  return new Promise((resolve) => {
-    try {
-      const u = new URL(url);
-      const req = http.request(
-        {
-          hostname: u.hostname,
-          port: u.port,
-          path: u.pathname,
-          method: 'GET',
-          timeout: timeoutMs,
-        },
-        (res) => {
-          resolve(res.statusCode && res.statusCode < 500 ? 'ONLINE' : 'OFFLINE');
-        }
-      );
-      req.on('error', () => resolve('OFFLINE'));
-      req.on('timeout', () => {
-        req.destroy();
-        resolve('OFFLINE');
-      });
-      req.end();
-    } catch {
-      resolve('OFFLINE');
-    }
-  });
+async function checkHealth(url: string, timeoutMs = 2500): Promise<'ONLINE' | 'OFFLINE'> {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+    return res.status < 500 ? 'ONLINE' : 'OFFLINE';
+  } catch {
+    return 'OFFLINE';
+  }
 }
 
 function getHistoricRuns() {
@@ -107,9 +88,12 @@ const server = http.createServer(async (req, res) => {
 
   // API: Ecosystem Status
   if (pathname === '/api/status') {
-    const blackboxStatus = await checkHealth('http://localhost:4000/health/ready').catch(() => 'OFFLINE');
-    const quorumStatus = await checkHealth('http://localhost:3000/health').catch(() => 'OFFLINE');
-    const minioStatus = await checkHealth('http://localhost:9000/minio/health/live').catch(() => 'OFFLINE');
+    const blackboxTarget = process.env['BLACKBOX_URL'] || 'https://blackbox-x.onrender.com/health/live';
+    const quorumTarget = process.env['QUORUM_URL'] || 'https://quorum-lab.onrender.com/?format=json';
+
+    const blackboxStatus = await checkHealth(blackboxTarget).catch(() => 'OFFLINE');
+    const quorumStatus = await checkHealth(quorumTarget).catch(() => 'OFFLINE');
+    const minioStatus = await checkHealth('http://localhost:9000/minio/health/live', 800).catch(() => 'OFFLINE');
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(

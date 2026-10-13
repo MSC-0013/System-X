@@ -1,0 +1,1 @@
+{"version":3,"file":"comparisonEngine.d.ts","sourceRoot":"","sources":["../src/comparisonEngine.ts"],"names":[],"mappings":"AAAA;;;;;;;;GAQG;AACH,OAAO,KAAK,EAAE,mBAAmB,EAAiB,MAAM,6BAA6B,CAAC;AAEtF,OAAO,KAAK,EAAE,gBAAgB,EAAE,kBAAkB,EAAE,MAAM,YAAY,CAAC;AAQvE;;;;;GAKG;AACH,wBAAgB,wBAAwB,CACtC,MAAM,EAAE,mBAAmB,EAC3B,QAAQ,GAAE,kBAAgD,GACzD,gBAAgB,CAoElB"}

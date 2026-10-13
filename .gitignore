@@ -1,5 +1,4 @@
 node_modules/
-dist/
 .turbo/
 coverage/
 *.log
@@ -8,4 +7,3 @@ Thumbs.db
 
 tmp-*
 tmp-test-nodes/
-

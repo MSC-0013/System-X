@@ -4,14 +4,11 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@12
 
-# Copy repository
+# Copy repository (including compiled package dist/ directories)
 COPY . .
 
 # Install dependencies inside Linux container
 RUN pnpm install --no-frozen-lockfile
-
-# Build workspace packages in dependency order
-RUN pnpm build
 
 # Environment configuration
 ENV NODE_ENV=production

@@ -1,0 +1,83 @@
+import { computeTraceHash } from '@system-x/integration-contracts';
+import { generateOperationTrace } from './operationTraceGenerator.js';
+/**
+ * Compile an IntegratedExperiment workload into a CanonicalOperationTrace.
+ *
+ * @param spec             The full experiment specification.
+ * @param experimentSpecHash  SHA-256 of the canonical experiment spec (from I0).
+ * @returns                CanonicalOperationTrace ready to pass to the QUORUM adapter.
+ */
+/**
+ * Workload compiler version — bump when any of these change:
+ *   - PRNG algorithm or seed derivation
+ *   - Zipf/Uniform generator logic
+ *   - Key encoding scheme
+ *   - Operation scheduling model
+ *
+ * Replay identity: same spec + masterSeed + WORKLOAD_COMPILER_VERSION = same trace.
+ */
+export const WORKLOAD_COMPILER_VERSION = '1.0.0';
+export const SEED_DERIVATION_ALGORITHM = 'fnv1a64+splitmix64-v1';
+export const PRNG_ALGORITHM = 'mulberry32-v1';
+/**
+ * Named distribution algorithm identifiers.
+ * Must change if the distribution algorithm implementation changes.
+ */
+const ALGORITHM_NAMES = {
+    ZIPFIAN: 'ycsb-rejection-inversion-v1',
+    UNIFORM: 'uniform-direct-v1',
+};
+export function compileWorkload(spec, experimentSpecHash) {
+    const { workload, masterSeed } = spec;
+    // Map IntegratedWorkload to the compiler's WorkloadSpec shape.
+    const compiledSpec = {
+        clientCount: workload.concurrency,
+        operationCount: workload.operationCount,
+        durationMs: estimateDurationMs(workload),
+        readFraction: workload.readRatio,
+        deleteFraction: Math.max(0, 1 - workload.readRatio - workload.writeRatio),
+        keyDistribution: workload.distribution === 'ZIPFIAN' ? 'ZIPFIAN' : 'UNIFORM',
+        keySpaceSize: workload.keyRange.max - workload.keyRange.min,
+        valueSize: workload.valueSizeBytes ?? 64,
+    };
+    // Generate the trace entries (pure, deterministic).
+    const rawEntries = generateOperationTrace(compiledSpec, experimentSpecHash, masterSeed);
+    // Convert to the canonical contract shape.
+    const entries = rawEntries.map((e) => ({
+        sequence: e.sequence,
+        logicalClientId: e.logicalClientId,
+        operation: e.operation,
+        key: e.key,
+        ...(e.value !== undefined ? { value: e.value } : {}),
+        scheduledOffsetUs: e.scheduledOffsetUs,
+    }));
+    const traceHash = computeTraceHash(entries);
+    const distributionAlgorithm = workload.distribution === 'ZIPFIAN'
+        ? ALGORITHM_NAMES.ZIPFIAN
+        : ALGORITHM_NAMES.UNIFORM;
+    return {
+        contractVersion: '1.0.0',
+        experimentSpecHash,
+        traceHash,
+        masterSeed,
+        entries,
+        workloadCompilerVersion: WORKLOAD_COMPILER_VERSION,
+        seedDerivationAlgorithm: SEED_DERIVATION_ALGORITHM,
+        prngAlgorithm: PRNG_ALGORITHM,
+        distributionAlgorithm,
+    };
+}
+/**
+ * Estimate total experiment duration in milliseconds.
+ * If the workload has a target throughput, we derive duration from operationCount.
+ * Otherwise we default to 30 seconds.
+ */
+function estimateDurationMs(workload) {
+    if (workload.targetThroughputOpsSec && workload.targetThroughputOpsSec > 0) {
+        const durationSec = workload.operationCount / workload.targetThroughputOpsSec;
+        return Math.ceil(durationSec * 1000);
+    }
+    // Fallback: 30 seconds.
+    return 30_000;
+}
+//# sourceMappingURL=workloadCompiler.js.map

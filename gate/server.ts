@@ -485,15 +485,17 @@ function renderWebDashboard(): string {
       } catch {}
     }
 
-    async function triggerExperiment(mode = 'calibrated') {
-      const btn = document.getElementById('run-btn');
-      const baseBtn = document.getElementById('run-baseline-btn');
+    async function triggerExperiment(mode) {
+      mode = mode || 'calibrated';
+      var btn = document.getElementById('run-btn');
+      var baseBtn = document.getElementById('run-baseline-btn');
       btn.disabled = true;
       if (baseBtn) baseBtn.disabled = true;
       document.getElementById('run-spinner').style.display = 'inline';
-      document.getElementById('term-log').textContent = `Starting ${mode === 'calibrated' ? 'Closed-Loop Calibrated Certification' : 'Pre-Calibration Baseline Run'}... Please wait...\n`;
+      var label = mode === 'calibrated' ? 'Closed-Loop Calibrated Certification' : 'Pre-Calibration Baseline Run';
+      document.getElementById('term-log').textContent = 'Starting ' + label + '... Please wait...\\n';
       
-      await fetch(`/api/experiment/run?mode=${mode}`, { method: 'POST' });
+      await fetch('/api/experiment/run?mode=' + encodeURIComponent(mode), { method: 'POST' });
       pollExperiment();
     }
 

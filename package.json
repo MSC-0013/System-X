@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "turbo run build",
+    "build": "pnpm --filter @system-x/integration-contracts build && pnpm --filter @system-x/workload-compiler build && pnpm --filter @system-x/fault-compiler build && pnpm --filter @system-x/result-normalizer build && pnpm --filter @system-x/comparison-engine build && pnpm --filter @system-x/calibration-loop build && pnpm --filter @system-x/certification-gate build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean",

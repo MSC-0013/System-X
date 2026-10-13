@@ -4,15 +4,14 @@ WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm@12
 
-# Copy package descriptors first for optimal layer caching
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml* ./
-COPY packages ./packages
+# Copy repository
+COPY . .
 
 # Install dependencies inside Linux container
 RUN pnpm install --no-frozen-lockfile
 
-# Copy remaining application source code
-COPY . .
+# Build workspace packages in dependency order
+RUN pnpm build
 
 # Environment configuration
 ENV NODE_ENV=production

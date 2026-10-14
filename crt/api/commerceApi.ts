@@ -29,6 +29,19 @@ export function createCommerceApiRouter(services: {
       return true;
     }
 
+    // 0b. GET /api/status
+    if (req.method === 'GET' && (pathname === '/api/status' || pathname === '/status')) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        status: 'ONLINE',
+        service: 'commerce-reliability-testbed',
+        cluster: 'Quorum Lab N=3 (W=2, R=2)',
+        activeNodes: adapter.getActiveNodes(),
+        timestamp: new Date().toISOString(),
+      }));
+      return true;
+    }
+
     // 1. GET /api/products
     if (req.method === 'GET' && pathname === '/api/products') {
       const url = new URL(req.url ?? '/', 'http://localhost');

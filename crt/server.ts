@@ -21,101 +21,139 @@ import { CrtScenarioSuite } from './scenarios/crtScenarios.js';
 const CRT_PORT = parseInt(process.env['CRT_PORT'] ?? '4200', 10);
 const CRT_HOST = process.env['CRT_HOST'] ?? '127.0.0.1';
 
+let bootstrapPromise: Promise<{
+  server: http.Server;
+  adapter: QuorumAdapter;
+  scenarioSuite: CrtScenarioSuite;
+  catalog: CatalogService;
+  inventory: InventoryManager;
+  cart: CartService;
+  checkout: CheckoutSagaCoordinator;
+  eventBus: EventBus;
+}> | null = null;
+
 async function bootstrap() {
-  console.log('[CRT] Initializing Commerce Reliability Testbed...');
+  if (bootstrapPromise) {
+    return bootstrapPromise;
+  }
 
-  const adapter = new QuorumAdapter();
-  await adapter.initializeCluster();
-  console.log('[CRT] 3-Node Quorum Lab Cluster Initialized (W=2, R=2, SYNC_FSYNC).');
+  bootstrapPromise = (async () => {
+    console.log('[CRT] Initializing Commerce Reliability Testbed...');
 
-  const catalog = new CatalogService();
-  const inventory = new InventoryManager(adapter);
-  const cart = new CartService(adapter);
-  const eventBus = new EventBus();
-  const checkout = new CheckoutSagaCoordinator(adapter, inventory, eventBus);
-  const scenarioSuite = new CrtScenarioSuite(adapter);
+    const adapter = new QuorumAdapter();
+    await adapter.initializeCluster();
+    console.log('[CRT] 3-Node Quorum Lab Cluster Initialized (W=2, R=2, SYNC_FSYNC).');
 
-  // Seed default stock for critical test SKU PHONE-001
-  await inventory.setStock('tenant-01', 'PHONE-001', 1, 0);
-  console.log('[CRT] Initialized inventory for PHONE-001 with available=1 (Ready for CRT-03 last item test).');
+    const catalog = new CatalogService();
+    const inventory = new InventoryManager(adapter);
+    const cart = new CartService(adapter);
+    const eventBus = new EventBus();
+    const checkout = new CheckoutSagaCoordinator(adapter, inventory, eventBus);
+    const scenarioSuite = new CrtScenarioSuite(adapter);
 
-  const commerceRouter = createCommerceApiRouter({
-    catalog,
-    inventory,
-    cart,
-    checkout,
-    eventBus,
-    adapter,
-  });
+    // Seed default stock for critical test SKU PHONE-001
+    await inventory.setStock('tenant-01', 'PHONE-001', 1, 0);
+    console.log('[CRT] Initialized inventory for PHONE-001 with available=1 (Ready for CRT-03 last item test).');
 
-  const server = http.createServer(async (req, res) => {
-    const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
-    const pathname = url.pathname;
+    const commerceRouter = createCommerceApiRouter({
+      catalog,
+      inventory,
+      cart,
+      checkout,
+      eventBus,
+      adapter,
+    });
 
-    // CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-idempotency-key');
+    const server = http.createServer(async (req, res) => {
+      const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+      const pathname = url.pathname;
 
-    if (req.method === 'OPTIONS') {
-      res.writeHead(204);
-      res.end();
-      return;
-    }
+      // CORS
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-idempotency-key');
 
-    // Read body text
-    let bodyText = '';
-    for await (const chunk of req) {
-      bodyText += chunk;
-    }
-
-    // Scenario execution endpoints
-    const runMatch = pathname.match(/^\/api\/scenarios\/run\/([A-Za-z0-9-]+)$/);
-    if (req.method === 'POST' && runMatch) {
-      try {
-        const scenarioId = runMatch[1]!;
-        const result = await scenarioSuite.runScenario(scenarioId);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(result, null, 2));
-        return;
-      } catch (err: any) {
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: err.message }));
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204);
+        res.end();
         return;
       }
+
+      // Read body text
+      let bodyText = '';
+      for await (const chunk of req) {
+        bodyText += chunk;
+      }
+
+      // Scenario execution endpoints
+      const runMatch = pathname.match(/^\/api\/scenarios\/run\/([A-Za-z0-9-]+)$/);
+      if (req.method === 'POST' && runMatch) {
+        try {
+          const scenarioId = runMatch[1]!;
+          const result = await scenarioSuite.runScenario(scenarioId);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(result, null, 2));
+          return;
+        } catch (err: any) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: err.message }));
+          return;
+        }
+      }
+
+      if (req.method === 'POST' && pathname === '/api/scenarios/run-all') {
+        const results = await scenarioSuite.runAll();
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(results, null, 2));
+        return;
+      }
+
+      // Try Commerce API
+      const handledByCommerce = await commerceRouter(req, res, pathname, bodyText);
+      if (handledByCommerce) return;
+
+      // Dashboard UI
+      if (pathname === '/' || pathname === '/dashboard' || pathname === '/storefront') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end(renderControlCenterHtml());
+        return;
+      }
+
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Not Found' }));
+    });
+
+    server.on('error', (err: any) => {
+      if (err.code === 'EADDRINUSE') {
+        console.warn(`[CRT] Port ${CRT_PORT} already in use, reusing active daemon.`);
+      } else {
+        console.error('[CRT] Server error:', err);
+      }
+    });
+
+    try {
+      server.listen(CRT_PORT, CRT_HOST, () => {
+        console.log(`[CRT] Commerce Reliability Testbed listening at http://${CRT_HOST}:${CRT_PORT}`);
+        console.log(`[CRT] Open http://localhost:${CRT_PORT} in your browser to view the Storefront & Control Center.`);
+      });
+    } catch (err: any) {
+      console.warn(`[CRT] Server listen notice: ${err.message}`);
     }
 
-    if (req.method === 'POST' && pathname === '/api/scenarios/run-all') {
-      const results = await scenarioSuite.runAll();
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(results, null, 2));
-      return;
-    }
+    return { server, adapter, scenarioSuite, catalog, inventory, cart, checkout, eventBus };
+  })();
 
-    // Try Commerce API
-    const handledByCommerce = await commerceRouter(req, res, pathname, bodyText);
-    if (handledByCommerce) return;
-
-    // Dashboard UI
-    if (pathname === '/' || pathname === '/dashboard' || pathname === '/storefront') {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(renderControlCenterHtml());
-      return;
-    }
-
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Not Found' }));
-  });
-
-  server.listen(CRT_PORT, CRT_HOST, () => {
-    console.log(`[CRT] Commerce Reliability Testbed listening at http://${CRT_HOST}:${CRT_PORT}`);
-    console.log(`[CRT] Open http://localhost:${CRT_PORT} in your browser to view the Storefront & Control Center.`);
-  });
-
-  return { server, adapter, scenarioSuite, catalog, inventory, cart, checkout, eventBus };
+  return bootstrapPromise;
 }
 
-if (process.argv[1]?.endsWith('server.ts') || process.argv[1]?.endsWith('server.js')) {
+const isDirectCliRun =
+  Boolean(process.argv[1]) &&
+  (process.argv[1].endsWith('crt/server.ts') ||
+   process.argv[1].endsWith('crt\\server.ts') ||
+   process.argv[1].endsWith('crt/server.js') ||
+   process.argv[1].endsWith('crt\\server.js'));
+
+if (isDirectCliRun) {
   bootstrap().catch((err) => {
     console.error('[CRT] Fatal startup error:', err);
     process.exit(1);

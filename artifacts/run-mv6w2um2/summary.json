@@ -1,0 +1,56 @@
+{
+  "runId": "run-mv6w2um2",
+  "certified": true,
+  "verdict": "CERTIFIED [PASS]",
+  "bbMetrics": {
+    "p50": 1.203,
+    "p95": 1.227,
+    "p99": 1.354
+  },
+  "qrMetrics": {
+    "p50": 1.203,
+    "p95": 1.227,
+    "p99": 1.354
+  },
+  "p99Mape": 0,
+  "ksPValue": 1,
+  "wasserstein": 0,
+  "nodes": [
+    {
+      "id": "node-1",
+      "ops": 37,
+      "reads": 24,
+      "writes": 13,
+      "successRate": 1,
+      "p50": 1.204,
+      "p95": 1.224,
+      "p99": 1.395,
+      "errors": 0
+    },
+    {
+      "id": "node-2",
+      "ops": 36,
+      "reads": 23,
+      "writes": 13,
+      "successRate": 1,
+      "p50": 1.203,
+      "p95": 1.227,
+      "p99": 1.229,
+      "errors": 0
+    },
+    {
+      "id": "node-3",
+      "ops": 36,
+      "reads": 29,
+      "writes": 7,
+      "successRate": 1,
+      "p50": 1.203,
+      "p95": 1.238,
+      "p99": 1.354,
+      "errors": 0
+    }
+  ],
+  "certificationRecordHash": "4fc28071b11f08cc07905b1e45e56ca4948cfd4e2ee574bd54f381622d5c51bf",
+  "traceHash": "315eb5314e6c38007e1cf971ed088fa46b2b176417389cefe81a775acfda9d0b",
+  "timelineHash": "256d82af157701499fd51ceb093bf8738b667007b43d80789ba0e4027ca8b120"
+}

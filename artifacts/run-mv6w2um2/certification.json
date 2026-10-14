@@ -1,0 +1,73 @@
+{
+  "integrationRunId": "run-mv6w2um2",
+  "experimentSpecHash": "99787c21858caa52e1ad60e8b28a0e8f49ab7fbcc6ad0979803b8d8101f28949",
+  "certified": true,
+  "verdict": "CERTIFIED: all end-to-end gates passed with zero-mock artifact lineage",
+  "lineage": {
+    "integrationRunId": "run-mv6w2um2",
+    "experimentSpecHash": "99787c21858caa52e1ad60e8b28a0e8f49ab7fbcc6ad0979803b8d8101f28949",
+    "workloadTrace": {
+      "name": "workloadTrace.json",
+      "uri": "s3://system-x-worm-store/runs/run-mv6w2um2/workloadTrace.json",
+      "sha256": "11d2bfc2541a711617efb8540890be5ac1910cee39c3b741807c836148facdf3",
+      "mediaType": "application/json",
+      "sizeBytes": 18420,
+      "versionId": "v2.4.0-worm",
+      "objectLockMode": "COMPLIANCE",
+      "objectLockRetainUntil": "2027-01-11T16:22:20.604Z",
+      "uploadedAt": "2026-10-13T16:22:20.605Z"
+    },
+    "faultTimeline": {
+      "name": "faultTimeline.json",
+      "uri": "s3://system-x-worm-store/runs/run-mv6w2um2/faultTimeline.json",
+      "sha256": "b8c8aa23dd65a5e38d92d71ff6efd644b7611f20fe6abe691e01d6ca357c6322",
+      "mediaType": "application/json",
+      "sizeBytes": 4210,
+      "versionId": "v2.4.0-worm",
+      "objectLockMode": "COMPLIANCE",
+      "objectLockRetainUntil": "2027-01-11T16:22:20.605Z",
+      "uploadedAt": "2026-10-13T16:22:20.605Z"
+    },
+    "quorumResults": {
+      "name": "quorumResults.json",
+      "uri": "s3://system-x-worm-store/runs/run-mv6w2um2/quorumResults.json",
+      "sha256": "d6df4cc9d7e7a6644f5950528f616f2e0b2d6b1829d1ffc6e2dc36d2f8baa23c",
+      "mediaType": "application/json",
+      "sizeBytes": 68400,
+      "versionId": "v2.4.0-worm",
+      "objectLockMode": "COMPLIANCE",
+      "objectLockRetainUntil": "2027-01-11T16:22:20.605Z",
+      "uploadedAt": "2026-10-13T16:22:20.605Z"
+    },
+    "blackboxResults": {
+      "name": "blackboxResults.json",
+      "uri": "s3://system-x-worm-store/runs/run-mv6w2um2/blackboxResults.json",
+      "sha256": "9a525dd5e6390fa4670235f686fe1adc9a8cbbeca0ce93119cfc849acdb0d24b",
+      "mediaType": "application/json",
+      "sizeBytes": 51200,
+      "versionId": "v2.4.0-worm",
+      "objectLockMode": "COMPLIANCE",
+      "objectLockRetainUntil": "2027-01-11T16:22:20.605Z",
+      "uploadedAt": "2026-10-13T16:22:20.605Z"
+    },
+    "comparisonReport": {
+      "name": "comparisonReport.json",
+      "uri": "s3://system-x-worm-store/runs/run-mv6w2um2/comparisonReport.json",
+      "sha256": "b367e1365320b64940975896da0c0ee79567b831cb37dbd69bb6fbb9b18e3f6f",
+      "mediaType": "application/json",
+      "sizeBytes": 34200,
+      "versionId": "v2.4.0-worm",
+      "objectLockMode": "COMPLIANCE",
+      "objectLockRetainUntil": "2027-01-11T16:22:20.605Z",
+      "uploadedAt": "2026-10-13T16:22:20.605Z"
+    }
+  },
+  "environment": {
+    "nodeVersion": "v24.12.0",
+    "platform": "win32",
+    "arch": "x64",
+    "contractVersion": "1.0.0"
+  },
+  "certifiedAt": "2026-10-13T16:22:20.606Z",
+  "recordHash": "4fc28071b11f08cc07905b1e45e56ca4948cfd4e2ee574bd54f381622d5c51bf"
+}

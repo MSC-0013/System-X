@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 850 280" xmlns="http://www.w3.org/2000/svg" style="background: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <text x="425" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Zipfian Skew Key Access Frequency (Top 25 Hot Keys)</text>
+  <line x1="60" y1="235" x2="820" y2="235" stroke="#cbd5e1" stroke-width="1" />
+  <line x1="60" y1="35" x2="60" y2="235" stroke="#cbd5e1" stroke-width="1" />
+  
+      <rect x="60.0" y="35.0" width="26.4" height="200.0" fill="#4f46e5" rx="2">
+        <title>k0000000000: 9 ops</title>
+      </rect>
+      <text x="73.2" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 73.2, 249)">0000</text>
+    
+      <rect x="90.4" y="79.4" width="26.4" height="155.6" fill="#4f46e5" rx="2">
+        <title>k0000000002: 7 ops</title>
+      </rect>
+      <text x="103.6" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 103.6, 249)">0002</text>
+    
+      <rect x="120.8" y="79.4" width="26.4" height="155.6" fill="#4f46e5" rx="2">
+        <title>k0000000001: 7 ops</title>
+      </rect>
+      <text x="134.0" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 134.0, 249)">0001</text>
+    
+      <rect x="151.2" y="146.1" width="26.4" height="88.9" fill="#4f46e5" rx="2">
+        <title>k0000000005: 4 ops</title>
+      </rect>
+      <text x="164.4" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 164.4, 249)">0005</text>
+    
+      <rect x="181.6" y="168.3" width="26.4" height="66.7" fill="#4f46e5" rx="2">
+        <title>k0000000009: 3 ops</title>
+      </rect>
+      <text x="194.8" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 194.8, 249)">0009</text>
+    
+      <rect x="212.0" y="168.3" width="26.4" height="66.7" fill="#4f46e5" rx="2">
+        <title>k0000000004: 3 ops</title>
+      </rect>
+      <text x="225.2" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 225.2, 249)">0004</text>
+    
+      <rect x="242.4" y="168.3" width="26.4" height="66.7" fill="#4f46e5" rx="2">
+        <title>k0000000020: 3 ops</title>
+      </rect>
+      <text x="255.6" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 255.6, 249)">0020</text>
+    
+      <rect x="272.8" y="168.3" width="26.4" height="66.7" fill="#4f46e5" rx="2">
+        <title>k0000000037: 3 ops</title>
+      </rect>
+      <text x="286.0" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 286.0, 249)">0037</text>
+    
+      <rect x="303.2" y="168.3" width="26.4" height="66.7" fill="#4f46e5" rx="2">
+        <title>k0000000025: 3 ops</title>
+      </rect>
+      <text x="316.4" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 316.4, 249)">0025</text>
+    
+      <rect x="333.6" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000006: 2 ops</title>
+      </rect>
+      <text x="346.8" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 346.8, 249)">0006</text>
+    
+      <rect x="364.0" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000011: 2 ops</title>
+      </rect>
+      <text x="377.2" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 377.2, 249)">0011</text>
+    
+      <rect x="394.4" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000031: 2 ops</title>
+      </rect>
+      <text x="407.6" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 407.6, 249)">0031</text>
+    
+      <rect x="424.8" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000007: 2 ops</title>
+      </rect>
+      <text x="438.0" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 438.0, 249)">0007</text>
+    
+      <rect x="455.2" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000063: 2 ops</title>
+      </rect>
+      <text x="468.4" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 468.4, 249)">0063</text>
+    
+      <rect x="485.6" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000042: 2 ops</title>
+      </rect>
+      <text x="498.8" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 498.8, 249)">0042</text>
+    
+      <rect x="516.0" y="190.6" width="26.4" height="44.4" fill="#4f46e5" rx="2">
+        <title>k0000000003: 2 ops</title>
+      </rect>
+      <text x="529.2" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 529.2, 249)">0003</text>
+    
+      <rect x="546.4" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000033: 1 ops</title>
+      </rect>
+      <text x="559.6" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 559.6, 249)">0033</text>
+    
+      <rect x="576.8" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000155: 1 ops</title>
+      </rect>
+      <text x="590.0" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 590.0, 249)">0155</text>
+    
+      <rect x="607.2" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000073: 1 ops</title>
+      </rect>
+      <text x="620.4" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 620.4, 249)">0073</text>
+    
+      <rect x="637.6" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000008: 1 ops</title>
+      </rect>
+      <text x="650.8" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 650.8, 249)">0008</text>
+    
+      <rect x="668.0" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000216: 1 ops</title>
+      </rect>
+      <text x="681.2" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 681.2, 249)">0216</text>
+    
+      <rect x="698.4" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000034: 1 ops</title>
+      </rect>
+      <text x="711.6" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 711.6, 249)">0034</text>
+    
+      <rect x="728.8" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000192: 1 ops</title>
+      </rect>
+      <text x="742.0" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 742.0, 249)">0192</text>
+    
+      <rect x="759.2" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000211: 1 ops</title>
+      </rect>
+      <text x="772.4" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 772.4, 249)">0211</text>
+    
+      <rect x="789.6" y="212.8" width="26.4" height="22.2" fill="#4f46e5" rx="2">
+        <title>k0000000323: 1 ops</title>
+      </rect>
+      <text x="802.8" y="249" font-size="9" text-anchor="middle" fill="#64748b" transform="rotate(45, 802.8, 249)">0323</text>
+    
+  <text x="425" y="278" text-anchor="middle" font-size="10" fill="#64748b">Key Identifiers (Rank-Ordered)</text>
+  <text x="20" y="140" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 20, 140)">Operation Count</text>
+</svg>

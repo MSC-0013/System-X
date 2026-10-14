@@ -3,6 +3,16 @@
 > **Closed-Loop Research, Benchmark, Calibration & Empirical Verification Engine**  
 > Uniting **BLACKBOX-X** (discrete-event performance simulation) and **QUORUM LAB** (distributed consistency and failure execution) into a unified, mathematically verifiable certification platform.
 
+> [!IMPORTANT]
+> ### 🌐 DIRECT LIVE WEB DASHBOARD (CLICK TO OPEN IN BROWSER)
+> - 🖥️ **SYSTEM-X Ecosystem Portal & Control Server**: 👉 **[http://localhost:8080](http://localhost:8080)**  
+> - 🛒 **Commerce Reliability Testbed (CRT)**: 👉 **[http://localhost:4200](http://localhost:4200)**  
+>
+> **Direct Live REST Endpoints:**
+> - System-X Health: [http://localhost:8080/health](http://localhost:8080/health)
+> - Ecosystem Status: [http://localhost:8080/api/status](http://localhost:8080/api/status)
+> - Runs Manifests: [http://localhost:8080/api/runs](http://localhost:8080/api/runs)
+
 ---
 
 ## 1. Executive Summary

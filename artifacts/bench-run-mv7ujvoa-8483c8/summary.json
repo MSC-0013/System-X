@@ -1,0 +1,49 @@
+{
+  "runId": "bench-run-mv7ujvoa-8483c8",
+  "type": "WEBSITE_BENCHMARK",
+  "config": {
+    "name": "Verification Stress Benchmark",
+    "targetUrl": "http://localhost:4200/api/products",
+    "routes": [
+      "/api/products"
+    ],
+    "method": "GET",
+    "requestCount": 200,
+    "concurrency": 20,
+    "timeoutMs": 5000,
+    "headers": {},
+    "allowLocalhost": true,
+    "authorizedConfirmed": true
+  },
+  "state": "COMPLETED",
+  "createdAt": "2026-10-14T08:27:21.754Z",
+  "elapsedMs": 105,
+  "sentRequests": 200,
+  "completedRequests": 200,
+  "successfulRequests": 200,
+  "failedRequests": 0,
+  "statusDistribution": {
+    "200": 200
+  },
+  "throughputRps": 1904.8,
+  "latency": {
+    "p50Ms": 7,
+    "p90Ms": 16,
+    "p95Ms": 29,
+    "p99Ms": 38,
+    "meanMs": 9.74,
+    "minMs": 1,
+    "maxMs": 39
+  },
+  "routeBreakdown": {
+    "/api/products": {
+      "count": 200,
+      "successCount": 200,
+      "meanMs": 9.74,
+      "p99Ms": 38
+    }
+  },
+  "hasArtifacts": true,
+  "startedAt": "2026-10-14T08:27:21.755Z",
+  "completedAt": "2026-10-14T08:27:21.861Z"
+}

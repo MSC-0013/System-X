@@ -629,12 +629,19 @@ export function renderWebDashboard(): string {
       gap: 24px;
     }
     .node-box {
-      border: 1px solid var(--border-dark);
+      border: 1px solid var(--border);
       background: #ffffff;
-      padding: 14px 18px;
+      padding: 12px 14px;
       border-radius: var(--radius-sm);
-      width: 200px;
-      box-shadow: 2px 2px 0px rgba(0,0,0,0.06);
+      width: 220px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: relative;
+      transition: all 0.15s ease;
+    }
+    .node-box.is-bottleneck {
+      border: 2px solid var(--text);
+      background: #fafafa;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.08);
     }
     .node-title {
       font-weight: 700;
@@ -645,11 +652,42 @@ export function renderWebDashboard(): string {
       align-items: center;
       justify-content: space-between;
     }
-    .node-attr {
+    .node-param-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 6px;
       font-size: 11px;
-      color: var(--text-muted);
       font-family: var(--font-mono);
-      line-height: 1.5;
+      color: var(--text-muted);
+    }
+    .node-param-input {
+      width: 76px;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: #ffffff;
+      color: var(--text);
+      text-align: right;
+    }
+    .node-param-input:focus {
+      outline: none;
+      border-color: var(--text);
+    }
+    .node-delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0 2px;
+    }
+    .node-delete-btn:hover {
+      color: var(--text);
     }
     .connector-line {
       font-family: var(--font-mono);
@@ -1345,63 +1383,88 @@ export function renderWebDashboard(): string {
       <div class="page-header">
         <div>
           <h1 class="page-title">System Model Topology &amp; Architecture Editor</h1>
-          <p class="page-desc">Define services, databases, queues, and concurrency limits to validate performance before deployment.</p>
+          <p class="page-desc">Define services, databases, queues, and concurrency limits to validate performance, queue depth, and bottlenecks before deployment.</p>
         </div>
-        <div style="display:flex; gap:8px;">
-          <button class="btn btn-secondary" onclick="addModelNode('SERVICE')">+ Add Service</button>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn btn-secondary" onclick="addModelNode('SERVICE')">+ Add Microservice</button>
           <button class="btn btn-secondary" onclick="addModelNode('DATABASE')">+ Add Database</button>
           <button class="btn btn-secondary" onclick="addModelNode('CACHE')">+ Add Cache</button>
+          <button class="btn btn-secondary" onclick="addModelNode('QUEUE')">+ Add Queue</button>
+          <button class="btn btn-secondary" onclick="resetDefaultTopology()">Reset Topology</button>
           <button class="btn btn-primary" onclick="simulateModelTopology()">Simulate Model &rarr;</button>
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="margin-bottom:16px;">
         <div class="card-header">
           <div class="card-title">Interactive Topology Canvas</div>
-          <span class="badge">Analytical Solver</span>
+          <span class="badge" id="topology-count-badge">3 Nodes Configured</span>
         </div>
 
         <div class="model-canvas" id="model-canvas">
-          <div class="node-box" id="node-edge-gw">
-            <div class="node-title">
-              <span>API Gateway</span>
-              <span class="badge">ENTRY</span>
-            </div>
-            <div class="node-attr">Concurrency: 500</div>
-            <div class="node-attr">Timeout: 3000ms</div>
-            <div class="node-attr">Route: /api/*</div>
+          <!-- Dynamically populated by renderTopologyCanvas() -->
+        </div>
+      </div>
+
+      <!-- Analytical Capacity & Bottleneck Solver Output Card -->
+      <div class="card" id="model-results-card">
+        <div class="card-header">
+          <div class="card-title">Analytical Capacity &amp; Bottleneck Analysis</div>
+          <span class="badge badge-inverse" id="model-verdict-badge">SOLVER READY</span>
+        </div>
+
+        <!-- 4 Key Metric Cards -->
+        <div class="grid-4" style="margin-bottom:16px;">
+          <div class="stat-box">
+            <div class="stat-label">Max System Throughput</div>
+            <div class="stat-value" id="stat-max-qps">&mdash;</div>
+            <div class="stat-sub" id="stat-max-sub">Bound by critical bottleneck</div>
           </div>
-
-          <div class="connector-line">&rarr;</div>
-
-          <div class="node-box" id="node-order-svc">
-            <div class="node-title">
-              <span>Order Service</span>
-              <span class="badge">SERVICE</span>
-            </div>
-            <div class="node-attr">Threads: 16</div>
-            <div class="node-attr">Processing: 12ms</div>
-            <div class="node-attr">Max QPS: 1200</div>
+          <div class="stat-box">
+            <div class="stat-label">Baseline Latency</div>
+            <div class="stat-value" id="stat-base-lat">&mdash;</div>
+            <div class="stat-sub">Sum of pipeline stages</div>
           </div>
-
-          <div class="connector-line">&rarr;</div>
-
-          <div class="node-box" id="node-quorum-db">
-            <div class="node-title">
-              <span>Quorum Cluster</span>
-              <span class="badge">STORAGE</span>
-            </div>
-            <div class="node-attr">Nodes: 3 (W=2, R=2)</div>
-            <div class="node-attr">Storage: WAL Disk</div>
-            <div class="node-attr">Fsync Latency: 4ms</div>
+          <div class="stat-box">
+            <div class="stat-label">Primary Bottleneck</div>
+            <div class="stat-value" style="font-size:15px; word-break:break-all;" id="stat-bottleneck-name">&mdash;</div>
+            <div class="stat-sub" id="stat-bottleneck-type">&mdash;</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Estimated P99 Latency</div>
+            <div class="stat-value" id="stat-p99-lat">&mdash;</div>
+            <div class="stat-sub">Under 90% peak load</div>
           </div>
         </div>
 
-        <div style="margin-top:16px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-subtle);">
-          <strong>Attributed Bottleneck Analysis:</strong>
-          <span style="color:var(--text-muted); margin-left:6px;" id="model-bottleneck-text">
-            Simulated max capacity is 1,200 QPS bounded by Order Service thread-pool saturation (16 threads @ 12ms service time).
-          </span>
+        <!-- Root-Cause & Actionable Engineering Recommendation -->
+        <div id="model-recommendation-box" style="margin-bottom:16px; padding:14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:12px; background:var(--bg-subtle);">
+          <div style="font-weight:700; font-size:13px; margin-bottom:6px;" id="model-recommendation-title">Attributed Bottleneck Analysis</div>
+          <div style="color:var(--text); line-height:1.6;" id="model-recommendation-body">Click "Simulate Model &rarr;" to calculate queueing delays, throughput bounds, and attributed bottlenecks across your configured nodes.</div>
+        </div>
+
+        <!-- Per-Stage Pipeline Table -->
+        <div style="font-weight:700; font-size:12px; margin-bottom:8px; text-transform:uppercase; font-family:var(--font-mono); color:var(--text-muted);">
+          Pipeline Stage Capacity Breakdown
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Stage #</th>
+                <th>Node Name</th>
+                <th>Type</th>
+                <th>Concurrency / Pool</th>
+                <th>Processing Time</th>
+                <th>Queue Buffer</th>
+                <th>Max Throughput</th>
+                <th>Pipeline Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-model-stages">
+              <tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:16px;">Click "Simulate Model &rarr;" to analyze pipeline stages.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

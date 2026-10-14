@@ -53,6 +53,9 @@ function switchTab(tabId, ev) {
 
   if (tabId === 'compare') {
     populateComparisonDropdowns();
+  } else if (tabId === 'model') {
+    renderTopologyCanvas();
+    simulateModelTopology();
   } else if (tabId === 'crt') {
     loadCrtScenarios();
   } else if (tabId === 'reports' || tabId === 'overview') {
@@ -539,34 +542,254 @@ function renderComparisonResults(data) {
 }
 
 // ---------------------------------------------------------------------------
-// 6. TAB 4: Model Topology Editor Logic
+// 6. TAB 4: Model Topology Editor & Analytical Queueing Solver Logic
 // ---------------------------------------------------------------------------
-function addModelNode(type) {
+let topologyNodes = [
+  { id: 'node-edge-gw', name: 'API Gateway', type: 'ENTRY', concurrency: 500, serviceTimeMs: 4, maxQueueDepth: 1000 },
+  { id: 'node-order-svc', name: 'Order Service', type: 'SERVICE', concurrency: 16, serviceTimeMs: 12, maxQueueDepth: 200 },
+  { id: 'node-quorum-db', name: 'Quorum Cluster', type: 'STORAGE', concurrency: 32, serviceTimeMs: 15, maxQueueDepth: 500 },
+];
+let lastBottleneckNodeId = null;
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderTopologyCanvas() {
   const canvas = document.getElementById('model-canvas');
   if (!canvas) return;
-  const box = document.createElement('div');
-  box.className = 'node-box';
-  const count = canvas.querySelectorAll('.node-box').length + 1;
-  box.innerHTML =
-    '<div class="node-title">' +
-    '  <span>' + type + ' #' + count + '</span>' +
-    '  <span class="badge">' + type + '</span>' +
-    '</div>' +
-    '<div class="node-attr">Concurrency: 100</div>' +
-    '<div class="node-attr">Latency: 8ms</div>' +
-    '<div class="node-attr">Failure Rate: 0.0%</div>';
-  const arrow = document.createElement('div');
-  arrow.className = 'connector-line';
-  arrow.innerHTML = '→';
-  canvas.appendChild(arrow);
-  canvas.appendChild(box);
+  const countBadge = document.getElementById('topology-count-badge');
+  if (countBadge) {
+    countBadge.textContent = topologyNodes.length + (topologyNodes.length === 1 ? ' Node Configured' : ' Nodes Configured');
+  }
+
+  canvas.innerHTML = '';
+
+  topologyNodes.forEach(function(node, idx) {
+    if (idx > 0) {
+      const arrow = document.createElement('div');
+      arrow.className = 'connector-line';
+      arrow.textContent = '→';
+      canvas.appendChild(arrow);
+    }
+
+    const box = document.createElement('div');
+    const isBottleneck = node.id === lastBottleneckNodeId;
+    box.className = 'node-box' + (isBottleneck ? ' is-bottleneck' : '');
+    box.id = 'box-' + node.id;
+
+    const maxCap = Math.round((node.concurrency * 1000) / Math.max(1, node.serviceTimeMs));
+
+    box.innerHTML =
+      '<div class="node-title">' +
+      '  <span style="font-weight:700;">' + escapeHtml(node.name) + '</span>' +
+      '  <div style="display:flex; align-items:center; gap:4px;">' +
+      '    <span class="badge">' + node.type + '</span>' +
+      (idx > 0 ? '    <button class="node-delete-btn" title="Remove Node" onclick="removeModelNode(\'' + node.id + '\')">&times;</button>' : '') +
+      '  </div>' +
+      '</div>' +
+      '<div class="node-param-row">' +
+      '  <span>Concurrency / Pool:</span>' +
+      '  <input type="number" class="node-param-input" min="1" max="10000" value="' + node.concurrency + '" onchange="updateNodeParam(\'' + node.id + '\', \'concurrency\', this.value)" />' +
+      '</div>' +
+      '<div class="node-param-row">' +
+      '  <span>Service Time (ms):</span>' +
+      '  <input type="number" class="node-param-input" min="1" max="5000" value="' + node.serviceTimeMs + '" onchange="updateNodeParam(\'' + node.id + '\', \'serviceTimeMs\', this.value)" />' +
+      '</div>' +
+      '<div class="node-param-row">' +
+      '  <span>Queue Buffer Limit:</span>' +
+      '  <input type="number" class="node-param-input" min="10" max="50000" value="' + node.maxQueueDepth + '" onchange="updateNodeParam(\'' + node.id + '\', \'maxQueueDepth\', this.value)" />' +
+      '</div>' +
+      '<div style="margin-top:8px; padding-top:6px; border-top:1px dashed var(--border); display:flex; justify-content:space-between; font-size:10px; font-family:var(--font-mono); color:var(--text-muted);">' +
+      '  <span>Max Capacity:</span>' +
+      '  <strong style="color:var(--text);">' + maxCap.toLocaleString() + ' QPS</strong>' +
+      '</div>' +
+      (isBottleneck ? '<div style="margin-top:4px; font-size:10px; font-family:var(--font-mono); color:var(--text); font-weight:700; text-align:center;">! CRITICAL BOTTLENECK</div>' : '');
+
+    canvas.appendChild(box);
+  });
+}
+
+function addModelNode(type) {
+  let defaultConcurrency = 20;
+  let defaultServiceTime = 10;
+  let defaultQueue = 200;
+  let defaultName = 'Service #' + (topologyNodes.length + 1);
+
+  if (type === 'SERVICE') {
+    defaultConcurrency = 24;
+    defaultServiceTime = 12;
+    defaultQueue = 300;
+    defaultName = 'Microservice #' + (topologyNodes.length + 1);
+  } else if (type === 'DATABASE') {
+    defaultConcurrency = 16;
+    defaultServiceTime = 20;
+    defaultQueue = 200;
+    defaultName = 'PostgreSQL DB #' + (topologyNodes.length + 1);
+  } else if (type === 'CACHE') {
+    defaultConcurrency = 150;
+    defaultServiceTime = 2;
+    defaultQueue = 1000;
+    defaultName = 'Redis Cache #' + (topologyNodes.length + 1);
+  } else if (type === 'QUEUE') {
+    defaultConcurrency = 80;
+    defaultServiceTime = 6;
+    defaultQueue = 5000;
+    defaultName = 'Kafka Topic #' + (topologyNodes.length + 1);
+  }
+
+  const newNode = {
+    id: 'node-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+    name: defaultName,
+    type: type,
+    concurrency: defaultConcurrency,
+    serviceTimeMs: defaultServiceTime,
+    maxQueueDepth: defaultQueue,
+  };
+
+  topologyNodes.push(newNode);
+  renderTopologyCanvas();
+  simulateModelTopology();
+}
+
+function removeModelNode(id) {
+  topologyNodes = topologyNodes.filter(function(n) { return n.id !== id; });
+  renderTopologyCanvas();
+  simulateModelTopology();
+}
+
+function updateNodeParam(id, field, value) {
+  const node = topologyNodes.find(function(n) { return n.id === id; });
+  if (node) {
+    const num = parseInt(value, 10);
+    if (!isNaN(num) && num > 0) {
+      node[field] = num;
+    }
+  }
+  renderTopologyCanvas();
+  simulateModelTopology();
+}
+
+function resetDefaultTopology() {
+  topologyNodes = [
+    { id: 'node-edge-gw', name: 'API Gateway', type: 'ENTRY', concurrency: 500, serviceTimeMs: 4, maxQueueDepth: 1000 },
+    { id: 'node-order-svc', name: 'Order Service', type: 'SERVICE', concurrency: 16, serviceTimeMs: 12, maxQueueDepth: 200 },
+    { id: 'node-quorum-db', name: 'Quorum Cluster', type: 'STORAGE', concurrency: 32, serviceTimeMs: 15, maxQueueDepth: 500 },
+  ];
+  lastBottleneckNodeId = null;
+  renderTopologyCanvas();
+  simulateModelTopology();
 }
 
 function simulateModelTopology() {
-  const textEl = document.getElementById('model-bottleneck-text');
-  if (textEl) {
-    textEl.textContent =
-      'Running discrete-event simulation... Topology evaluated: System safely handles up to 1,450 QPS before queue depth exceeds 200 items on Quorum Cluster.';
+  if (topologyNodes.length === 0) return;
+
+  // 1. Calculate each node's capacity
+  const stageStats = topologyNodes.map(function(node, index) {
+    const cap = (node.concurrency * 1000) / Math.max(1, node.serviceTimeMs);
+    return {
+      node: node,
+      stage: index + 1,
+      capacityQps: Math.round(cap),
+      rawCap: cap,
+    };
+  });
+
+  // 2. Identify the bottleneck (minimum capacity node)
+  const sorted = stageStats.slice().sort(function(a, b) { return a.rawCap - b.rawCap; });
+  const bottleneck = sorted[0];
+  lastBottleneckNodeId = bottleneck.node.id;
+
+  // 3. Compute Pipeline Math
+  const maxSystemQps = bottleneck.capacityQps;
+  const baseLatencyMs = topologyNodes.reduce(function(acc, n) { return acc + n.serviceTimeMs; }, 0);
+
+  // M/M/c queueing approximation for tail latency under 90% load
+  const p99Est = Math.round(baseLatencyMs + (bottleneck.node.serviceTimeMs * 3.5));
+
+  // 4. Update Header Badge & 4 Metric Cards
+  const verdictBadge = document.getElementById('model-verdict-badge');
+  if (verdictBadge) {
+    verdictBadge.textContent = maxSystemQps.toLocaleString() + ' QPS BOUNDED';
+  }
+
+  const statMax = document.getElementById('stat-max-qps');
+  if (statMax) statMax.textContent = maxSystemQps.toLocaleString() + ' req/s';
+
+  const statMaxSub = document.getElementById('stat-max-sub');
+  if (statMaxSub) statMaxSub.textContent = 'Bound by ' + bottleneck.node.name;
+
+  const statBase = document.getElementById('stat-base-lat');
+  if (statBase) statBase.textContent = baseLatencyMs + ' ms';
+
+  const statBottleName = document.getElementById('stat-bottleneck-name');
+  if (statBottleName) statBottleName.textContent = bottleneck.node.name;
+
+  const statBottleType = document.getElementById('stat-bottleneck-type');
+  if (statBottleType) statBottleType.textContent = 'Stage #' + bottleneck.stage + ' (' + bottleneck.node.type + ')';
+
+  const statP99 = document.getElementById('stat-p99-lat');
+  if (statP99) statP99.textContent = p99Est + ' ms';
+
+  // 5. Generate Root-Cause Analysis & Recommendations
+  const recTitle = document.getElementById('model-recommendation-title');
+  const recBody = document.getElementById('model-recommendation-body');
+
+  const target2x = maxSystemQps * 2;
+  const neededConcurrency = Math.ceil((target2x * bottleneck.node.serviceTimeMs) / 1000);
+  const neededLatency = Math.max(1, Math.floor((bottleneck.node.concurrency * 1000) / target2x));
+
+  if (recTitle) {
+    recTitle.innerHTML =
+      '<span class="badge badge-inverse" style="margin-right:6px;">! BOTTLENECK IDENTIFIED</span>' +
+      escapeHtml(bottleneck.node.name) + ' limits overall system throughput to ' + maxSystemQps.toLocaleString() + ' QPS.';
+  }
+
+  if (recBody) {
+    recBody.innerHTML =
+      '<p style="margin-bottom:8px;"><strong>Root Cause Analysis:</strong> ' +
+      'Stage #' + bottleneck.stage + ' (<strong>' + escapeHtml(bottleneck.node.name) + '</strong>) operates with a concurrency limit of <code>' + bottleneck.node.concurrency + '</code> and processing duration of <code>' + bottleneck.node.serviceTimeMs + 'ms</code>. ' +
+      'At an arrival rate exceeding <code>' + maxSystemQps.toLocaleString() + ' req/s</code>, this node hits 100% thread-pool/worker exhaustion. ' +
+      'Incoming requests accumulate in its buffer (limit: ' + bottleneck.node.maxQueueDepth + ' requests) until exhausting capacity, causing queuing delay spikes and rejected requests.</p>' +
+      '<p><strong>Actionable Scaling Recommendations:</strong><br/>' +
+      '&bull; <strong>Horizontal Scale:</strong> Increase <code>' + escapeHtml(bottleneck.node.name) + '</code> concurrency from <code>' + bottleneck.node.concurrency + '</code> to <code>' + neededConcurrency + '</code> to unlock <strong>' + target2x.toLocaleString() + ' QPS</strong> capacity.<br/>' +
+      '&bull; <strong>Vertical Optimization:</strong> Reduce service processing latency from <code>' + bottleneck.node.serviceTimeMs + 'ms</code> to <code>' + neededLatency + 'ms</code> (via SQL indexing, caching, or read replicas).<br/>' +
+      '&bull; <strong>Queue Cushion:</strong> Under a 20% traffic surge (<code>' + Math.round(maxSystemQps * 1.2) + ' QPS</code>), the current queue buffer of <code>' + bottleneck.node.maxQueueDepth + '</code> will hold overflow for <strong>' + (bottleneck.node.maxQueueDepth / Math.max(1, Math.round(maxSystemQps * 0.2))).toFixed(1) + ' seconds</strong> before rejecting load.</p>';
+  }
+
+  // 6. Populate Breakdown Table
+  const tbody = document.getElementById('tbody-model-stages');
+  if (tbody) {
+    tbody.innerHTML = '';
+    stageStats.forEach(function(st) {
+      const isCritical = st.node.id === bottleneck.node.id;
+      const tr = document.createElement('tr');
+      if (isCritical) {
+        tr.style.background = 'var(--bg-hover)';
+      }
+      tr.innerHTML =
+        '<td><strong>Stage ' + st.stage + '</strong></td>' +
+        '<td><strong>' + escapeHtml(st.node.name) + '</strong>' + (isCritical ? ' <span class="badge badge-inverse" style="font-size:9px;">BOTTLENECK</span>' : '') + '</td>' +
+        '<td><span class="badge">' + st.node.type + '</span></td>' +
+        '<td><code>' + st.node.concurrency + ' workers</code></td>' +
+        '<td><code>' + st.node.serviceTimeMs + ' ms</code></td>' +
+        '<td><code>' + st.node.maxQueueDepth + ' reqs</code></td>' +
+        '<td><strong>' + st.capacityQps.toLocaleString() + ' req/s</strong></td>' +
+        '<td>' + (isCritical ? '<span class="badge badge-inverse">! BOTTLENECK (100% Load)</span>' : '<span class="badge">✓ HEALTHY (' + Math.round((maxSystemQps / st.capacityQps) * 100) + '% Load)</span>') + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Update canvas styling to reflect bottleneck node
+  const canvas = document.getElementById('model-canvas');
+  if (canvas) {
+    canvas.querySelectorAll('.node-box').forEach(function(box) {
+      if (box.id === 'box-' + bottleneck.node.id) {
+        box.classList.add('is-bottleneck');
+      } else {
+        box.classList.remove('is-bottleneck');
+      }
+    });
   }
 }
 
@@ -889,6 +1112,8 @@ window.addEventListener('DOMContentLoaded', function() {
   pollStatus();
   setInterval(pollStatus, 4000);
   loadAllRuns();
+  renderTopologyCanvas();
+  simulateModelTopology();
 });
 
 // Expose all functions to window explicitly
@@ -901,7 +1126,11 @@ window.cancelCurrentRun = cancelCurrentRun;
 window.filterRequestSamples = filterRequestSamples;
 window.refreshRequestInspector = refreshRequestInspector;
 window.executeComparison = executeComparison;
+window.renderTopologyCanvas = renderTopologyCanvas;
 window.addModelNode = addModelNode;
+window.removeModelNode = removeModelNode;
+window.updateNodeParam = updateNodeParam;
+window.resetDefaultTopology = resetDefaultTopology;
 window.simulateModelTopology = simulateModelTopology;
 window.crashNode = crashNode;
 window.partitionNode = partitionNode;

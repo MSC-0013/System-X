@@ -57,12 +57,24 @@ try {
 } catch {}
 
 let crtScenarioSuiteInstance: any = null;
+let crtCommerceRouter: any = null;
 
 async function bootstrapCrtEmbedded() {
   try {
     const { bootstrap: bootstrapCrt } = await import('../crt/server.js');
     const crtApp = await bootstrapCrt();
     crtScenarioSuiteInstance = crtApp.scenarioSuite;
+    if (crtApp.catalog && crtApp.inventory && crtApp.cart && crtApp.checkout && crtApp.eventBus && crtApp.adapter) {
+      const { createCommerceApiRouter } = await import('../crt/api/commerceApi.js');
+      crtCommerceRouter = createCommerceApiRouter({
+        catalog: crtApp.catalog,
+        inventory: crtApp.inventory,
+        cart: crtApp.cart,
+        checkout: crtApp.checkout,
+        eventBus: crtApp.eventBus,
+        adapter: crtApp.adapter,
+      });
+    }
     console.log('[SYSTEM-X] Embedded Commerce Reliability Testbed (CRT) initialized on port 4200.');
   } catch (err: any) {
     console.warn('[SYSTEM-X] CRT embedded daemon auto-start notice:', err.message);
@@ -514,6 +526,24 @@ const server = http.createServer(async (req, res) => {
   // -------------------------------------------------------------------------
   // 4. Commerce Reliability Testbed (CRT) Integration
   // -------------------------------------------------------------------------
+
+  if (
+    pathname === '/api/products' ||
+    pathname.startsWith('/api/products/') ||
+    pathname.startsWith('/api/inventory') ||
+    pathname.startsWith('/api/cart') ||
+    pathname.startsWith('/api/checkout') ||
+    pathname.startsWith('/api/orders')
+  ) {
+    if (crtCommerceRouter) {
+      let bodyText = '';
+      for await (const chunk of req) {
+        bodyText += chunk;
+      }
+      const handled = await crtCommerceRouter(req, res, pathname, bodyText);
+      if (handled) return;
+    }
+  }
 
   if (pathname === '/api/crt/scenarios' && req.method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });

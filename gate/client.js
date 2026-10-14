@@ -36,6 +36,21 @@ function switchTab(tabId, ev) {
   if (targetView) targetView.classList.add('active');
   if (targetNav) targetNav.classList.add('active');
 
+  const titleMap = {
+    overview: 'Overview',
+    website: 'Website Performance',
+    compare: 'Compare Runs',
+    model: 'System Models',
+    quorum: 'Quorum Lab',
+    crt: 'Commerce Reliability',
+    simulation: 'Closed-Loop Verification',
+    reports: 'Reports Archive'
+  };
+  const breadcrumb = document.getElementById('topbar-breadcrumb');
+  if (breadcrumb && titleMap[tabId]) {
+    breadcrumb.textContent = titleMap[tabId];
+  }
+
   if (tabId === 'compare') {
     populateComparisonDropdowns();
   } else if (tabId === 'crt') {
@@ -895,3 +910,17 @@ window.runAllCrtScenarios = runAllCrtScenarios;
 window.runMasterExperiment = runMasterExperiment;
 window.runClosedLoopQuick = runClosedLoopQuick;
 window.loadAllRuns = loadAllRuns;
+
+
+// Sidebar Pin / Unpin Toggle
+function toggleSidebarPin() {
+  document.body.classList.toggle('sidebar-pinned');
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar) sidebar.classList.toggle('pinned');
+  const btn = document.getElementById('btn-pin-sidebar');
+  if (btn) {
+    const isPinned = document.body.classList.contains('sidebar-pinned');
+    btn.innerHTML = isPinned ? '<span>📌</span> <span class="side-nav-label">Pinned</span>' : '<span>📌</span> <span class="side-nav-label">Pin Sidebar</span>';
+  }
+}
+window.toggleSidebarPin = toggleSidebarPin;

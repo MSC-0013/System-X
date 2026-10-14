@@ -59,34 +59,42 @@ export function renderWebDashboard(): string {
     a:hover { color: var(--text-muted); }
     code, pre, .mono { font-family: var(--font-mono); font-feature-settings: "tnum"; }
 
-    /* Top Navigation Bar */
-    .top-bar {
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-      position: sticky;
+    /* Left Collapsible Hover Sidebar */
+    .sidebar {
+      position: fixed;
       top: 0;
-      z-index: 100;
-    }
-    .top-bar-inner {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 60px;
+      bottom: 0;
+      left: 0;
+      width: 64px;
+      background: var(--bg);
+      border-right: 1px solid var(--border);
+      z-index: 200;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
-      gap: 16px;
+      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+      overflow-x: hidden;
+      overflow-y: auto;
+      white-space: nowrap;
     }
-    .brand-wrap {
+    .sidebar:hover, .sidebar.pinned {
+      width: 250px;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar-header {
+      height: 60px;
+      padding: 0 16px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: inherit;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      flex-shrink: 0;
     }
-    .brand-logo {
-      width: 28px;
-      height: 28px;
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
       background: var(--text);
       color: var(--bg);
       display: flex;
@@ -96,62 +104,165 @@ export function renderWebDashboard(): string {
       font-size: 14px;
       border-radius: var(--radius-sm);
       font-family: var(--font-mono);
+      flex-shrink: 0;
     }
-    .brand-name {
+    .sidebar-brand-text {
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      pointer-events: none;
+    }
+    .sidebar:hover .sidebar-brand-text, .sidebar.pinned .sidebar-brand-text {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .sidebar-brand-title {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.02em;
+      line-height: 1.2;
     }
-    .brand-tag {
+    .sidebar-brand-sub {
       font-size: 10px;
-      font-family: var(--font-mono);
-      padding: 2px 6px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
       color: var(--text-muted);
+      font-family: var(--font-mono);
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
-    /* Top Nav Tabs */
-    .nav-tabs {
+    .sidebar-nav {
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+    }
+
+    .side-nav-item {
+      width: 100%;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 4px;
-      overflow-x: auto;
-      height: 60px;
-    }
-    .tab-btn {
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 0 14px;
-      height: 60px;
+      padding: 0 12px;
+      gap: 14px;
       font-family: var(--font-sans);
       font-size: 13px;
       font-weight: 500;
+      text-align: left;
+      transition: all 0.12s ease;
+      position: relative;
+    }
+    .side-nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+    .side-nav-item.active {
+      background: var(--bg-subtle);
+      border-color: var(--border);
+      color: var(--text);
+      font-weight: 700;
+    }
+    .side-nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      background: var(--text);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .side-nav-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+    }
+
+    .side-nav-label-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: calc(100% - 36px);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      pointer-events: none;
+    }
+    .sidebar:hover .side-nav-label-wrap, .sidebar.pinned .side-nav-label-wrap {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .side-nav-label {
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .side-nav-badge {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 1px 6px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .sidebar-pin-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
       color: var(--text-muted);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
-      transition: all 0.15s ease;
+      width: 100%;
+      justify-content: center;
     }
-    .tab-btn:hover {
-      color: var(--text);
+    .sidebar-pin-btn:hover {
       background: var(--bg-hover);
-    }
-    .tab-btn.active {
       color: var(--text);
-      font-weight: 600;
-      border-bottom-color: var(--text);
     }
-    .tab-badge {
-      font-size: 10px;
-      font-family: var(--font-mono);
-      padding: 1px 5px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
+
+    /* Top Sticky Status Bar */
+    .top-bar {
+      margin-left: 64px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: margin-left 0.22s ease;
+    }
+    .top-bar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
     }
 
     /* Status Bar in Header */
@@ -172,12 +283,24 @@ export function renderWebDashboard(): string {
       font-weight: bold;
     }
 
-    /* Main Container */
+    /* Main Container & Responsive Layout */
     .main-wrap {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 24px;
+      margin-left: 64px;
+      max-width: 1400px;
+      padding: 24px 32px;
       min-height: calc(100vh - 120px);
+      transition: margin-left 0.22s ease;
+    }
+
+    .footer {
+      margin-left: 64px;
+      transition: margin-left 0.22s ease;
+    }
+
+    body.sidebar-pinned .top-bar,
+    body.sidebar-pinned .main-wrap,
+    body.sidebar-pinned .footer {
+      margin-left: 250px;
     }
 
     .tab-content {
@@ -550,27 +673,105 @@ export function renderWebDashboard(): string {
 </head>
 <body>
 
-  <!-- Top Sticky Navigation -->
+    <!-- Left Collapsible Hover Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header" onclick="switchTab('overview', event)" title="SYSTEM-X Testing Control Center">
+      <div class="sidebar-logo">SX</div>
+      <div class="sidebar-brand-text">
+        <div class="sidebar-brand-title">SYSTEM-X</div>
+        <div class="sidebar-brand-sub">Control Center</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="side-nav-item tab-btn active" type="button" onclick="switchTab('overview', event)" id="tabnav-overview" title="Overview">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Overview</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('website', event)" id="tabnav-website" title="Website Performance Benchmark">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/><path d="m13 11 3-3"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Website Performance</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('compare', event)" id="tabnav-compare" title="Compare Executions">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Compare Runs</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('model', event)" id="tabnav-model" title="System Architecture Modeling">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"/><rect x="3" y="17" width="6" height="4" rx="1"/><rect x="15" y="17" width="6" height="4" rx="1"/><path d="M12 7v4"/><path d="M6 17v-3a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v3"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">System Models</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('quorum', event)" id="tabnav-quorum" title="Quorum Lab Cluster Explorer">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Quorum Lab</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('crt', event)" id="tabnav-crt" title="Commerce Reliability Scenarios">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Commerce Reliability</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('simulation', event)" id="tabnav-simulation" title="Closed-Loop Verification">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Closed-Loop Verification</span>
+        </div>
+      </button>
+
+      <button class="side-nav-item tab-btn" type="button" onclick="switchTab('reports', event)" id="tabnav-reports" title="Persistent Reports Archive">
+        <span class="side-nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+        </span>
+        <div class="side-nav-label-wrap">
+          <span class="side-nav-label">Reports Archive</span>
+          <span class="side-nav-badge" id="nav-runs-count">0</span>
+        </div>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-pin-btn" id="btn-pin-sidebar" type="button" onclick="toggleSidebarPin()" title="Pin or unpin sidebar">
+        <span>📌</span> <span class="side-nav-label">Pin Sidebar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Clean Top Bar with Breadcrumb & Health Status -->
   <header class="top-bar">
     <div class="top-bar-inner">
-      <div class="brand-wrap" style="cursor:pointer;" onclick="switchTab('overview', event)">
-        <div class="brand-logo">SX</div>
-        <div>
-          <span class="brand-name">SYSTEM-X</span>
-          <span class="brand-tag">Testing Control Center</span>
-        </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted); text-transform:uppercase;">Section /</span>
+        <span id="topbar-breadcrumb" style="font-size:14px; font-weight:700;">Overview</span>
       </div>
-
-      <nav class="nav-tabs">
-        <button class="tab-btn active" type="button" onclick="switchTab('overview', event)" id="tabnav-overview">Overview</button>
-        <button class="tab-btn" type="button" onclick="switchTab('website', event)" id="tabnav-website">Website Performance</button>
-        <button class="tab-btn" type="button" onclick="switchTab('compare', event)" id="tabnav-compare">Compare Runs</button>
-        <button class="tab-btn" type="button" onclick="switchTab('model', event)" id="tabnav-model">System Models</button>
-        <button class="tab-btn" type="button" onclick="switchTab('quorum', event)" id="tabnav-quorum">Quorum Lab</button>
-        <button class="tab-btn" type="button" onclick="switchTab('crt', event)" id="tabnav-crt">Commerce Reliability</button>
-        <button class="tab-btn" type="button" onclick="switchTab('simulation', event)" id="tabnav-simulation">Closed-Loop Verification</button>
-        <button class="tab-btn" type="button" onclick="switchTab('reports', event)" id="tabnav-reports">Reports Archive <span class="tab-badge" id="nav-runs-count">0</span></button>
-      </nav>
 
       <div class="header-status">
         <div class="status-item" title="SYSTEM-X Gate Daemon Port 8080">

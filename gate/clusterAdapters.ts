@@ -63,12 +63,26 @@ export class StandaloneQuorumNodeApp {
       registerPeer: (peer: { nodeId: string; address: string }) => void;
     };
     put: (args: any) => Promise<any>;
+    get: (args: any) => Promise<any>;
     distributedGet: (args: { key: string }) => Promise<any>;
+    delete: (args: any) => Promise<any>;
   };
 
   public readonly id: string;
   public readonly port: number;
-  private static clusterStore = new Map<string, Map<string, { value: Buffer; version: bigint; dot: string }>>();
+  private static clusterStore = new Map<
+    string,
+    Map<
+      string,
+      {
+        value: Buffer;
+        version: bigint;
+        tombstone: boolean;
+        dot: { counter: number };
+        vectorClock: Record<string, number>;
+      }
+    >
+  >();
 
   constructor(public config: any, public options: any = {}) {
     this.id = config.node?.id ?? 'node-default';
@@ -87,14 +101,22 @@ export class StandaloneQuorumNodeApp {
           peerMap.set(peer.nodeId, peer.address);
         },
       },
+
       put: async (args: any) => {
         const store = StandaloneQuorumNodeApp.clusterStore.get(this.id)!;
         const current = store.get(args.key);
         const nextVer = (current?.version ?? 0n) + 1n;
+        const vectorClock: Record<string, number> = {
+          ...(current?.vectorClock ?? {}),
+          [this.id]: Number(nextVer),
+        };
+
         const entry = {
           value: Buffer.isBuffer(args.value) ? args.value : Buffer.from(String(args.value)),
           version: nextVer,
-          dot: `${args.clientId || this.id}:${nextVer}`,
+          tombstone: false,
+          dot: { counter: Number(nextVer) },
+          vectorClock,
         };
         store.set(args.key, entry);
 
@@ -112,11 +134,15 @@ export class StandaloneQuorumNodeApp {
 
         return {
           status: acks >= requiredW ? 'SUCCESS' : 'QUORUM_FAILED',
-          version: nextVer,
+          version: {
+            dot: { counter: Number(nextVer) },
+            vectorClock,
+          },
           acks,
         };
       },
-      distributedGet: async (args: { key: string }) => {
+
+      get: async (args: any) => {
         const store = StandaloneQuorumNodeApp.clusterStore.get(this.id)!;
         const local = store.get(args.key);
         let highest = local;
@@ -137,17 +163,92 @@ export class StandaloneQuorumNodeApp {
           store.set(args.key, highest);
         }
 
+        if (highest) {
+          return {
+            key: args.key,
+            keyState: {
+              entries: [
+                {
+                  value: highest.value,
+                  tombstone: Boolean(highest.tombstone),
+                  version: {
+                    dot: highest.dot,
+                    vectorClock: highest.vectorClock,
+                  },
+                },
+              ],
+            },
+            status: 'OK',
+          };
+        }
+
+        return {
+          key: args.key,
+          keyState: {
+            entries: [],
+          },
+          status: 'NOT_FOUND',
+        };
+      },
+
+      distributedGet: async (args: { key: string }) => {
+        const store = StandaloneQuorumNodeApp.clusterStore.get(this.id)!;
+        const local = store.get(args.key);
+        let highest = local;
+
+        for (const peerId of peerMap.keys()) {
+          const peerStore = StandaloneQuorumNodeApp.clusterStore.get(peerId);
+          const peerEntry = peerStore?.get(args.key);
+          if (peerEntry) {
+            if (!highest || peerEntry.version > highest.version) {
+              highest = peerEntry;
+            }
+          }
+        }
+
+        if (highest && (!local || local.version < highest.version)) {
+          store.set(args.key, highest);
+        }
+
         return highest
           ? {
               key: args.key,
               keyState: {
                 value: highest.value,
                 version: highest.version,
-                vectorClock: { [this.id]: Number(highest.version) },
+                vectorClock: highest.vectorClock,
               },
               status: 'OK',
             }
           : null;
+      },
+
+      delete: async (args: any) => {
+        const store = StandaloneQuorumNodeApp.clusterStore.get(this.id)!;
+        const current = store.get(args.key);
+        const nextVer = (current?.version ?? 0n) + 1n;
+        const vectorClock: Record<string, number> = {
+          ...(current?.vectorClock ?? {}),
+          [this.id]: Number(nextVer),
+        };
+
+        const tombstoneEntry = {
+          value: Buffer.alloc(0),
+          version: nextVer,
+          tombstone: true,
+          dot: { counter: Number(nextVer) },
+          vectorClock,
+        };
+        store.set(args.key, tombstoneEntry);
+
+        for (const peerId of peerMap.keys()) {
+          const peerStore = StandaloneQuorumNodeApp.clusterStore.get(peerId);
+          if (peerStore) {
+            peerStore.set(args.key, tombstoneEntry);
+          }
+        }
+
+        return { status: 'SUCCESS' };
       },
     };
   }

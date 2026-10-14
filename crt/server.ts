@@ -18,8 +18,8 @@ import { createCommerceApiRouter } from './api/commerceApi.js';
 import { renderControlCenterHtml } from './dashboard/controlCenterHtml.js';
 import { CrtScenarioSuite } from './scenarios/crtScenarios.js';
 
-const PORT = parseInt(process.env['PORT'] ?? '4200', 10);
-const HOST = process.env['HOST'] ?? '0.0.0.0';
+const CRT_PORT = parseInt(process.env['CRT_PORT'] ?? '4200', 10);
+const CRT_HOST = process.env['CRT_HOST'] ?? '127.0.0.1';
 
 async function bootstrap() {
   console.log('[CRT] Initializing Commerce Reliability Testbed...');
@@ -107,12 +107,12 @@ async function bootstrap() {
     res.end(JSON.stringify({ error: 'Not Found' }));
   });
 
-  server.listen(PORT, HOST, () => {
-    console.log(`[CRT] Commerce Reliability Testbed listening at http://${HOST}:${PORT}`);
-    console.log(`[CRT] Open http://localhost:${PORT} in your browser to view the Storefront & Control Center.`);
+  server.listen(CRT_PORT, CRT_HOST, () => {
+    console.log(`[CRT] Commerce Reliability Testbed listening at http://${CRT_HOST}:${CRT_PORT}`);
+    console.log(`[CRT] Open http://localhost:${CRT_PORT} in your browser to view the Storefront & Control Center.`);
   });
 
-  return { server, adapter };
+  return { server, adapter, scenarioSuite, catalog, inventory, cart, checkout, eventBus };
 }
 
 if (process.argv[1]?.endsWith('server.ts') || process.argv[1]?.endsWith('server.js')) {

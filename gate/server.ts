@@ -56,6 +56,22 @@ try {
   }
 } catch {}
 
+let crtScenarioSuiteInstance: any = null;
+
+async function bootstrapCrtEmbedded() {
+  try {
+    const { bootstrap: bootstrapCrt } = await import('../crt/server.js');
+    const crtApp = await bootstrapCrt();
+    crtScenarioSuiteInstance = crtApp.scenarioSuite;
+    console.log('[SYSTEM-X] Embedded Commerce Reliability Testbed (CRT) initialized on port 4200.');
+  } catch (err: any) {
+    console.warn('[SYSTEM-X] CRT embedded daemon auto-start notice:', err.message);
+  }
+}
+
+// Start CRT daemon in background on server boot
+bootstrapCrtEmbedded();
+
 async function checkHealth(url: string, timeoutMs = 2500): Promise<'ONLINE' | 'OFFLINE'> {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
@@ -196,9 +212,11 @@ const server = http.createServer(async (req, res) => {
     const [blackboxStatus, quorumStatus, minioStatus, crtStatus] = await Promise.all([
       checkHealth(blackboxTarget).catch(() => 'OFFLINE'),
       checkHealth(quorumTarget).catch(() => 'OFFLINE'),
-      checkHealth('http://localhost:9000/minio/health/live', 800).catch(() => 'OFFLINE'),
-      checkHealth('http://localhost:4200/api/products', 1200).catch(() => 'OFFLINE'),
+      checkHealth('http://127.0.0.1:9000/minio/health/live', 800).catch(() => 'OFFLINE'),
+      checkHealth('http://127.0.0.1:4200/api/products', 1200).catch(() => 'OFFLINE'),
     ]);
+
+    const crtOnline = crtStatus === 'ONLINE' || crtScenarioSuiteInstance !== null;
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(
@@ -207,7 +225,7 @@ const server = http.createServer(async (req, res) => {
         blackboxApi: blackboxStatus === 'ONLINE' ? 'ONLINE' : 'READY',
         quorumApi: quorumStatus === 'ONLINE' ? 'ONLINE' : 'READY',
         minioStorage: minioStatus === 'ONLINE' ? 'ONLINE' : 'READY',
-        crtTestbed: crtStatus === 'ONLINE' ? 'ONLINE' : 'READY',
+        crtTestbed: crtOnline ? 'ONLINE' : 'READY',
         isExperimentRunning,
         runsCount: getHistoricRuns().length,
         benchmarkRunsCount: listBenchmarkRuns().length,
@@ -508,19 +526,35 @@ const server = http.createServer(async (req, res) => {
     try {
       const crtRes = await fetch(`http://127.0.0.1:4200/api/scenarios/run/${scenarioId}`, {
         method: 'POST',
-        signal: AbortSignal.timeout(35000),
+        signal: AbortSignal.timeout(15000),
       });
-      const data = await crtRes.json();
-      res.writeHead(crtRes.status, { 'Content-Type': 'application/json' });
+      if (crtRes.ok) {
+        const data = await crtRes.json();
+        res.writeHead(crtRes.status, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(data));
+        return;
+      }
+    } catch {}
+
+    // Resilient in-process execution fallback
+    try {
+      if (!crtScenarioSuiteInstance) {
+        const { QuorumAdapter } = await import('../crt/adapter/quorumAdapter.js');
+        const { CrtScenarioSuite } = await import('../crt/scenarios/crtScenarios.js');
+        const adapter = new QuorumAdapter();
+        await adapter.initializeCluster();
+        crtScenarioSuiteInstance = new CrtScenarioSuite(adapter);
+      }
+      const data = await crtScenarioSuiteInstance.runScenario(scenarioId);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(data));
       return;
     } catch (err: any) {
-      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(
         JSON.stringify({
-          error: `Commerce Reliability Testbed unreachable on port 4200: ${err.message}`,
+          error: `Scenario ${scenarioId} execution error: ${err.message}`,
           scenarioId,
-          suggestion: 'Ensure CRT server daemon is active on port 4200.',
         })
       );
       return;
@@ -531,17 +565,34 @@ const server = http.createServer(async (req, res) => {
     try {
       const crtRes = await fetch('http://127.0.0.1:4200/api/scenarios/run-all', {
         method: 'POST',
-        signal: AbortSignal.timeout(60000),
+        signal: AbortSignal.timeout(30000),
       });
-      const data = await crtRes.json();
-      res.writeHead(crtRes.status, { 'Content-Type': 'application/json' });
+      if (crtRes.ok) {
+        const data = await crtRes.json();
+        res.writeHead(crtRes.status, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(data));
+        return;
+      }
+    } catch {}
+
+    // Resilient in-process execution fallback
+    try {
+      if (!crtScenarioSuiteInstance) {
+        const { QuorumAdapter } = await import('../crt/adapter/quorumAdapter.js');
+        const { CrtScenarioSuite } = await import('../crt/scenarios/crtScenarios.js');
+        const adapter = new QuorumAdapter();
+        await adapter.initializeCluster();
+        crtScenarioSuiteInstance = new CrtScenarioSuite(adapter);
+      }
+      const data = await crtScenarioSuiteInstance.runAll();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(data));
       return;
     } catch (err: any) {
-      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(
         JSON.stringify({
-          error: `Commerce Reliability Testbed unreachable on port 4200: ${err.message}`,
+          error: `Scenario suite execution error: ${err.message}`,
         })
       );
       return;

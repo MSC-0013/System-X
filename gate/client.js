@@ -709,8 +709,14 @@ async function runAllCrtScenarios() {
     if (badge) badge.textContent = '✓ FINISHED';
     if (terminal) {
       terminal.textContent += JSON.stringify(results, null, 2) + '\n';
+      terminal.scrollTop = terminal.scrollHeight;
     }
-    loadCrtScenarios();
+    if (Array.isArray(results)) {
+      results.forEach(function(r) {
+        const scBadge = document.getElementById('crt-res-' + r.scenarioId);
+        if (scBadge) scBadge.textContent = r.passed ? '✓ PASS' : '! FAIL';
+      });
+    }
   } catch (err) {
     if (badge) badge.textContent = '! ERROR';
     if (terminal) {

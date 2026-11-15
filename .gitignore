@@ -7,3 +7,6 @@ Thumbs.db
 
 tmp-*
 tmp-test-nodes/
+
+dist/
+*.tsbuildinfo

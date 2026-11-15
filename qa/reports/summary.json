@@ -1,0 +1,120 @@
+{
+  "definitions": 90,
+  "assertions": 379,
+  "checks": 459,
+  "records": 13907,
+  "actual": 13461,
+  "passed": 13245,
+  "failed": 216,
+  "blocked": 446,
+  "skipped": 0,
+  "verified10": 444,
+  "latestOpen": [
+    {
+      "id": "BX-M12",
+      "PASS": 9,
+      "FAIL": 1,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "BX-M6",
+      "PASS": 6,
+      "FAIL": 4,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-09",
+      "PASS": 1,
+      "FAIL": 9,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-10",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-11",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-12",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-CRT-SUITE",
+      "PASS": 0,
+      "FAIL": 9,
+      "BLOCKED": 1,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G4",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G5",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G6",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G7",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G8",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-HOSTED-CART-CHROME",
+      "PASS": 6,
+      "FAIL": 4,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-HOSTED-SHOP-CHROME",
+      "PASS": 9,
+      "FAIL": 1,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-TRACE-PARITY",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    }
+  ],
+  "metrics": 40
+}

@@ -5,4 +5,3 @@
  * from @system-x/integration-contracts.
  */
 export {};
-//# sourceMappingURL=types.js.map

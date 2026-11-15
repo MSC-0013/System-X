@@ -19,10 +19,17 @@ export function generateComparisonReport(result, criteria = DEFAULT_COMPARISON_C
     const realLatencies = result.samples
         .filter((s) => s.source === 'QUORUM_CLIENT')
         .map((s) => s.latencyMs);
-    // KS test on latency distributions.
-    const latencyKs = twoSampleKsTest(simLatencies, realLatencies, criteria.ksAlpha);
+    const dataValid = simLatencies.length >= 2 && realLatencies.length >= 2 &&
+        [...simLatencies, ...realLatencies].every((value) => Number.isFinite(value) && value >= 0) &&
+        [simSummary, realSummary].every((summary) => summary &&
+            Number.isFinite(summary.p99Ms) && summary.p99Ms >= 0 &&
+            Number.isFinite(summary.throughputOpsSec) && summary.throughputOpsSec > 0) &&
+        simSummary?.totalSamples === simLatencies.length && realSummary?.totalSamples === realLatencies.length;
+    // NaN represents unavailable metrics (serialized as null), never a perfect match.
+    const latencyKs = dataValid ? twoSampleKsTest(simLatencies, realLatencies, criteria.ksAlpha)
+        : { dStatistic: NaN, pValue: NaN, rejected: true, alpha: criteria.ksAlpha };
     // Wasserstein distance.
-    const latencyWasserstein = wassersteinDistance(simLatencies, realLatencies);
+    const latencyWasserstein = dataValid ? wassersteinDistance(simLatencies, realLatencies) : { distance: NaN };
     // MAPE on p99 latency and throughput.
     const simP99 = simSummary?.p99Ms ?? 0;
     const realP99 = realSummary?.p99Ms ?? 0;
@@ -45,16 +52,22 @@ export function generateComparisonReport(result, criteria = DEFAULT_COMPARISON_C
     const engineeringKsPass = latencyKs.dStatistic <= criteria.maxKsDStatistic; // Gate B
     const p99Pass = p99LatencyMape.mapePercent <= criteria.maxP99MapePercent;
     const tputPass = throughputMape.mapePercent <= criteria.maxThroughputMapePercent;
-    // All four gates must pass.
-    const certified = statisticalKsPass && engineeringKsPass && p99Pass && tputPass;
+    // Require every configured threshold and valid evidence from both sources.
+    const wassersteinLimit = criteria.maxWassersteinMs ?? 12;
+    const wassersteinPass = latencyWasserstein.distance <= wassersteinLimit;
+    const certified = dataValid && statisticalKsPass && engineeringKsPass && p99Pass && tputPass && wassersteinPass;
     const reasons = [];
-    if (!statisticalKsPass)
+    if (!dataValid)
+        reasons.push('Insufficient or invalid evidence: each source needs at least two finite samples and a matching summary with positive throughput');
+    if (dataValid && !wassersteinPass)
+        reasons.push(`Wasserstein distance=${latencyWasserstein.distance} exceeds max=${wassersteinLimit} ms`);
+    if (dataValid && !statisticalKsPass)
         reasons.push(`KS hypothesis rejected: p=${latencyKs.pValue.toFixed(4)} < alpha=${criteria.ksAlpha}`);
-    if (!engineeringKsPass)
+    if (dataValid && !engineeringKsPass)
         reasons.push(`KS D=${latencyKs.dStatistic.toFixed(3)} exceeds engineering max=${criteria.maxKsDStatistic}`);
-    if (!p99Pass)
+    if (dataValid && !p99Pass)
         reasons.push(`p99 MAPE=${p99LatencyMape.mapePercent.toFixed(1)}% exceeds max=${criteria.maxP99MapePercent}%`);
-    if (!tputPass)
+    if (dataValid && !tputPass)
         reasons.push(`throughput MAPE=${throughputMape.mapePercent.toFixed(1)}% exceeds max=${criteria.maxThroughputMapePercent}%`);
     const verdict = certified
         ? 'CERTIFIED: simulation fidelity meets all engineering thresholds'
@@ -86,4 +99,3 @@ function buildSummaryView(summary, latencies) {
         successRate: summary?.successRate ?? 0,
     };
 }
-//# sourceMappingURL=comparisonEngine.js.map

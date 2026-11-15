@@ -11,8 +11,10 @@
  */
 export function twoSampleKsTest(a, b, alpha = 0.05) {
     if (a.length === 0 || b.length === 0) {
-        return { dStatistic: 0, pValue: 1, rejected: false, alpha };
+        throw new RangeError('KS comparison requires two non-empty samples');
     }
+    if (![...a, ...b].every(Number.isFinite))
+        throw new RangeError('KS samples must be finite');
     const sortedA = [...a].sort((x, y) => x - y);
     const sortedB = [...b].sort((x, y) => x - y);
     const n1 = sortedA.length;
@@ -70,29 +72,27 @@ function kolmogorovPValue(t) {
  */
 export function wassersteinDistance(a, b) {
     if (a.length === 0 || b.length === 0) {
-        return { distance: 0 };
+        throw new RangeError('Wasserstein comparison requires two non-empty samples');
     }
+    if (![...a, ...b].every(Number.isFinite))
+        throw new RangeError('Wasserstein samples must be finite');
     const sortedA = [...a].sort((x, y) => x - y);
     const sortedB = [...b].sort((x, y) => x - y);
-    // Interpolate both to common quantile positions.
-    const n = Math.max(sortedA.length, sortedB.length);
+    // Integrate the absolute ECDF difference exactly, including unequal sample
+    // sizes, repeated values, and singleton distributions.
+    const values = [...new Set([...sortedA, ...sortedB])].sort((x, y) => x - y);
+    let ia = 0;
+    let ib = 0;
     let totalDistance = 0;
-    for (let i = 0; i < n; i++) {
-        const qa = interpolateQuantile(sortedA, i / (n - 1));
-        const qb = interpolateQuantile(sortedB, i / (n - 1));
-        totalDistance += Math.abs(qa - qb);
+    for (let i = 0; i < values.length - 1; i++) {
+        const value = values[i];
+        while (ia < sortedA.length && sortedA[ia] <= value)
+            ia++;
+        while (ib < sortedB.length && sortedB[ib] <= value)
+            ib++;
+        totalDistance += Math.abs(ia / sortedA.length - ib / sortedB.length) * (values[i + 1] - value);
     }
-    return { distance: totalDistance / n };
-}
-function interpolateQuantile(sorted, p) {
-    if (sorted.length === 0)
-        return 0;
-    const idx = p * (sorted.length - 1);
-    const lo = Math.floor(idx);
-    const hi = Math.ceil(idx);
-    if (lo === hi)
-        return sorted[lo];
-    return sorted[lo] + (idx - lo) * (sorted[hi] - sorted[lo]);
+    return { distance: totalDistance };
 }
 // ---------------------------------------------------------------------------
 // MAPE
@@ -108,4 +108,3 @@ export function computeMape(actual, predicted) {
     const mapePercent = (Math.abs(actual - predicted) / Math.abs(actual)) * 100;
     return { mapePercent };
 }
-//# sourceMappingURL=statistics.js.map

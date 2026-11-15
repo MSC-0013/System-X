@@ -1,10 +1,12 @@
 # SYSTEM-X
 
+Source files, tests, and service entry points run as JavaScript on Node.js 24. Workspace builds stage JavaScript in each package’s `dist/` directory.
+
 > **Closed-Loop Research, Benchmark, Calibration & Empirical Verification Engine**  
 > Uniting **BLACKBOX-X** (discrete-event performance simulation) and **QUORUM LAB** (distributed consistency and failure execution) into a unified, mathematically verifiable certification platform.
 
 > [!IMPORTANT]
-> ### 🌐 DIRECT LIVE WEB DASHBOARD (CLICK TO OPEN IN BROWSER)
+> ### 🌐 LOCAL DASHBOARD ENDPOINTS
 > - 🖥️ **SYSTEM-X Ecosystem Portal & Control Server**: 👉 **[http://localhost:8080](http://localhost:8080)**  
 > - 🛒 **Commerce Reliability Testbed (CRT)**: 👉 **[http://localhost:4200](http://localhost:4200)**  
 >
@@ -81,7 +83,7 @@ SYSTEM-X is an independent integration platform that closes the loop between ana
 |                                 v                                           |
 |                  +-----------------------------+                            |
 |                  |     CERTIFICATION GATE      |                            |
-|                  |      CERTIFIED [PASS]       |                            |
+|                  |      EVALUATES EVIDENCE     |                            |
 |                  +-----------------------------+                            |
 |                                                                             |
 +-----------------------------------------------------------------------------+
@@ -95,9 +97,9 @@ SYSTEM-X is an independent integration platform that closes the loop between ana
 
 ---
 
-## 3. The 8 Certification Gates (G1 through G8)
+## 3. Certification Design (G1 through G8)
 
-Every experiment execution is evaluated against eight non-negotiable verification gates:
+The table describes the intended full certification protocol. The local demo measures workload execution, network faults, and model fidelity. Calibration, held-out validation, and object retention require separate verification.
 
 | Gate | Name | Criterion | Verification Mechanism |
 |---|---|---|---|
@@ -117,10 +119,10 @@ Every experiment execution is evaluated against eight non-negotiable verificatio
 ```text
 system-x/
 ├── gate/
-│   ├── server.ts               # SYSTEM-X Unified Web Portal & Control Server (Port 8080)
-│   ├── runRealDemo.ts          # Master in-process experiment & closed-loop runner
-│   ├── localGate.ts            # Local deterministic 7-stage verification gate
-│   └── integrationGate.ts      # 18-step live multi-system integration gate
+│   ├── server.js               # SYSTEM-X Unified Web Portal & Control Server (Port 8080)
+│   ├── runRealDemo.js          # Master in-process experiment & closed-loop runner
+│   ├── localGate.js            # Local deterministic 7-stage verification gate
+│   └── integrationGate.js      # 18-step live multi-system integration gate
 ├── packages/
 │   ├── integration-contracts/  # JSON Schemas, TypeScript interfaces, & spec hashing
 │   ├── workload-compiler/      # Compiles abstract specs into deterministic op streams
@@ -143,11 +145,13 @@ system-x/
 ### A. Live Ecosystem Dashboard (Port 8080)
 Launch the SYSTEM-X Unified Control Server & Web Portal:
 ```bash
-npm run serve
-# or
-npm start
+pnpm install --frozen-lockfile
+pnpm build
+pnpm serve
 ```
 Open **`http://localhost:8080`** in any browser.
+
+The redesign adapts [Spotlight Card](https://reactbits.dev/components/spotlight-card) and [Star Border](https://reactbits.dev/animations/star-border) from React Bits for the existing JavaScript portal. The effects respect the browser's reduced-motion setting.
 
 Features:
 - **Real-Time Ecosystem Health**: Live monitoring of System-X, Blackbox-X, Quorum Lab, and MinIO storage.
@@ -156,57 +160,45 @@ Features:
 - **Quorum Explorer**: Per-node cluster telemetry, WAL sequence, and quorum overlap.
 - **Run Manifests & Reports**: Interactive executive dashboard with SVG charts.
 
+Run `pnpm test:chrome` with Google Chrome installed and all three sibling workspaces built. The test starts an isolated portal and HTTP fixture, exercises the UI with custom JSON, and saves screenshots and reports in a temporary directory. Set `CHROME_EXECUTABLE` if Chrome is installed in a different location.
+
+The portal binds to loopback by default. For a deployment reachable from other hosts, set `SYSTEM_X_ACCESS_TOKEN` to a secret with at least 24 characters and serve the portal behind HTTPS. The browser login is `system-x` with that token as the password. Set `SYSTEM_X_BENCHMARK_ORIGINS` to the comma-separated origins approved for testing. To benchmark loopback services, configure `SYSTEM_X_LOCAL_BENCHMARK_ORIGINS` with the exact origins and enable the local target option for each run.
+
 ### B. Master CLI Experiment Runner
 Execute the master closed-loop verification experiment directly in your terminal:
 ```bash
-npm run demo:real
+pnpm demo:real
 ```
 
-Output highlights:
-```text
-==============================================================================
-       SYSTEM-X — DISTRIBUTED SYSTEM CLOSED-LOOP VALIDATION
-==============================================================================
-[CLUSTER] Initializing 3-Node In-Process Quorum Lab Cluster...
-[WORKLOAD] Compiling 150 deterministic Zipfian operations (seed: 1337)...
-[FAULTS] Injecting Node-2 Partition (800ms) and Node-3 Delay (500ms)...
-[METRICS] Two-Sample KS: p=1.0000, D=0.0000 (Threshold <= 0.15) [PASS]
-[METRICS] Wasserstein-1: 0.000 ms (Threshold <= 12.000 ms) [PASS]
-[CALIBRATION] 70% Train / 30% Held-Out: Zero Data Leakage Verified.
-==============================================================================
-FINAL VERDICT: CERTIFIED [PASS]
-Certification Hash: 4fc28071b11f08cc07905b1e45e56ca4948cfd4e2ee574bd54f381622d5c51bf
-==============================================================================
-```
+Build Quorum Lab with `pnpm build` and Blackbox-X with `npm run build` in their sibling folders first. The runner measures 150 operations across three local Quorum Lab nodes and compares those measurements with an independent Blackbox-X baseline. The report includes the applied partition and delay, operation outcomes, and latency comparison.
+
+The local run reports **NOT CERTIFIED**. Local files provide no S3 Object Lock evidence, and the model must also meet the measured comparison thresholds. Use `pnpm demo:real --require-certification` to return an error exit for an uncertified result.
 
 ### C. Run Local Verification Gate
 ```bash
-npm run gate:local
+pnpm check
+pnpm test
+pnpm gate:local
 ```
 
 ---
 
 ## 6. Generated Artifact Bundles
 
-Every completed run produces a tamper-proof artifact bundle in `artifacts/run-<id>`:
+A local run writes a SHA-256 manifest and its measured evidence to `artifacts/run-<id>`:
 ```text
-artifacts/run-mv6w2um2/
-├── report.html                    # Interactive Executive HTML Dashboard
-├── summary.json                   # Full Machine-Readable Performance Metrics
-├── certification.json             # Cryptographic Lineage Manifest (SHA-256)
-├── workload/trace.json            # Deterministic 150-Op Trace Ledger
-├── faults/timeline.json           # Monotonic Fault Sequence
-├── telemetry/normalized.json      # Normalized Empirical Datasets
-├── graphs/latency-timeseries.svg  # Latency vs Time Vector Chart
-├── graphs/latency-cdf.svg         # Analytical vs Empirical CDF Comparison Chart
-└── graphs/workload-distribution.svg # Zipfian Key Access Distribution Chart
+artifacts/run-<id>/
+├── report.html
+├── summary.json
+├── certification.json
+├── comparison.json
+├── workload/trace.json
+├── faults/timeline.json
+└── telemetry/{quorum,blackbox,normalized}.json
 ```
 
 ---
 
 ## 7. Integration with the Commerce Reliability Testbed (CRT)
 
-SYSTEM-X serves as the certification engine for the **Commerce Reliability Testbed (CRT)** on port 4200:
-- Verifies CRT-03 (20 concurrent buyers for the last item with strictly 0 overselling).
-- Validates idempotency deduplication across repeated checkout requests (CRT-02).
-- Certifies that node crashes, network partitions, and healing events preserve application state without lost writes.
+The embedded **Commerce Reliability Testbed (CRT)** exercises checkout, idempotency, inventory contention, concurrent writes, and duplicate event delivery. Run `node crt/scenarios/runLastItemTest.js` for the 20-buyer check. Run `node crt/scenarios/runAllScenarios.js` to see which scenarios passed and which remain unverified. The full matrix exits unsuccessfully if any scenario fails or lacks evidence.

@@ -1,3 +1,4 @@
+import { computeThroughput } from '@system-x/result-normalizer';
 import { DEFAULT_CALIBRATION_CONFIG } from './types.js';
 import { requestBlackboxCalibration } from './blackboxClient.js';
 // ---------------------------------------------------------------------------
@@ -13,6 +14,9 @@ import { requestBlackboxCalibration } from './blackboxClient.js';
  * @param config             BLACKBOX-X connection config.
  */
 export async function runCalibrationCycle(integrationRunId, experimentSpecHash, normalizedResult, currentParameters, config = DEFAULT_CALIBRATION_CONFIG) {
+    if (!Number.isFinite(config.calibrationFraction) || config.calibrationFraction <= 0 || config.calibrationFraction >= 1) {
+        throw new RangeError('calibrationFraction must be strictly between 0 and 1');
+    }
     const paramMap = {};
     for (const p of currentParameters) {
         paramMap[p.name] = p.value;
@@ -21,14 +25,17 @@ export async function runCalibrationCycle(integrationRunId, experimentSpecHash, 
     const allRealSamples = normalizedResult.samples
         .filter((s) => s.source === 'QUORUM_CLIENT')
         .slice()
-        .sort((a, b) => (a.operationId < b.operationId ? -1 : 1));
+        .sort((a, b) => a.timestampMs - b.timestampMs || a.operationId.localeCompare(b.operationId));
     const n = allRealSamples.length;
+    if (n < 2 || new Set(allRealSamples.map((s) => s.operationId)).size !== n ||
+        allRealSamples.some((s) => !Number.isFinite(s.latencyMs) || s.latencyMs < 0 || !Number.isFinite(s.timestampMs))) {
+        throw new RangeError('Calibration requires at least two distinct operations with finite timestamps and non-negative latencies');
+    }
     const splitIdx = Math.max(1, Math.floor(n * config.calibrationFraction));
     const calSamples = allRealSamples.slice(0, splitIdx);
     const valSamples = allRealSamples.slice(splitIdx);
     // 2. Build calibration request containing ONLY calibration partition (zero leakage)
-    const realSummary = normalizedResult.summaries.find((s) => s.source === 'QUORUM_CLIENT');
-    const request = buildCalibrationRequest(integrationRunId, experimentSpecHash, paramMap, calSamples, realSummary);
+    const request = buildCalibrationRequest(integrationRunId, experimentSpecHash, paramMap, calSamples);
     // 3. Send ONLY calibration data to BLACKBOX-X optimizer
     const response = await requestBlackboxCalibration(request, config);
     // 4. SYSTEM-X evaluates calibrated parameters on the held-out validation partition
@@ -37,8 +44,10 @@ export async function runCalibrationCycle(integrationRunId, experimentSpecHash, 
         ? valLatencies[Math.max(0, Math.ceil(0.99 * valLatencies.length) - 1)] ?? 0
         : 0;
     const diff = Math.abs(valP99Ms - response.predictedP99Ms);
-    const validationP99MapePercent = valP99Ms > 0 ? (diff / valP99Ms) * 100 : 0;
-    const validated = validationP99MapePercent <= 20.0;
+    const validationP99MapePercent = valP99Ms > 0 ? (diff / valP99Ms) * 100
+        : response.predictedP99Ms === 0 ? 0 : Infinity;
+    const validated = valSamples.length > 0 && Number.isFinite(response.predictedP99Ms) &&
+        response.predictedP99Ms >= 0 && validationP99MapePercent <= 20.0;
     return {
         integrationRunId,
         experimentSpecHash,
@@ -62,7 +71,7 @@ export async function runCalibrationCycle(integrationRunId, experimentSpecHash, 
 // ---------------------------------------------------------------------------
 // Internal: build calibration request from calibration partition ONLY
 // ---------------------------------------------------------------------------
-function buildCalibrationRequest(integrationRunId, experimentSpecHash, parameters, calSamples, realSummary) {
+function buildCalibrationRequest(integrationRunId, experimentSpecHash, parameters, calSamples) {
     const calLatencies = calSamples.map((s) => s.latencyMs).sort((a, b) => a - b);
     const nc = calLatencies.length;
     const p = (arr, pct) => arr[Math.max(0, Math.ceil((pct / 100) * arr.length) - 1)] ?? 0;
@@ -88,7 +97,7 @@ function buildCalibrationRequest(integrationRunId, experimentSpecHash, parameter
             meanMs: nc > 0 ? calLatencies.reduce((s, v) => s + v, 0) / nc : 0,
         },
         empiricalCdfBuckets: buildEmpiricalCdf(calLatencies),
-        targetThroughputOpsSec: realSummary?.throughputOpsSec ?? 0,
+        targetThroughputOpsSec: computeThroughput(calSamples.map((s) => s.timestampMs)),
         errorRate,
         ...(staleReadRate !== undefined ? { staleReadRate } : {}),
         sloBreachCount,
@@ -109,8 +118,11 @@ function buildEmpiricalCdf(sorted) {
     for (const pct of percentiles) {
         const idx = Math.max(0, Math.ceil((pct / 100) * n) - 1);
         const latencyMs = sorted[idx] ?? 0;
-        const fraction = pct / 100;
-        // Deduplicate: skip if same latency as previous bucket.
+        let end = idx + 1;
+        while (end < n && sorted[end] === latencyMs)
+            end++;
+        const fraction = end / n;
+        // Each point is the actual ECDF, including the full mass of ties.
         const prev = buckets[buckets.length - 1];
         if (!prev || latencyMs !== prev[0]) {
             buckets.push([latencyMs, fraction]);
@@ -118,4 +130,3 @@ function buildEmpiricalCdf(sorted) {
     }
     return buckets;
 }
-//# sourceMappingURL=calibrationLoop.js.map

@@ -151,4 +151,3 @@ export class QuorumNodeClient {
         this.clients.clear();
     }
 }
-//# sourceMappingURL=quorumNodeClient.js.map

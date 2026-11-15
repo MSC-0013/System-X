@@ -10,8 +10,6 @@
 import { deriveStreamSeed } from '@system-x/integration-contracts';
 import { createMulberry32, createUniformGenerator } from './uniformGenerator.js';
 import { createZipfianGenerator } from './zipfianGenerator.js';
-/** Minimum gap between operations for a client (in microseconds). */
-const MIN_OP_GAP_US = 100;
 /**
  * Generate the full operation trace for all clients.
  *
@@ -22,8 +20,19 @@ const MIN_OP_GAP_US = 100;
  *  - We interleave across all clients in time order.
  */
 export function generateOperationTrace(spec, experimentSpecHash, masterSeed) {
+    if (!Number.isSafeInteger(spec.operationCount) || spec.operationCount < 1 ||
+        !Number.isSafeInteger(spec.clientCount) || spec.clientCount < 1 ||
+        !Number.isSafeInteger(spec.keySpaceSize) || spec.keySpaceSize < 1 ||
+        !Number.isFinite(spec.durationMs) || spec.durationMs <= 0 ||
+        !Number.isSafeInteger(spec.keyMin ?? 0) || (spec.keyMin ?? 0) < 0 ||
+        !Number.isSafeInteger((spec.keyMin ?? 0) + spec.keySpaceSize) ||
+        !Number.isSafeInteger(spec.valueSize) || spec.valueSize < 1 ||
+        !Number.isFinite(spec.readFraction) || !Number.isFinite(spec.deleteFraction) ||
+        spec.readFraction < 0 || spec.deleteFraction < 0 || spec.readFraction + spec.deleteFraction > 1) {
+        throw new RangeError('Invalid workload count, duration, key range, value size, or operation fractions');
+    }
     const durationUs = spec.durationMs * 1000;
-    const opsPerClient = Math.ceil(spec.operationCount / spec.clientCount);
+    const opsPerClient = Math.floor(spec.operationCount / spec.clientCount);
     const allEntries = [];
     for (let clientId = 0; clientId < spec.clientCount; clientId++) {
         // Separate seeds for operation type, key selection, and timing per client.
@@ -34,18 +43,13 @@ export function generateOperationTrace(spec, experimentSpecHash, masterSeed) {
         const keyRng = createMulberry32(keySeed);
         const timeRng = createMulberry32(timeSeed);
         const keyGen = spec.keyDistribution === 'ZIPFIAN'
-            ? createZipfianGenerator(keyRng, spec.keySpaceSize)
+            ? createZipfianGenerator(keyRng, spec.keySpaceSize, spec.zipfianTheta)
             : { next: createUniformGenerator(keyRng, 0, spec.keySpaceSize) };
-        // Distribute operations uniformly over [0, durationUs) with minimum gap.
-        let cursor = 0;
-        const clientOpsToGenerate = Math.min(opsPerClient, spec.operationCount);
+        // Allocate the remainder exactly once. Each operation gets a stratified
+        // time slot so a shrinking random window cannot silently drop operations.
+        const clientOpsToGenerate = opsPerClient + (clientId < spec.operationCount % spec.clientCount ? 1 : 0);
         for (let i = 0; i < clientOpsToGenerate; i++) {
-            // Random offset within the remaining window.
-            const remaining = durationUs - cursor;
-            if (remaining <= 0)
-                break;
-            const offset = cursor + Math.floor(timeRng() * remaining);
-            cursor = offset + MIN_OP_GAP_US;
+            const offset = Math.floor(((i + timeRng()) / clientOpsToGenerate) * durationUs);
             // Determine operation type.
             const rand = opRng();
             let operation;
@@ -59,7 +63,7 @@ export function generateOperationTrace(spec, experimentSpecHash, masterSeed) {
                 operation = 'PUT';
             }
             // Generate key.
-            const keyIndex = keyGen.next();
+            const keyIndex = (spec.keyMin ?? 0) + keyGen.next();
             const key = `k${keyIndex.toString().padStart(10, '0')}`;
             // Generate value for PUT (deterministic value based on key index and size).
             let value;
@@ -86,4 +90,3 @@ export function generateOperationTrace(spec, experimentSpecHash, masterSeed) {
     // Assign final monotonic sequence numbers.
     return allEntries.map((entry, idx) => ({ ...entry, sequence: idx }));
 }
-//# sourceMappingURL=operationTraceGenerator.js.map

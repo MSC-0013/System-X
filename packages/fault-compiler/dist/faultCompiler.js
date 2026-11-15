@@ -132,4 +132,3 @@ function computeTimelineHash(events) {
     const canonical = canonicalJsonStringify(events);
     return createHash('sha256').update(canonical, 'utf8').digest('hex');
 }
-//# sourceMappingURL=faultCompiler.js.map

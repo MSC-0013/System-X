@@ -16,7 +16,7 @@ import { generateOperationTrace } from './operationTraceGenerator.js';
  *
  * Replay identity: same spec + masterSeed + WORKLOAD_COMPILER_VERSION = same trace.
  */
-export const WORKLOAD_COMPILER_VERSION = '1.0.0';
+export const WORKLOAD_COMPILER_VERSION = '1.1.0';
 export const SEED_DERIVATION_ALGORITHM = 'fnv1a64+splitmix64-v1';
 export const PRNG_ALGORITHM = 'mulberry32-v1';
 /**
@@ -24,7 +24,7 @@ export const PRNG_ALGORITHM = 'mulberry32-v1';
  * Must change if the distribution algorithm implementation changes.
  */
 const ALGORITHM_NAMES = {
-    ZIPFIAN: 'ycsb-rejection-inversion-v1',
+    ZIPFIAN: 'zipf-inverse-cdf-v1',
     UNIFORM: 'uniform-direct-v1',
 };
 export function compileWorkload(spec, experimentSpecHash) {
@@ -38,6 +38,8 @@ export function compileWorkload(spec, experimentSpecHash) {
         deleteFraction: Math.max(0, 1 - workload.readRatio - workload.writeRatio),
         keyDistribution: workload.distribution === 'ZIPFIAN' ? 'ZIPFIAN' : 'UNIFORM',
         keySpaceSize: workload.keyRange.max - workload.keyRange.min,
+        keyMin: workload.keyRange.min,
+        ...(workload.zipfianTheta !== undefined ? { zipfianTheta: workload.zipfianTheta } : {}),
         valueSize: workload.valueSizeBytes ?? 64,
     };
     // Generate the trace entries (pure, deterministic).
@@ -80,4 +82,3 @@ function estimateDurationMs(workload) {
     // Fallback: 30 seconds.
     return 30_000;
 }
-//# sourceMappingURL=workloadCompiler.js.map

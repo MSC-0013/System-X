@@ -1,0 +1,7 @@
+{
+  "expected": "Master certification rejects metadata-only claims",
+  "certified": true,
+  "verdict": "CERTIFIED: comparison and supplied lineage metadata passed (storage contents and retention require independent verification)",
+  "retainedArtifactsVerified": 0,
+  "usedExternalServices": false
+}

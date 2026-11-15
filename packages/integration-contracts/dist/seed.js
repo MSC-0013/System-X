@@ -26,4 +26,3 @@ export function createMulberry32(seed) {
         return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
 }
-//# sourceMappingURL=seed.js.map

@@ -1,0 +1,155 @@
+{
+  "definitions": 90,
+  "assertions": 377,
+  "checks": 444,
+  "records": 6252,
+  "actual": 5972,
+  "passed": 5880,
+  "failed": 92,
+  "blocked": 280,
+  "skipped": 0,
+  "verified10": 424,
+  "latestOpen": [
+    {
+      "id": "BX-M11",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "BX-M12",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "BX-M6",
+      "PASS": 7,
+      "FAIL": 3,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-04",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-05",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-07",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-08",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-09",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-10",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-11",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-12",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-14",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "CRT-15",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-CRT-TENANT-HTTP",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G4",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G5",
+      "PASS": 0,
+      "FAIL": 10,
+      "BLOCKED": 0,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G6",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G7",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-G8",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    },
+    {
+      "id": "SX-TRACE-PARITY",
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 10,
+      "SKIPPED": 0
+    }
+  ],
+  "metrics": 20
+}

@@ -8,6 +8,8 @@ export class ValidationError extends Error {
 }
 export function validateWorkload(workload) {
     const errors = [];
+    if (!workload || typeof workload !== 'object' || Array.isArray(workload))
+        return ['workload must be an object'];
     if (!Number.isInteger(workload.operationCount) || workload.operationCount < 1) {
         errors.push(`operationCount must be an integer >= 1, got ${workload.operationCount}`);
     }
@@ -18,7 +20,7 @@ export function validateWorkload(workload) {
         errors.push(`distribution must be 'UNIFORM' or 'ZIPFIAN', got '${workload.distribution}'`);
     }
     if (workload.distribution === 'ZIPFIAN') {
-        if (workload.zipfianTheta === undefined || workload.zipfianTheta < 0.1 || workload.zipfianTheta > 2.0) {
+        if (workload.zipfianTheta === undefined || !Number.isFinite(workload.zipfianTheta) || workload.zipfianTheta < 0.1 || workload.zipfianTheta > 2.0) {
             errors.push(`zipfianTheta must be between 0.1 and 2.0 for ZIPFIAN distribution, got ${workload.zipfianTheta}`);
         }
     }
@@ -26,33 +28,35 @@ export function validateWorkload(workload) {
         errors.push('keyRange must be defined as { min, max }');
     }
     else {
-        if (workload.keyRange.min < 0) {
+        if (!Number.isSafeInteger(workload.keyRange.min) || workload.keyRange.min < 0) {
             errors.push(`keyRange.min must be >= 0, got ${workload.keyRange.min}`);
         }
-        if (workload.keyRange.max < workload.keyRange.min) {
-            errors.push(`keyRange.max (${workload.keyRange.max}) cannot be less than keyRange.min (${workload.keyRange.min})`);
+        if (!Number.isSafeInteger(workload.keyRange.max) || workload.keyRange.max <= workload.keyRange.min) {
+            errors.push(`keyRange.max (${workload.keyRange.max}) must be an integer greater than keyRange.min (${workload.keyRange.min}); max is exclusive`);
         }
     }
     const ratioSum = workload.readRatio + workload.writeRatio;
     if (Math.abs(ratioSum - 1.0) > 1e-6) {
         errors.push(`readRatio (${workload.readRatio}) + writeRatio (${workload.writeRatio}) must equal 1.0 (sum: ${ratioSum})`);
     }
-    if (workload.readRatio < 0 || workload.readRatio > 1.0) {
+    if (!Number.isFinite(workload.readRatio) || workload.readRatio < 0 || workload.readRatio > 1.0) {
         errors.push(`readRatio must be between 0.0 and 1.0, got ${workload.readRatio}`);
     }
-    if (workload.writeRatio < 0 || workload.writeRatio > 1.0) {
+    if (!Number.isFinite(workload.writeRatio) || workload.writeRatio < 0 || workload.writeRatio > 1.0) {
         errors.push(`writeRatio must be between 0.0 and 1.0, got ${workload.writeRatio}`);
     }
-    if (workload.targetThroughputOpsSec !== undefined && workload.targetThroughputOpsSec <= 0) {
+    if (workload.targetThroughputOpsSec !== undefined && (!Number.isFinite(workload.targetThroughputOpsSec) || workload.targetThroughputOpsSec <= 0)) {
         errors.push(`targetThroughputOpsSec must be > 0, got ${workload.targetThroughputOpsSec}`);
     }
-    if (workload.valueSizeBytes !== undefined && (workload.valueSizeBytes < 1 || workload.valueSizeBytes > 10485760)) {
+    if (workload.valueSizeBytes !== undefined && (!Number.isSafeInteger(workload.valueSizeBytes) || workload.valueSizeBytes < 1 || workload.valueSizeBytes > 10485760)) {
         errors.push(`valueSizeBytes must be between 1 and 10MB, got ${workload.valueSizeBytes}`);
     }
     return errors;
 }
 export function validateConsistency(consistency) {
     const errors = [];
+    if (!consistency || typeof consistency !== 'object' || Array.isArray(consistency))
+        return ['consistency must be an object'];
     const validEngines = ['LEADERLESS', 'LEADER', 'RAFT'];
     if (!validEngines.includes(consistency.replicationEngine)) {
         errors.push(`Invalid replicationEngine: '${consistency.replicationEngine}'`);
@@ -86,31 +90,35 @@ export function validateFaultSchedule(schedule) {
     const validFaultTypes = ['PARTITION', 'DELAY', 'LOSS', 'CLOCK_SKEW', 'CRASH', 'RESTART', 'RECOVER'];
     for (let i = 0; i < schedule.faults.length; i++) {
         const fault = schedule.faults[i];
+        if (!fault || typeof fault !== 'object') {
+            errors.push(`Fault [${i}]: must be an object`);
+            continue;
+        }
         if (!fault.id || typeof fault.id !== 'string') {
             errors.push(`Fault [${i}]: id must be a non-empty string`);
         }
         if (!validFaultTypes.includes(fault.type)) {
             errors.push(`Fault [${i}]: invalid fault type '${fault.type}'`);
         }
-        if (!Array.isArray(fault.targetNodes) || fault.targetNodes.length === 0) {
+        if (!Array.isArray(fault.targetNodes) || fault.targetNodes.length === 0 || fault.targetNodes.some((id) => typeof id !== 'string' || !id.trim())) {
             errors.push(`Fault [${i}]: targetNodes must be a non-empty array of node IDs`);
         }
-        if (typeof fault.offsetMs !== 'number' || fault.offsetMs < 0) {
+        if (!Number.isFinite(fault.offsetMs) || fault.offsetMs < 0) {
             errors.push(`Fault [${i}]: offsetMs must be >= 0, got ${fault.offsetMs}`);
         }
-        if (typeof fault.durationMs !== 'number' || fault.durationMs <= 0) {
+        if (!Number.isFinite(fault.durationMs) || fault.durationMs <= 0) {
             errors.push(`Fault [${i}]: durationMs must be > 0, got ${fault.durationMs}`);
         }
         if (fault.parameters) {
-            if (fault.type === 'DELAY' && fault.parameters.delayMs !== undefined && fault.parameters.delayMs <= 0) {
+            if (fault.type === 'DELAY' && fault.parameters.delayMs !== undefined && (!Number.isFinite(fault.parameters.delayMs) || fault.parameters.delayMs <= 0)) {
                 errors.push(`Fault [${i}]: parameters.delayMs must be > 0`);
             }
             if (fault.type === 'LOSS' && fault.parameters.lossRate !== undefined) {
-                if (fault.parameters.lossRate < 0.0 || fault.parameters.lossRate > 1.0) {
+                if (!Number.isFinite(fault.parameters.lossRate) || fault.parameters.lossRate < 0.0 || fault.parameters.lossRate > 1.0) {
                     errors.push(`Fault [${i}]: parameters.lossRate must be between 0.0 and 1.0`);
                 }
             }
-            if (fault.type === 'RESTART' && fault.parameters.recoveryTimeoutMs !== undefined && fault.parameters.recoveryTimeoutMs <= 0) {
+            if (fault.type === 'RESTART' && fault.parameters.recoveryTimeoutMs !== undefined && (!Number.isFinite(fault.parameters.recoveryTimeoutMs) || fault.parameters.recoveryTimeoutMs <= 0)) {
                 errors.push(`Fault [${i}]: parameters.recoveryTimeoutMs must be > 0`);
             }
         }
@@ -121,23 +129,23 @@ export function validateSlo(slo) {
     const errors = [];
     if (!slo)
         return errors;
-    if (typeof slo.targetP99Ms !== 'number' || slo.targetP99Ms <= 0) {
+    if (!Number.isFinite(slo.targetP99Ms) || slo.targetP99Ms <= 0) {
         errors.push(`slo.targetP99Ms must be > 0, got ${slo.targetP99Ms}`);
     }
-    if (typeof slo.maxErrorRate !== 'number' || slo.maxErrorRate < 0.0 || slo.maxErrorRate > 1.0) {
+    if (!Number.isFinite(slo.maxErrorRate) || slo.maxErrorRate < 0.0 || slo.maxErrorRate > 1.0) {
         errors.push(`slo.maxErrorRate must be between 0.0 and 1.0, got ${slo.maxErrorRate}`);
     }
-    if (slo.maxStaleReadRate !== undefined && (slo.maxStaleReadRate < 0.0 || slo.maxStaleReadRate > 1.0)) {
+    if (slo.maxStaleReadRate !== undefined && (!Number.isFinite(slo.maxStaleReadRate) || slo.maxStaleReadRate < 0.0 || slo.maxStaleReadRate > 1.0)) {
         errors.push(`slo.maxStaleReadRate must be between 0.0 and 1.0, got ${slo.maxStaleReadRate}`);
     }
-    if (slo.minThroughputOpsSec !== undefined && slo.minThroughputOpsSec <= 0) {
+    if (slo.minThroughputOpsSec !== undefined && (!Number.isFinite(slo.minThroughputOpsSec) || slo.minThroughputOpsSec <= 0)) {
         errors.push(`slo.minThroughputOpsSec must be > 0, got ${slo.minThroughputOpsSec}`);
     }
     return errors;
 }
 export function validateIntegratedExperiment(spec) {
     const errors = [];
-    if (!spec || typeof spec !== 'object') {
+    if (!spec || typeof spec !== 'object' || Array.isArray(spec)) {
         return { valid: false, errors: ['Experiment specification must be a non-null object'] };
     }
     const exp = spec;
@@ -196,7 +204,7 @@ export function validateOperationTraceEntry(entry) {
     if (!entry.key || typeof entry.key !== 'string') {
         errors.push('entry.key must be a non-empty string');
     }
-    if (entry.scheduledOffsetUs !== undefined && (typeof entry.scheduledOffsetUs !== 'number' || entry.scheduledOffsetUs < 0)) {
+    if (entry.scheduledOffsetUs !== undefined && (!Number.isFinite(entry.scheduledOffsetUs) || entry.scheduledOffsetUs < 0)) {
         errors.push(`entry.scheduledOffsetUs must be a non-negative number, got ${entry.scheduledOffsetUs}`);
     }
     return errors;
@@ -275,4 +283,3 @@ export function mapNativeErrorToSemanticOutcome(errorCode) {
             return 'ROUTING_RETRYABLE_FAILURE';
     }
 }
-//# sourceMappingURL=validation.js.map

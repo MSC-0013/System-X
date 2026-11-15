@@ -90,4 +90,3 @@ export function validateCellCapability(cell, capabilities) {
     }
     return { valid: true };
 }
-//# sourceMappingURL=capabilityValidator.js.map

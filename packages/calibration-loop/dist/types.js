@@ -14,4 +14,3 @@ export const DEFAULT_CALIBRATION_CONFIG = {
     maxRetries: 3,
     calibrationFraction: 0.7,
 };
-//# sourceMappingURL=types.js.map

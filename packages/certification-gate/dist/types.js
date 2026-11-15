@@ -16,4 +16,3 @@ export const DEFAULT_ARTIFACT_STORE_CONFIG = {
     forcePathStyle: true,
     retentionDays: 365,
 };
-//# sourceMappingURL=types.js.map

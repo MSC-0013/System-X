@@ -18,4 +18,3 @@ export function createUniformGenerator(prng, min, max) {
     const range = max - min;
     return () => Math.floor(prng() * range) + min;
 }
-//# sourceMappingURL=uniformGenerator.js.map

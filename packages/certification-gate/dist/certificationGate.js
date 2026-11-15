@@ -3,7 +3,7 @@ import { verifyLineageCompleteness, computeRecordHash } from './artifactIntegrit
 // Main export
 // ---------------------------------------------------------------------------
 /**
- * Evaluate all certification criteria and produce an immutable CertificationRecord.
+ * Evaluate the comparison and lineage metadata. These inputs cannot certify a master run.
  *
  * @param integrationRunId   Correlation ID.
  * @param experimentSpecHash Reproducibility identity hash.
@@ -16,6 +16,10 @@ import { verifyLineageCompleteness, computeRecordHash } from './artifactIntegrit
 export function evaluateCertification(integrationRunId, experimentSpecHash, comparison, lineage, requireVersionId = true, certifiedAt, environmentOverride) {
     const failures = [];
     const reasons = [];
+    if (comparison.integrationRunId !== integrationRunId || lineage.integrationRunId !== integrationRunId ||
+        comparison.experimentSpecHash !== experimentSpecHash || lineage.experimentSpecHash !== experimentSpecHash) {
+        failures.push('Run identity mismatch between comparison, lineage, and certification request');
+    }
     // --- Gate 1: Comparison must be certified.
     if (!comparison.certified) {
         failures.push(`Comparison not certified: ${comparison.verdict}`);
@@ -38,6 +42,8 @@ export function evaluateCertification(integrationRunId, experimentSpecHash, comp
         ...(lineage.validationReport ? [lineage.validationReport] : []),
     ];
     for (const artifact of allArtifacts) {
+        if (!artifact)
+            continue; // Report incomplete lineage instead of throwing.
         if (!/^[0-9a-f]{64}$/.test(artifact.sha256)) {
             failures.push(`Invalid SHA-256 for artifact '${artifact.name}': ${artifact.sha256}`);
             reasons.push('CHECKSUM_MISMATCH');
@@ -46,16 +52,17 @@ export function evaluateCertification(integrationRunId, experimentSpecHash, comp
     // --- Gate 4: Zero-mock verification (versionId required).
     if (requireVersionId) {
         for (const artifact of allArtifacts) {
+            if (!artifact)
+                continue;
             if (!artifact.versionId) {
                 failures.push(`Artifact '${artifact.name}' has no versionId — not uploaded to S3 (zero-mock violation)`);
                 reasons.push('ZERO_MOCK_VIOLATION');
             }
         }
     }
-    const certified = failures.length === 0;
-    const verdict = certified
-        ? 'CERTIFIED: all end-to-end gates passed with zero-mock artifact lineage'
-        : `NOT CERTIFIED: ${failures.join('; ')}`;
+    const metadataEligible = failures.length === 0;
+    failures.push('Independent G1–G8 execution and retained artifact verification are required');
+    const verdict = `NOT CERTIFIED: ${failures.join('; ')}`;
     const environment = environmentOverride ?? {
         nodeVersion: process.version,
         platform: process.platform,
@@ -66,7 +73,8 @@ export function evaluateCertification(integrationRunId, experimentSpecHash, comp
     const recordWithoutHash = {
         integrationRunId,
         experimentSpecHash,
-        certified,
+        certified: false,
+        metadataEligible,
         verdict,
         lineage,
         environment,
@@ -75,4 +83,3 @@ export function evaluateCertification(integrationRunId, experimentSpecHash, comp
     const recordHash = computeRecordHash(recordWithoutHash);
     return { ...recordWithoutHash, recordHash };
 }
-//# sourceMappingURL=certificationGate.js.map

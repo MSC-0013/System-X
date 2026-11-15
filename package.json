@@ -4,36 +4,38 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter @system-x/integration-contracts build && pnpm --filter @system-x/workload-compiler build && pnpm --filter @system-x/fault-compiler build && pnpm --filter @system-x/result-normalizer build && pnpm --filter @system-x/comparison-engine build && pnpm --filter @system-x/calibration-loop build && pnpm --filter @system-x/certification-gate build",
+    "build": "turbo run build",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck",
+    "test:chrome": "node tests/chrome-portal-smoke.mjs",
     "clean": "turbo run clean",
-    "gate": "node --import tsx gate/localGate.ts",
-    "gate:local": "node --import tsx gate/localGate.ts",
-    "gate:integration": "node --import tsx gate/integrationGate.ts",
-    "demo:real": "node --import tsx gate/runRealDemo.ts",
-    "serve": "node --import tsx gate/server.ts",
-    "start": "node --import tsx gate/server.ts"
+    "gate": "node gate/localGate.js",
+    "gate:local": "node gate/localGate.js",
+    "gate:integration": "node gate/integrationGate.js",
+    "demo:real": "node gate/runRealDemo.js",
+    "serve": "node gate/server.js",
+    "start": "node gate/server.js",
+    "check": "node scripts/workspace.mjs check"
   },
   "devDependencies": {
-    "@system-x/integration-contracts": "workspace:*",
-    "@system-x/quorum-adapter": "workspace:*",
-    "@system-x/workload-compiler": "workspace:*",
-    "@system-x/fault-compiler": "workspace:*",
-    "@system-x/result-normalizer": "workspace:*",
-    "@system-x/comparison-engine": "workspace:*",
     "@system-x/calibration-loop": "workspace:*",
     "@system-x/campaign-engine": "workspace:*",
     "@system-x/certification-gate": "workspace:*",
-    "tsx": "^4.19.3",
+    "@system-x/comparison-engine": "workspace:*",
+    "@system-x/fault-compiler": "workspace:*",
+    "@system-x/integration-contracts": "workspace:*",
+    "@system-x/quorum-adapter": "workspace:*",
+    "@system-x/result-normalizer": "workspace:*",
+    "@system-x/workload-compiler": "workspace:*",
+    "playwright-core": "1.65.1",
     "turbo": "^2.4.4",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.7",
-    "@types/node": "^24.0.0"
+    "vitest": "^3.0.7"
   },
   "engines": {
     "node": ">=24.0.0",
     "pnpm": ">=10.0.0"
   },
-  "packageManager": "pnpm@12.4.2"
+  "packageManager": "pnpm@12.4.2",
+  "dependencies": {
+    "mysql2": "3.12.0"
+  }
 }

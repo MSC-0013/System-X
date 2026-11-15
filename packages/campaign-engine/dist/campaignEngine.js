@@ -91,4 +91,3 @@ export function computeEffectiveAlpha(baseAlpha, numCells, policy) {
             return baseAlpha;
     }
 }
-//# sourceMappingURL=campaignEngine.js.map

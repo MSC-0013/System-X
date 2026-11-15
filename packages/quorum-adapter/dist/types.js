@@ -20,4 +20,3 @@ export class QuorumNodeError extends Error {
         this.grpcCode = grpcCode;
     }
 }
-//# sourceMappingURL=types.js.map

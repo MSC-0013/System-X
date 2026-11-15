@@ -1,0 +1,67 @@
+# Dedicated temporary QA data plane. Existing service ports are checked before startup.
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${QA_MYSQL_ROOT_PASSWORD:?set QA_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: blackbox_qa
+      MYSQL_USER: blackbox_qa
+      MYSQL_PASSWORD: ${QA_MYSQL_PASSWORD:?set QA_MYSQL_PASSWORD}
+    ports: ["127.0.0.1:3308:3306"]
+    volumes: ["qa_mysql:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+  redis:
+    image: redis:7.4-alpine
+    ports: ["127.0.0.1:6380:6379"]
+    volumes: ["qa_redis:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  kafka:
+    image: ${QA_KAFKA_IMAGE:-apache/kafka:4.3.1}
+    ports: ["127.0.0.1:9092:9092"]
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://127.0.0.1:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    volumes: ["qa_kafka:/var/lib/kafka/data"]
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "127.0.0.1:9092", "--list"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  minio:
+    image: ${QA_MINIO_IMAGE:-quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z}
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: ${QA_MINIO_USER:?set QA_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${QA_MINIO_PASSWORD:?set QA_MINIO_PASSWORD}
+    ports: ["127.0.0.1:9000:9000"]
+    volumes: ["qa_minio:/data"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+volumes:
+  qa_mysql:
+  qa_redis:
+  qa_kafka:
+  qa_minio:
+

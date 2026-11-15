@@ -1,0 +1,2431 @@
+{
+  "SX": {
+    "name": "System-X",
+    "doc": "SYSTEM_X.md",
+    "sha256": "1f1740136e2b9d2fc4ea5a4760dee3eecd0f153cbf8fdc5790431f9060a27e04",
+    "specificationLines": 723,
+    "headings": [
+      {
+        "line": 1,
+        "heading": "SYSTEM-X — Complete Architecture, Codebase Audit & Engineering Reference Manual"
+      },
+      {
+        "line": 2,
+        "heading": "Closed-Loop Distributed System Verification, Benchmark, Calibration & Empirical Certification Platform"
+      },
+      {
+        "line": 14,
+        "heading": "1. Project Overview"
+      },
+      {
+        "line": 31,
+        "heading": "2. Business Problem and Objectives"
+      },
+      {
+        "line": 33,
+        "heading": "Core Business Problems Solved"
+      },
+      {
+        "line": 38,
+        "heading": "Key Technical Objectives"
+      },
+      {
+        "line": 47,
+        "heading": "3. Features and Implementation Status"
+      },
+      {
+        "line": 69,
+        "heading": "4. Technology Stack (Verified vs. Unverified)"
+      },
+      {
+        "line": 71,
+        "heading": "Verified Codebase Dependencies"
+      },
+      {
+        "line": 83,
+        "heading": "Architectural Distinction: Implemented vs. Historical/External"
+      },
+      {
+        "line": 89,
+        "heading": "5. Repository Structure"
+      },
+      {
+        "line": 147,
+        "heading": "6. Architecture Overview"
+      },
+      {
+        "line": 195,
+        "heading": "7. Architecture Diagram"
+      },
+      {
+        "line": 243,
+        "heading": "8. Main Request and Data Flows"
+      },
+      {
+        "line": 245,
+        "heading": "A. The Master Closed-Loop Verification Flow (`demo:real`)"
+      },
+      {
+        "line": 262,
+        "heading": "9. Frontend Architecture"
+      },
+      {
+        "line": 266,
+        "heading": "1. The SYSTEM-X Testing Control Center (`http://localhost:8080`)"
+      },
+      {
+        "line": 279,
+        "heading": "2. The Commerce Reliability Testbed (CRT) Portal (`http://localhost:4200`)"
+      },
+      {
+        "line": 285,
+        "heading": "10. Backend Architecture"
+      },
+      {
+        "line": 287,
+        "heading": "Monorepo Architecture & Inter-Package Boundaries"
+      },
+      {
+        "line": 323,
+        "heading": "11. API Reference"
+      },
+      {
+        "line": 350,
+        "heading": "12. Database Architecture & Storage Models"
+      },
+      {
+        "line": 354,
+        "heading": "1. The Distributed Quorum Key-Value Model (QUORUM LAB Engine)"
+      },
+      {
+        "line": 363,
+        "heading": "2. The Commerce Relational Data Model (`commerce_sql_practice_lab.sql`)"
+      },
+      {
+        "line": 440,
+        "heading": "13. Authentication, Security & SSRF Protection"
+      },
+      {
+        "line": 454,
+        "heading": "14. Validation, Error Taxonomy & Resilience"
+      },
+      {
+        "line": 456,
+        "heading": "The Unified Error Taxonomy (`packages/result-normalizer/src/errorTaxonomy.ts`)"
+      },
+      {
+        "line": 476,
+        "heading": "15. The 8 Master Certification Gates (G1 to G8)"
+      },
+      {
+        "line": 510,
+        "heading": "16. The Commerce Reliability Testbed (CRT) & The 15 Scenarios"
+      },
+      {
+        "line": 534,
+        "heading": "17. Testing and Verification Evidence"
+      },
+      {
+        "line": 538,
+        "heading": "1. Package Unit & Integration Tests (110 Tests)"
+      },
+      {
+        "line": 556,
+        "heading": "2. Local Deterministic Verification Gate (7 Steps)"
+      },
+      {
+        "line": 571,
+        "heading": "3. Critical Concurrency Test (CRT-03: 20 Buyers for Last Item)"
+      },
+      {
+        "line": 595,
+        "heading": "4. Master Closed-Loop Demo Execution (G1–G8 Gates)"
+      },
+      {
+        "line": 604,
+        "heading": "18. Local Development Setup & Commands"
+      },
+      {
+        "line": 606,
+        "heading": "Prerequisites"
+      },
+      {
+        "line": 611,
+        "heading": "Installation"
+      },
+      {
+        "line": 617,
+        "heading": "Core Execution Commands"
+      },
+      {
+        "line": 629,
+        "heading": "19. Environment Variables"
+      },
+      {
+        "line": 646,
+        "heading": "20. Known Limitations and Technical Debt"
+      },
+      {
+        "line": 654,
+        "heading": "21. Future Improvement Roadmap"
+      },
+      {
+        "line": 663,
+        "heading": "22. Interview Preparation Notes & Technical Defense"
+      },
+      {
+        "line": 665,
+        "heading": "The 30-Second Elevator Pitch"
+      },
+      {
+        "line": 672,
+        "heading": "Key Technical Interview Q&A"
+      },
+      {
+        "line": 674,
+        "heading": "Q1: \"Why did you build an independent integration platform instead of writing tests inside Quorum Lab or Blackbox-X?\""
+      },
+      {
+        "line": 677,
+        "heading": "Q2: \"In your CRT project, how did you prevent overselling when 20 buyers raced for 1 item?\""
+      },
+      {
+        "line": 684,
+        "heading": "Q3: \"Why did you require both the Kolmogorov–Smirnov test AND the 1-Wasserstein distance in Gate G4?\""
+      },
+      {
+        "line": 691,
+        "heading": "Q4: \"How does the zero-leakage calibration partition work?\""
+      },
+      {
+        "line": 696,
+        "heading": "23. Glossary"
+      },
+      {
+        "line": 707,
+        "heading": "24. Source References and Resume Verification Status"
+      }
+    ],
+    "claims": [
+      {
+        "line": 26,
+        "text": "6. **Enforces the 8 Master Certification Gates (G1–G8)**, freezing all code, workload traces, fault timelines, and telemetry into an immutable SHA-256 Write-Once-Read-Many (WORM) audit manifest."
+      },
+      {
+        "line": 51,
+        "text": "| **Deterministic Workload Compiler** | Generates bit-for-bit identical Zipfian ($\\alpha = 0.9$) or Uniform read/write traces using SplitMix64 & Mulberry32 PRNGs. | **Implemented** | [`packages/workload-compiler/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/workload-compiler/src/) |"
+      },
+      {
+        "line": 52,
+        "text": "| **Monotonic Fault Compiler** | Schedules network partitions, packet delays, and node crash/recovery events relative to an experiment start barrier. | **Implemented** | [`packages/fault-compiler/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/fault-compiler/src/) |"
+      },
+      {
+        "line": 53,
+        "text": "| **Result Normalizer** | Ingests heterogeneous telemetry from Blackbox-X (µs virtual time) and Quorum Lab (wall-clock hrtime), mapping to a unified error taxonomy. | **Implemented** | [`packages/result-normalizer/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/result-normalizer/src/) |"
+      },
+      {
+        "line": 54,
+        "text": "| **Two-Gate Comparison Engine** | Pure functional statistical testing: Two-Sample K-S ($D_{KS}, p$), 1-Wasserstein ($W_1$), and $P99$ / Throughput MAPE. | **Implemented** | [`packages/comparison-engine/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/comparison-engine/src/) |"
+      },
+      {
+        "line": 55,
+        "text": "| **Zero-Leakage Calibration Loop** | Automatically adjusts simulation parameters ($\\mu, \\delta$) across a strict 70% train / 30% held-out validation temporal split. | **Implemented** | [`packages/calibration-loop/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/calibration-loop/src/) |"
+      },
+      {
+        "line": 56,
+        "text": "| **8-Gate Certification Gate** | Evaluates non-negotiable gates G1 through G8, yielding an immutable `CERTIFIED [PASS]` verdict. | **Implemented** | [`packages/certification-gate/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/certification-gate/src/) |"
+      },
+      {
+        "line": 57,
+        "text": "| **Cryptographic WORM Lineage** | Computes RFC 8785 Canonical JSON hashes and stores tamper-proof SHA-256 manifests with MinIO Object Lock. | **Implemented** | [`packages/certification-gate/src/artifactIntegrity.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/certification-gate/src/artifactIntegrity.ts) |"
+      },
+      {
+        "line": 58,
+        "text": "| **Research Campaign Engine** | Validates Quorum cluster capability matrices before compiling Cartesian sweeps of consistency/fault policies. | **Implemented** | [`packages/campaign-engine/src/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/campaign-engine/src/) |"
+      },
+      {
+        "line": 59,
+        "text": "| **Real Website Benchmark Engine** | Live HTTP load generator with SSRF validation, route discovery, `process.hrtime.bigint` precision, and SSE streaming. | **Implemented** | [`gate/benchmarkRunner.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/gate/benchmarkRunner.ts) |"
+      },
+      {
+        "line": 60,
+        "text": "| **Testing Control Center Web UI** | Strict monochrome operational dashboard on port 8080 with 8 operational views and real-time SSE telemetry. | **Implemented** | [`gate/dashboardTemplate.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/gate/dashboardTemplate.ts) |"
+      },
+      {
+        "line": 61,
+        "text": "| **Commerce Testbed (CRT) Storefront** | Full e-commerce AUT on port 4200: 1,000 seeded products, catalog search, cart, and order placement. | **Implemented** | [`crt/catalog/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/crt/catalog/), [`crt/api/`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/crt/api/) |"
+      },
+      {
+        "line": 62,
+        "text": "| **Last-Item Concurrency (CRT-03)** | Atomic mutex queue and quorum reservation guaranteeing strictly 0 oversold items when 20 buyers compete for 1 item. | **Implemented** | [`crt/inventory/inventoryManager.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/crt/inventory/inventoryManager.ts) |"
+      },
+      {
+        "line": 63,
+        "text": "| **Checkout Saga Coordinator** | Multi-stage saga managing order intent (`PENDING`), stock reservation, payment simulation, and auto-compensation (`CANCELLED`). | **Implemented** | [`crt/checkout/checkoutSaga.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/crt/checkout/checkoutSaga.ts) |"
+      },
+      {
+        "line": 64,
+        "text": "| **CRT 15-Scenario Test Matrix** | Automated test suite verifying idempotency, crash recovery, split-brain guards, read repair, and tombstone safety. | **Implemented** | [`crt/scenarios/crtScenarios.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/crt/scenarios/crtScenarios.ts) |"
+      },
+      {
+        "line": 65,
+        "text": "| **Dynamic Sovereign Adapters** | Transparent runtime loader that resolves sibling repositories locally or falls back to an in-process Quorum engine for cloud. | **Implemented** | [`gate/clusterAdapters.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/gate/clusterAdapters.ts) |"
+      },
+      {
+        "line": 119,
+        "text": "│   ├── certification-gate/      # G1–G8 gate evaluation and SHA-256 WORM manifest generator"
+      },
+      {
+        "line": 188,
+        "text": "│   Evaluates Gates G1 - G8 -> Issues CERTIFIED [PASS] Verdict  │"
+      },
+      {
+        "line": 189,
+        "text": "│   Generates WORM SHA-256 Manifest + Interactive HTML Report   │"
+      },
+      {
+        "line": 207,
+        "text": "WORM[\"SHA-256 WORM Lineage<br/>(Immutable Manifest)\"]"
+      },
+      {
+        "line": 236,
+        "text": "CG --> WORM"
+      },
+      {
+        "line": 258,
+        "text": "8. **Gate Audit & Lineage:** `packages/certification-gate/src/certificationGate.ts` evaluates Gates G1–G8, issues `OVERALL VERDICT: CERTIFIED [PASS]`, computes SHA-256 lineage hash `6a6a7ac33...`, and writes the HTML report and SVG charts to `artifacts/run-<id>/`."
+      },
+      {
+        "line": 315,
+        "text": "- WORM SHA-256 lineage manifest"
+      },
+      {
+        "line": 448,
+        "text": "3. **Cryptographic Provenance (WORM SHA-256):**"
+      },
+      {
+        "line": 493,
+        "text": "G8     Immutable Cryptographic Lineage          WORM Hash      [PASS]"
+      },
+      {
+        "line": 516,
+        "text": "| **CRT-01** | Normal Baseline | Catalog browsing, stock check, and order placement under 0 faults. | **PASS** |"
+      },
+      {
+        "line": 517,
+        "text": "| **CRT-02** | Idempotency Replay | Duplicate checkout requests with identical keys return original order with 0 extra writes. | **PASS** |"
+      },
+      {
+        "line": 518,
+        "text": "| **CRT-03** | The Last Item Concurrency | **20 concurrent buyers for 1 item** $\\implies$ strictly 1 confirmed, 19 rejected, 0 oversold. | **PASS** |"
+      },
+      {
+        "line": 519,
+        "text": "| **CRT-04** | Node Crash & WAL Recovery | Write acknowledged, node killed, restarted, WAL replayed from disk with 0 lost writes. | **PASS** |"
+      },
+      {
+        "line": 520,
+        "text": "| **CRT-05** | Network Partition Survival | Node 1 isolated in minority; surviving majority ({Node 2, Node 3}) serves traffic without interruption. | **PASS** |"
+      },
+      {
+        "line": 521,
+        "text": "| **CRT-06** | Conflicting Updates (LWW) | Concurrent writes resolved deterministically using vector clocks and dot causality. | **PASS** |"
+      },
+      {
+        "line": 522,
+        "text": "| **CRT-07** | Network Healing & Convergence | Partition heals; anti-entropy gossip synchronizes replicas to identical state. | **PASS** |"
+      },
+      {
+        "line": 523,
+        "text": "| **CRT-08** | Tombstone Safety | Deleting an item writes a tombstone, preventing deletion resurrection during gossip repair. | **PASS** |"
+      },
+      {
+        "line": 524,
+        "text": "| **CRT-09** | Sustained Load | Sustained load testing verifying throughput and latency bounds within production SLOs. | **PASS** |"
+      },
+      {
+        "line": 525,
+        "text": "| **CRT-10** | Leader Fencing | Fences old leader epochs to prevent stale split-brain writes after leadership change. | **PASS** |"
+      },
+      {
+        "line": 526,
+        "text": "| **CRT-11** | Simulation Fidelity | Empirical Quorum latency compared against Blackbox analytical model ($D_{KS} \\le 0.15$). | **PASS** |"
+      },
+      {
+        "line": 527,
+        "text": "| **CRT-12** | Held-Out Validation | Model calibrated on 70% of data and verified on 30% held-out data with zero data leakage. | **PASS** |"
+      },
+      {
+        "line": 528,
+        "text": "| **CRT-13** | Event Bus Idempotency | Out-of-order and duplicate payment events processed deterministically by consumer sets. | **PASS** |"
+      },
+      {
+        "line": 529,
+        "text": "| **CRT-14** | Multi-Tenant Isolation | Strict partition keys ensure zero cross-tenant state bleed between enterprise accounts. | **PASS** |"
+      },
+      {
+        "line": 530,
+        "text": "| **CRT-15** | Artifact WORM Integrity | Cryptographic verification of run artifacts against canonical `experimentSpecHash`. | **PASS** |"
+      },
+      {
+        "line": 563,
+        "text": "[5/7] PASS  Comparison engine — two-gate AND certification — certified=false verdict=\"…NOT CERTIFIED: KS hypothesis rejected: p…\" AND gate ✓"
+      },
+      {
+        "line": 565,
+        "text": "[7/7] PASS  Certification record hash stability — certified=true recordHash=e5f67128d0addb5e… stable ✓"
+      },
+      {
+        "line": 598,
+        "text": "- Overall Verdict: `CERTIFIED [PASS]`"
+      },
+      {
+        "line": 642,
+        "text": "| `MINIO_BUCKET` | `system-x-integration-gate`| Bucket for WORM artifact archiving. |"
+      },
+      {
+        "line": 670,
+        "text": "> It then uses a **zero-leakage 70/30 split** to calibrate simulation parameters back to reality, certifies the run across **8 non-negotiable gates (G1–G8)**, and freezes the results into an immutable SHA-256 cryptographic WORM lineage. As a proof of concept, we built the **Commerce Reliability Testbed (CRT)** on top of it, proving zero overselling when 20 concurrent buyers race for the last remaining item under live node crashes.\"*"
+      },
+      {
+        "line": 702,
+        "text": "- **Write Once, Read Many (WORM):** Storage retention compliance guaranteeing that once an audit manifest and its SHA-256 hash are recorded, they cannot be modified or overwritten."
+      },
+      {
+        "line": 715,
+        "text": "| **\"Integrated SHA-256 cryptographic hashing to enforce auditability\"** | RFC 8785 Canonical JSON hashing and WORM lineage manifest generation. | [`packages/integration-contracts/src/canonical.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/integration-contracts/src/canonical.ts) | **Verified (Code & Tests)** |"
+      },
+      {
+        "line": 717,
+        "text": "| **\"Archiving WORM-compliant audit records in S3-compatible MinIO\"** | S3 object store uploader with SHA-256 checksums and Object Lock versionId verification. | [`packages/certification-gate/src/artifactStore.ts`](file:///c:/MSC/Main%20project/main%20portfolio%20integration%20project/system-x/packages/certification-gate/src/artifactStore.ts) | **Verified (Code & Tests)** |"
+      },
+      {
+        "line": 722,
+        "text": "*Authored and certified for the SYSTEM-X, QUORUM LAB, and BLACKBOX-X Engineering Ecosystem.*"
+      }
+    ],
+    "files": [
+      "COMPLETE_BACKEND_ROADMAP_LEARNING_GUIDE.md",
+      "Dockerfile",
+      "README.md",
+      "SYSTEM-X.md",
+      "SYSTEM_X.md",
+      "commerce_sql_practice_lab.sql",
+      "crt/adapter/mysqlCommerceStore.js",
+      "crt/adapter/quorumAdapter.js",
+      "crt/api/commerceApi.js",
+      "crt/api/commerceAuth.js",
+      "crt/cart/cartService.js",
+      "crt/catalog/catalogService.js",
+      "crt/catalog/seedData.js",
+      "crt/checkout/checkoutSaga.js",
+      "crt/dashboard/controlCenterHtml.js",
+      "crt/events/eventBus.js",
+      "crt/inventory/inventoryManager.js",
+      "crt/scenarios/crtScenarios.js",
+      "crt/scenarios/quorumProcess.js",
+      "crt/scenarios/runAllScenarios.js",
+      "crt/scenarios/runLastItemTest.js",
+      "crt/scenarios/tenantBoundary.js",
+      "crt/server.js",
+      "crt/types.js",
+      "docs/ARCHITECTURE.md",
+      "docs/CONTRACTS.md",
+      "experiments/exp-ecommerce-order-inventory-v2.json",
+      "experiments/master-production-experiment-100k.json",
+      "gate/benchmarkRunner.js",
+      "gate/benchmarkTarget.js",
+      "gate/client.js",
+      "gate/clusterAdapters.js",
+      "gate/dashboardTemplate.js",
+      "gate/integratedGate.js",
+      "gate/integrationGate.js",
+      "gate/localGate.js",
+      "gate/qa-panel.js",
+      "gate/runMasterExperiment.js",
+      "gate/runRealDemo.js",
+      "gate/server.js",
+      "package.json",
+      "packages/calibration-loop/package.json",
+      "packages/calibration-loop/src/blackboxClient.js",
+      "packages/calibration-loop/src/calibrationLoop.js",
+      "packages/calibration-loop/src/index.js",
+      "packages/calibration-loop/src/types.js",
+      "packages/calibration-loop/tests/calibrationLoop.test.js",
+      "packages/calibration-loop/vitest.config.js",
+      "packages/campaign-engine/package.json",
+      "packages/campaign-engine/src/campaignEngine.js",
+      "packages/campaign-engine/src/capabilityValidator.js",
+      "packages/campaign-engine/src/index.js",
+      "packages/campaign-engine/src/types.js",
+      "packages/campaign-engine/tests/campaignEngine.test.js",
+      "packages/campaign-engine/vitest.config.js",
+      "packages/certification-gate/package.json",
+      "packages/certification-gate/src/artifactIntegrity.js",
+      "packages/certification-gate/src/artifactStore.js",
+      "packages/certification-gate/src/certificationGate.js",
+      "packages/certification-gate/src/index.js",
+      "packages/certification-gate/src/types.js",
+      "packages/certification-gate/tests/certificationGate.test.js",
+      "packages/certification-gate/vitest.config.js",
+      "packages/comparison-engine/package.json",
+      "packages/comparison-engine/src/comparisonEngine.js",
+      "packages/comparison-engine/src/index.js",
+      "packages/comparison-engine/src/statistics.js",
+      "packages/comparison-engine/src/types.js",
+      "packages/comparison-engine/tests/comparisonEngine.test.js",
+      "packages/comparison-engine/vitest.config.js",
+      "packages/fault-compiler/package.json",
+      "packages/fault-compiler/src/faultCompiler.js",
+      "packages/fault-compiler/src/index.js",
+      "packages/fault-compiler/src/types.js",
+      "packages/fault-compiler/tests/faultCompiler.test.js",
+      "packages/fault-compiler/vitest.config.js",
+      "packages/integration-contracts/package.json",
+      "packages/integration-contracts/src/canonical.js",
+      "packages/integration-contracts/src/index.js",
+      "packages/integration-contracts/src/seed.js",
+      "packages/integration-contracts/src/types.js",
+      "packages/integration-contracts/src/validation.js",
+      "packages/integration-contracts/tests/contracts.test.js",
+      "packages/integration-contracts/vitest.config.js",
+      "packages/quorum-adapter/package.json",
+      "packages/quorum-adapter/src/clusterDiscovery.js",
+      "packages/quorum-adapter/src/controlApiClient.js",
+      "packages/quorum-adapter/src/index.js",
+      "packages/quorum-adapter/src/quorumNodeClient.js",
+      "packages/quorum-adapter/src/quorumRunSession.js",
+      "packages/quorum-adapter/src/types.js",
+      "packages/quorum-adapter/tests/quorumAdapter.test.js",
+      "packages/quorum-adapter/vitest.config.js",
+      "packages/result-normalizer/package.json",
+      "packages/result-normalizer/src/errorTaxonomy.js",
+      "packages/result-normalizer/src/index.js",
+      "packages/result-normalizer/src/resultNormalizer.js",
+      "packages/result-normalizer/src/statistics.js",
+      "packages/result-normalizer/src/types.js",
+      "packages/result-normalizer/tests/resultNormalizer.test.js",
+      "packages/result-normalizer/vitest.config.js",
+      "packages/workload-compiler/package.json",
+      "packages/workload-compiler/src/index.js",
+      "packages/workload-compiler/src/operationTraceGenerator.js",
+      "packages/workload-compiler/src/types.js",
+      "packages/workload-compiler/src/uniformGenerator.js",
+      "packages/workload-compiler/src/workloadCompiler.js",
+      "packages/workload-compiler/src/zipfianGenerator.js",
+      "packages/workload-compiler/tests/workloadCompiler.test.js",
+      "packages/workload-compiler/vitest.config.js",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "protocol/quorum/v1/common.proto",
+      "protocol/quorum/v1/health.proto",
+      "protocol/quorum/v1/node.proto",
+      "protocol/quorum/v1/protocolManifest.json",
+      "qa/FEATURE_INVENTORY.md",
+      "qa/PLAN.md",
+      "qa/README.md",
+      "qa/SOURCE_INDEX.json",
+      "qa/checks/browser.mjs",
+      "qa/checks/commerce-fixture.mjs",
+      "qa/checks/commerce-shared.mjs",
+      "qa/checks/commerce.mjs",
+      "qa/checks/comparison.mjs",
+      "qa/checks/crt.mjs",
+      "qa/checks/hosted-shop.mjs",
+      "qa/checks/hosted.mjs",
+      "qa/checks/milestone.mjs",
+      "qa/checks/quorum-process.mjs",
+      "qa/checks/reference.mjs",
+      "qa/checks/worm.mjs",
+      "qa/compose.qa.yml",
+      "qa/feature-manifest.json",
+      "qa/report.mjs",
+      "qa/run.mjs",
+      "schemas/experiment.schema.json",
+      "schemas/fault.schema.json",
+      "schemas/result.schema.json",
+      "schemas/workload.schema.json",
+      "scripts/workspace.mjs",
+      "tests/chrome-portal-smoke.mjs",
+      "turbo.json"
+    ],
+    "routes": [
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 15,
+        "declaration": "if (req.method === 'GET' && pathname === '/api/health') {"
+      },
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 26,
+        "declaration": "if (req.method === 'GET' && (pathname === '/api/status' || pathname === '/status')) {"
+      },
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 38,
+        "declaration": "if (req.method === 'GET' && pathname === '/api/products') {"
+      },
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 50,
+        "declaration": "if (req.method === 'GET' && pathname.startsWith('/api/products/')) {"
+      },
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 91,
+        "declaration": "if (write && pathname === '/api/inventory/adjust') {"
+      },
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 103,
+        "declaration": "if (write && pathname === '/api/cart/items') {"
+      },
+      {
+        "path": "crt/api/commerceApi.js",
+        "line": 114,
+        "declaration": "if (write && pathname === '/api/checkout') {"
+      },
+      {
+        "path": "crt/server.js",
+        "line": 101,
+        "declaration": "if (req.method === 'POST' && pathname === '/api/scenarios/run-all') {"
+      },
+      {
+        "path": "crt/server.js",
+        "line": 112,
+        "declaration": "if (pathname === '/' || pathname === '/dashboard' || pathname === '/storefront') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 192,
+        "declaration": "if (pathname === '/health') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 197,
+        "declaration": "if (pathname === '/api/status') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 223,
+        "declaration": "if (pathname === '/api/runs') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 229,
+        "declaration": "if (pathname === '/api/experiment/run' && req.method === 'POST') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 260,
+        "declaration": "if (pathname === '/api/experiment/status') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 273,
+        "declaration": "if (pathname === '/api/benchmarks/validate-target' && req.method === 'POST') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 293,
+        "declaration": "if (pathname === '/api/benchmarks/discover-routes' && req.method === 'POST') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 313,
+        "declaration": "if (pathname === '/api/benchmarks/start' && req.method === 'POST') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 352,
+        "declaration": "if (pathname === '/api/benchmarks/runs' && req.method === 'GET') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 359,
+        "declaration": "if (pathname.startsWith('/api/benchmarks/runs/')) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 434,
+        "declaration": "if (pathname === '/api/benchmarks/compare' && req.method === 'POST') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 457,
+        "declaration": "if (pathname === '/api/products' ||"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 458,
+        "declaration": "pathname.startsWith('/api/products/') ||"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 459,
+        "declaration": "pathname.startsWith('/api/inventory') ||"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 460,
+        "declaration": "pathname.startsWith('/api/cart') ||"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 461,
+        "declaration": "pathname.startsWith('/api/checkout') ||"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 462,
+        "declaration": "pathname.startsWith('/api/orders')) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 473,
+        "declaration": "if (pathname === '/api/crt/scenarios' && req.method === 'GET') {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 478,
+        "declaration": "if (req.method === \"POST\" && (pathname === \"/api/crt/scenarios/run-all\" || pathname.startsWith(\"/api/crt/scenarios/run/\"))) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 479,
+        "declaration": "const scenarioId = pathname === \"/api/crt/scenarios/run-all\" ? null : pathname.slice(\"/api/crt/scenarios/run/\".length);"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 503,
+        "declaration": "if (pathname.startsWith('/artifacts/')) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 529,
+        "declaration": "if (req.method === 'GET' && pathname === '/api/qa/results' && !remoteBind) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 541,
+        "declaration": "if (req.method === 'GET' && pathname === '/qa' && !remoteBind) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 552,
+        "declaration": "if (pathname === '/client.js' || pathname === '/portal.css' || (pathname === '/qa-panel.js' && !remoteBind)) {"
+      },
+      {
+        "path": "gate/server.js",
+        "line": 563,
+        "declaration": "if (pathname === '/' || pathname === '/index.html') {"
+      }
+    ],
+    "declaredRuntime": {
+      "node": ">=24.0.0",
+      "pnpm": ">=10.0.0"
+    },
+    "declaredPackageManager": "pnpm@12.4.2",
+    "scripts": {
+      "build": "turbo run build",
+      "test": "turbo run test",
+      "test:chrome": "node tests/chrome-portal-smoke.mjs",
+      "clean": "turbo run clean",
+      "gate": "node gate/localGate.js",
+      "gate:local": "node gate/localGate.js",
+      "gate:integration": "node gate/integrationGate.js",
+      "demo:real": "node gate/runRealDemo.js",
+      "serve": "node gate/server.js",
+      "start": "node gate/server.js",
+      "check": "node scripts/workspace.mjs check"
+    }
+  },
+  "BX": {
+    "name": "Blackbox-X",
+    "doc": "../BLACKBOX-X/blackbox-x.md",
+    "sha256": "cdcb23aa7d1024a608258ae6df785850f45d8790d4510b9f2e1e7b3f54069e52",
+    "specificationLines": 1088,
+    "headings": [
+      {
+        "line": 1,
+        "heading": "BLACKBOX-X — Comprehensive Systems Architecture, Technical Audit & Engineering Specification"
+      },
+      {
+        "line": 10,
+        "heading": "Table of Contents"
+      },
+      {
+        "line": 44,
+        "heading": "1. Project Overview"
+      },
+      {
+        "line": 46,
+        "heading": "1.1 Executive Summary"
+      },
+      {
+        "line": 53,
+        "heading": "1.2 Resume Alignment"
+      },
+      {
+        "line": 61,
+        "heading": "2. Business Problem and Objectives"
+      },
+      {
+        "line": 63,
+        "heading": "2.1 The Core Problems"
+      },
+      {
+        "line": 69,
+        "heading": "2.2 Platform Objectives"
+      },
+      {
+        "line": 78,
+        "heading": "3. Features and Implementation Status"
+      },
+      {
+        "line": 109,
+        "heading": "4. Technology Stack"
+      },
+      {
+        "line": 111,
+        "heading": "4.1 Core Runtime & Languages"
+      },
+      {
+        "line": 117,
+        "heading": "4.2 Control Plane & Application Framework"
+      },
+      {
+        "line": 123,
+        "heading": "4.3 Database & Storage Layer"
+      },
+      {
+        "line": 131,
+        "heading": "4.4 Event Streaming & Distributed Systems"
+      },
+      {
+        "line": 135,
+        "heading": "4.5 Observability, Logging & Quality"
+      },
+      {
+        "line": 144,
+        "heading": "5. Repository Structure"
+      },
+      {
+        "line": 199,
+        "heading": "6. Architecture Overview"
+      },
+      {
+        "line": 239,
+        "heading": "7. Architecture Diagram"
+      },
+      {
+        "line": 296,
+        "heading": "8. Main Request and Data Flows"
+      },
+      {
+        "line": 298,
+        "heading": "Flow 1: Modeling & Topology Cycle Validation"
+      },
+      {
+        "line": 315,
+        "heading": "Flow 2: Virtual-Time DES Execution & Canonical Hashing"
+      },
+      {
+        "line": 339,
+        "heading": "Flow 3: Live Benchmark & Non-Parametric Comparison"
+      },
+      {
+        "line": 363,
+        "heading": "Flow 4: Closed-Loop Coordinate-Descent Calibration"
+      },
+      {
+        "line": 384,
+        "heading": "Flow 5: Monotonic Capacity Search & Knee Detection"
+      },
+      {
+        "line": 410,
+        "heading": "Flow 6: Simulation Chaos & Blast-Radius Attribution"
+      },
+      {
+        "line": 432,
+        "heading": "Flow 7: Distributed Worker Coordination, Lease Fencing & Outbox Relay"
+      },
+      {
+        "line": 459,
+        "heading": "9. Frontend Architecture & Ecosystem Dashboards"
+      },
+      {
+        "line": 463,
+        "heading": "9.1 SYSTEM-X Ecosystem Portal — Tab 2: Blackbox-X Simulation (`http://localhost:8080`)"
+      },
+      {
+        "line": 470,
+        "heading": "9.2 Commerce Reliability Testbed (CRT) — Calibration View (`http://localhost:4200`)"
+      },
+      {
+        "line": 476,
+        "heading": "9.3 MinIO S3 Web Console (`http://localhost:9001`)"
+      },
+      {
+        "line": 483,
+        "heading": "10. Backend Architecture"
+      },
+      {
+        "line": 496,
+        "heading": "10.1 Key Backend Design Patterns"
+      },
+      {
+        "line": 513,
+        "heading": "11. API Reference"
+      },
+      {
+        "line": 515,
+        "heading": "11.1 Comprehensive Endpoint Inventory"
+      },
+      {
+        "line": 539,
+        "heading": "11.2 Key Endpoint Schemas & Examples"
+      },
+      {
+        "line": 541,
+        "heading": "`GET /health/dependencies`"
+      },
+      {
+        "line": 556,
+        "heading": "`POST /api/v1/environments/:id/topology/validate`"
+      },
+      {
+        "line": 587,
+        "heading": "12. Database Architecture"
+      },
+      {
+        "line": 591,
+        "heading": "12.1 Core Tables & Schemas"
+      },
+      {
+        "line": 645,
+        "heading": "13. Entity Relationship Diagram (ERD)"
+      },
+      {
+        "line": 697,
+        "heading": "14. Authentication and Authorization"
+      },
+      {
+        "line": 708,
+        "heading": "15. Validation and Error Handling"
+      },
+      {
+        "line": 719,
+        "heading": "16. External Integrations"
+      },
+      {
+        "line": 731,
+        "heading": "17. Background Jobs and Event Processing"
+      },
+      {
+        "line": 746,
+        "heading": "18. Security Considerations"
+      },
+      {
+        "line": 755,
+        "heading": "19. Performance and Scalability"
+      },
+      {
+        "line": 769,
+        "heading": "20. Reliability and Failure Handling"
+      },
+      {
+        "line": 782,
+        "heading": "21. Testing Strategy & Milestone Verification Gates (M0–M12)"
+      },
+      {
+        "line": 786,
+        "heading": "21.1 Milestone Verification Matrix"
+      },
+      {
+        "line": 804,
+        "heading": "21.2 Full Platform Regression Sweep Transcript (`verify:m12`)"
+      },
+      {
+        "line": 859,
+        "heading": "22. Local Development Setup"
+      },
+      {
+        "line": 861,
+        "heading": "22.1 Prerequisites"
+      },
+      {
+        "line": 866,
+        "heading": "22.2 Step-by-Step Setup Commands"
+      },
+      {
+        "line": 869,
+        "heading": "1. Clone repository and navigate to root"
+      },
+      {
+        "line": 872,
+        "heading": "2. Install dependencies across all monorepo workspaces"
+      },
+      {
+        "line": 875,
+        "heading": "3. Start live infrastructure containers (MySQL, Redis, Kafka, MinIO)"
+      },
+      {
+        "line": 878,
+        "heading": "4. Verify containers are healthy"
+      },
+      {
+        "line": 881,
+        "heading": "5. Run database migrations with advisory lock & checksum tracking"
+      },
+      {
+        "line": 884,
+        "heading": "6. Verify architectural boundaries (Dependency Cruiser)"
+      },
+      {
+        "line": 887,
+        "heading": "7. Run Vitest unit test suite (14 test suites, 64 tests)"
+      },
+      {
+        "line": 890,
+        "heading": "8. Run full platform verification gate suite (M0 through M12)"
+      },
+      {
+        "line": 893,
+        "heading": "9. Start Fastify Control Plane API Server"
+      },
+      {
+        "line": 899,
+        "heading": "23. Environment Variables"
+      },
+      {
+        "line": 920,
+        "heading": "24. Build and Deployment"
+      },
+      {
+        "line": 922,
+        "heading": "24.1 Monorepo Build Pipeline (Turborepo)"
+      },
+      {
+        "line": 946,
+        "heading": "24.2 Docker Deployment"
+      },
+      {
+        "line": 966,
+        "heading": "25. Logging and Observability"
+      },
+      {
+        "line": 984,
+        "heading": "26. Known Limitations and Technical Debt"
+      },
+      {
+        "line": 992,
+        "heading": "27. Improvement Roadmap"
+      },
+      {
+        "line": 1000,
+        "heading": "28. Interview Preparation Notes & Resume Deep-Dive"
+      },
+      {
+        "line": 1002,
+        "heading": "28.1 The 30-Second Elevator Pitch"
+      },
+      {
+        "line": 1005,
+        "heading": "28.2 Top 10 Technical Deep-Dive Interview Questions & Answers"
+      },
+      {
+        "line": 1007,
+        "heading": "Q1: How do you achieve 100% bit-for-bit determinism in the discrete-event simulation?"
+      },
+      {
+        "line": 1014,
+        "heading": "Q2: Why did you choose the Kolmogorov-Smirnov test and Wasserstein distance instead of just comparing average latency?"
+      },
+      {
+        "line": 1019,
+        "heading": "Q3: How does your monotonic epoch fencing prevent split-brain data corruption?"
+      },
+      {
+        "line": 1025,
+        "heading": "Q4: Why is Kafka modeled as a first-class node in the topology rather than just an edge attribute?"
+      },
+      {
+        "line": 1029,
+        "heading": "Q5: How do you classify cycles in the topology graph to prevent infinite loops?"
+      },
+      {
+        "line": 1035,
+        "heading": "Q6: How does the closed-loop parameter calibration avoid overfitting?"
+      },
+      {
+        "line": 1041,
+        "heading": "Q7: What is the purpose of Kingman's formula in your capacity search?"
+      },
+      {
+        "line": 1046,
+        "heading": "Q8: How does the Transactional Outbox pattern guarantee message delivery without distributed two-phase commit (2PC)?"
+      },
+      {
+        "line": 1052,
+        "heading": "Q9: How do you ensure high performance when sampling millions of random numbers?"
+      },
+      {
+        "line": 1057,
+        "heading": "Q10: What were the major engineering challenges you faced building this?"
+      },
+      {
+        "line": 1065,
+        "heading": "29. Glossary"
+      },
+      {
+        "line": 1080,
+        "heading": "30. Source References and Verification Status"
+      }
+    ],
+    "claims": [
+      {
+        "line": 82,
+        "text": "| **Typed Topology Graph** | Modeled services, databases, caches, brokers with cycle detection | **Implemented** | `packages/domain` | `POST /api/v1/environments/:id/nodes`<br>`POST /api/v1/environments/:id/topology/validate` | `topology_nodes`<br>`topology_edges`<br>`operations` | `verify:m1` |"
+      },
+      {
+        "line": 83,
+        "text": "| **SplitMix64 RNG Substreams** | Deterministic pseudo-random number generator with FNV-1a seed derivation | **Implemented** | `packages/statistics` | In-process statistical core | None (pure math) | `verify:m2` |"
+      },
+      {
+        "line": 84,
+        "text": "| **Inverse-CDF Sampling** | $O(1)$ sampling tables (`normal.v1`, `lognormal.v1`) with Acklam polynomial | **Implemented** | `packages/statistics` | In-process statistical core | `workloads`<br>`workload_versions` | `verify:m2` |"
+      },
+      {
+        "line": 85,
+        "text": "| **Mergeable Histograms** | DDSketch-style log-linear histogram ($\\gamma = 1.02$, 512 buckets) | **Implemented** | `packages/statistics` | In-process statistical core | None (in-memory) | `verify:m2` |"
+      },
+      {
+        "line": 86,
+        "text": "| **Deterministic DES Engine** | Monotonic virtual clock with total event ordering `(timeUs, priority, seqNum)` | **Implemented** | `packages/simulation-engine` | In-process simulation core | None (pure kernel) | `verify:m3` |"
+      },
+      {
+        "line": 87,
+        "text": "| **Resource Contention Models** | Processor-sharing CPU degradation, bounded ThreadPool, ConnectionPool slots | **Implemented** | `packages/simulation-engine` | In-process simulation core | None (pure kernel) | `verify:m3` |"
+      },
+      {
+        "line": 88,
+        "text": "| **Canonical State Hashing** | Incremental SHA-256 state hashing across all processed simulation events | **Implemented** | `packages/simulation-engine` | In-process simulation core | None (cryptographic) | `verify:m3` |"
+      },
+      {
+        "line": 89,
+        "text": "| **Live HTTP Benchmark Driver** | Live microsecond timing (`process.hrtime.bigint`) against Fastify targets | **Implemented** | `packages/comparison` | In-process harness | `benchmarks`<br>`benchmark_runs` | `verify:m4` |"
+      },
+      {
+        "line": 90,
+        "text": "| **KS & Wasserstein Tests** | Non-parametric two-sample Kolmogorov-Smirnov ($D_{KS}$) & 1D Earth Mover's Distance | **Implemented** | `packages/comparison` | `GET /api/v1/comparison/visualizer/:id` | `benchmark_comparisons` | `verify:m4` |"
+      },
+      {
+        "line": 91,
+        "text": "| **Monotonic Capacity Search** | Bisection search bounded within $[R_{\\min}, R_{\\max}]$ with knee-point detection | **Implemented** | `packages/capacity-search` | In-process search engine | `capacity_searches`<br>`capacity_search_steps` | `verify:m5` |"
+      },
+      {
+        "line": 92,
+        "text": "| **Dominant Bottleneck Attribution** | Multi-tier resource utilization analysis generating targeted remediation | **Implemented** | `packages/capacity-search` | In-process search engine | `capacity_searches` | `verify:m5` |"
+      },
+      {
+        "line": 93,
+        "text": "| **Coordinate-Descent Calibration** | Closed-loop parameter optimization with multi-objective loss function | **Implemented** | `packages/calibration` | In-process calibration loop | `calibration_sessions`<br>`calibration_iterations` | `verify:m6` |"
+      },
+      {
+        "line": 94,
+        "text": "| **Held-Out Validation Split** | 70/30 train/test temporal split proving out-of-sample SLA containment | **Implemented** | `packages/calibration` | In-process calibration loop | `calibration_sessions` | `verify:m6` |"
+      },
+      {
+        "line": 95,
+        "text": "| **Distributed Worker Coordination** | Redis heartbeat tracking (`IDLE, BUSY, OFFLINE`) & Kafka command dispatch | **Implemented** | `packages/load-orchestrator` | In-process orchestrator | `load_campaigns`<br>`load_worker_metrics` | `verify:m7` |"
+      },
+      {
+        "line": 96,
+        "text": "| **Periodic Telemetry Streaming** | 500ms worker telemetry published to Redis and aggregated cluster-wide | **Implemented** | `packages/load-orchestrator` | `GET /api/v1/analytics/time-series` | `load_worker_metrics` | `verify:m7` |"
+      },
+      {
+        "line": 97,
+        "text": "| **Distributed TTL Leases** | Redis locks backed by MySQL persistence for execution mutual exclusion | **Implemented** | `packages/execution-leases` | In-process lease manager | `execution_leases` | `verify:m8` |"
+      },
+      {
+        "line": 98,
+        "text": "| **Monotonic Epoch Fencing** | Intercepts zombie worker writes using strict monotonic epoch checks | **Implemented** | `packages/execution-leases` | In-process fencing guard | `execution_leases` | `verify:m8` |"
+      },
+      {
+        "line": 99,
+        "text": "| **Transactional Outbox Relay** | Atomic DB persistence with asynchronous relay to Kafka `system-events.v1` | **Implemented** | `packages/execution-leases` | In-process outbox relay | `outbox_events` | `verify:m8` |"
+      },
+      {
+        "line": 100,
+        "text": "| **Idempotent Inbox Consumer** | Deduplicates at-least-once deliveries via MySQL `inbox_events` unique keys | **Implemented** | `packages/execution-leases` | In-process inbox consumer | `inbox_events` | `verify:m8` |"
+      },
+      {
+        "line": 101,
+        "text": "| **Simulation Chaos Engine** | Scheduled latency injection, packet loss, blackholes, and resource starvation | **Implemented** | `packages/chaos-engine` | In-process chaos runner | `chaos_experiments`<br>`chaos_runs` | `verify:m9` |"
+      },
+      {
+        "line": 102,
+        "text": "| **Reverse-BFS Blast Radius** | Upstream DAG traversal computing failure blast radius, depth, and MTTR | **Implemented** | `packages/chaos-engine` | In-process chaos runner | `chaos_runs` | `verify:m9` |"
+      },
+      {
+        "line": 103,
+        "text": "| **MinIO S3 Content Storage** | Content-addressed SHA-256 simulation checkpoint and binary artifact storage | **Implemented** | `packages/storage` | S3 API integration | `stored_artifacts` | `verify:m10` |"
+      },
+      {
+        "line": 104,
+        "text": "| **Analytics & Reporting API** | Fastify REST endpoints for structured reports, time-series, and CDF curves | **Implemented** | `apps/blackbox-api` | `GET /api/v1/campaigns/:id/report`<br>`GET /metrics` | `experiment_campaigns` | `verify:m11` |"
+      },
+      {
+        "line": 105,
+        "text": "| **Multi-Tenant Regression** | 5-tenant concurrent execution, cross-tenant data isolation, and crash failover | **Implemented** | Root integration suite | Fastify control plane | Full DB Schema | `verify:m12` |"
+      },
+      {
+        "line": 381,
+        "text": "Status Transitions: CALIBRATED ──► VALIDATED (Zero Overfitting Certified)"
+      },
+      {
+        "line": 519,
+        "text": "| `GET` | `/health/live` | Pure process liveness probe | None | Public | None | **Implemented** |"
+      },
+      {
+        "line": 520,
+        "text": "| `GET` | `/health/startup` | Process initialization probe | None | Public | None | **Implemented** |"
+      },
+      {
+        "line": 521,
+        "text": "| `GET` | `/health/ready` | Readiness probe verifying all 4 services | None | Public | None (503 on outage) | **Implemented** |"
+      },
+      {
+        "line": 522,
+        "text": "| `GET` | `/health/dependencies` | Diagnostic check reporting latencies | None | Public | None | **Implemented** |"
+      },
+      {
+        "line": 523,
+        "text": "| `GET` | `/metrics` | Prometheus OpenMetrics exporter | None | Public | None (Low-cardinality) | **Implemented** |"
+      },
+      {
+        "line": 524,
+        "text": "| `POST` | `/api/v1/projects` | Create a new tenant project | Header | `x-tenant-id` | `name`, `slug` required | **Implemented** |"
+      },
+      {
+        "line": 525,
+        "text": "| `GET` | `/api/v1/projects` | List projects for tenant | Header | `x-tenant-id` | None | **Implemented** |"
+      },
+      {
+        "line": 526,
+        "text": "| `POST` | `/api/v1/projects/:id/environments` | Create environment under project | Header | `x-tenant-id` | `name`, `slug` required | **Implemented** |"
+      },
+      {
+        "line": 527,
+        "text": "| `POST` | `/api/v1/environments/:id/nodes` | Register a typed topology node | Header | `x-tenant-id` | `NodeKindSchema` | **Implemented** |"
+      },
+      {
+        "line": 528,
+        "text": "| `GET` | `/api/v1/environments/:id/nodes` | List nodes in environment | Header | `x-tenant-id` | None | **Implemented** |"
+      },
+      {
+        "line": 529,
+        "text": "| `POST` | `/api/v1/environments/:id/edges` | Register a typed topology edge | Header | `x-tenant-id` | `EdgeKindSchema` | **Implemented** |"
+      },
+      {
+        "line": 530,
+        "text": "| `GET` | `/api/v1/environments/:id/edges` | List edges in environment | Header | `x-tenant-id` | None | **Implemented** |"
+      },
+      {
+        "line": 531,
+        "text": "| `POST` | `/api/v1/environments/:id/topology/validate` | Cycle detection & graph validation | Header | `x-tenant-id` | Optional runaway guard | **Implemented** |"
+      },
+      {
+        "line": 532,
+        "text": "| `GET` | `/api/v1/projects/:id/topology` | Fetch full aggregated topology | Header | `x-tenant-id` | None | **Implemented** |"
+      },
+      {
+        "line": 533,
+        "text": "| `POST` | `/api/v1/nodes/:id/operations` | Register node operations | Header | `x-tenant-id` | Operation mode schemas | **Implemented** |"
+      },
+      {
+        "line": 534,
+        "text": "| `POST` | `/api/v1/operations/:id/dependencies` | Register operation dependencies | Header | `x-tenant-id` | Call order & mode | **Implemented** |"
+      },
+      {
+        "line": 535,
+        "text": "| `GET` | `/api/v1/campaigns/:id/report` | Fetch report & archive artifact | Header | `x-tenant-id` | Query `generateArtifact` | **Implemented** |"
+      },
+      {
+        "line": 536,
+        "text": "| `GET` | `/api/v1/analytics/time-series` | High-res latency & throughput series | Header | `x-tenant-id` | Query `runId, interval` | **Implemented** |"
+      },
+      {
+        "line": 537,
+        "text": "| `GET` | `/api/v1/comparison/visualizer/:id` | Quantile CDF curves & Wasserstein | Header | `x-tenant-id` | Comparison ID | **Implemented** |"
+      },
+      {
+        "line": 790,
+        "text": "| **M0** | Foundation & Security Boundary | `verify:m0` | **8/8** | **PASSED** | MySQL advisory locks, Fastify `/health/*`, 503 degradation, OTel SDK |"
+      },
+      {
+        "line": 791,
+        "text": "| **M1** | Domain & Typed Topology | `verify:m1` | **7/7** | **PASSED** | Typed nodes/edges, cycle classification (`ALL_SYNCHRONOUS`), operations |"
+      },
+      {
+        "line": 792,
+        "text": "| **M2** | Statistics & Workloads | `verify:m2` | **7/7** | **PASSED** | SplitMix64 PRNG, inverse-CDF sampling, DDSketch, Welford online variance |"
+      },
+      {
+        "line": 793,
+        "text": "| **M3** | Discrete-Event Engine | `verify:m3` | **7/7** | **PASSED** | Total event ordering `(timeUs, priority, seq)`, canonical SHA-256 hash |"
+      },
+      {
+        "line": 794,
+        "text": "| **M4** | Benchmark & Comparison | `verify:m4` | **7/7** | **PASSED** | Live Fastify HTTP benchmark, Two-Sample KS-test, Wasserstein distance |"
+      },
+      {
+        "line": 795,
+        "text": "| **M5** | Capacity Search | `verify:m5` | **7/7** | **PASSED** | Bisection search, non-monotonic anomaly detection, knee attribution |"
+      },
+      {
+        "line": 796,
+        "text": "| **M6** | Parameter Calibration | `verify:m6` | **7/7** | **PASSED** | Coordinate-descent optimizer, 70/30 train/val split, `VALIDATED` status |"
+      },
+      {
+        "line": 797,
+        "text": "| **M7** | Load Orchestration | `verify:m7` | **7/7** | **PASSED** | Redis worker pool, Kafka `START_LOAD`, 500ms cadence check, quantile merge |"
+      },
+      {
+        "line": 798,
+        "text": "| **M8** | Leases & Outbox Idempotency | `verify:m8` | **7/7** | **PASSED** | Redis TTL locks, epoch fencing (`STALE_EPOCH_FENCED`), outbox/inbox deduplication |"
+      },
+      {
+        "line": 799,
+        "text": "| **M9** | Chaos & Failure Propagation | `verify:m9` | **7/7** | **PASSED** | Fault schedules, reverse-BFS blast radius, Resilience Score & MTTR |"
+      },
+      {
+        "line": 800,
+        "text": "| **M10** | Storage & Checkpoints | `verify:m10` | **7/7** | **PASSED** | MinIO S3 bucket, content-addressed checkpoints (`<sha256>.json`), tenant isolation |"
+      },
+      {
+        "line": 801,
+        "text": "| **M11** | Analytics API & Metrics | `verify:m11` | **7/7** | **PASSED** | Prometheus `/metrics`, campaign reports, time-series, CDF visualizer |"
+      },
+      {
+        "line": 802,
+        "text": "| **M12** | Multi-Tenant Sign-Off | `verify:m12` | **7/7** | **PASSED** | 5 concurrent enterprise tenants, crash failover, full M0–M11 regression sweep |"
+      }
+    ],
+    "files": [
+      ".dependency-cruiser.cjs",
+      ".env.example",
+      "Dockerfile",
+      "README.md",
+      "apps/blackbox-api/Dockerfile",
+      "apps/blackbox-api/package.json",
+      "apps/blackbox-api/src/health.js",
+      "apps/blackbox-api/src/routes/__tests__/analytics.test.js",
+      "apps/blackbox-api/src/routes/analytics.js",
+      "apps/blackbox-api/src/routes/topology.js",
+      "apps/blackbox-api/src/server.js",
+      "blackbox-x.md",
+      "docs/architecture/m12-signoff-report.md",
+      "eslint.config.js",
+      "infrastructure/compose/docker-compose.yml",
+      "infrastructure/compose/otel-collector-config.yaml",
+      "infrastructure/compose/prometheus.yml",
+      "package-lock.json",
+      "package.json",
+      "packages/calibration/package.json",
+      "packages/calibration/src/__tests__/calibration.test.js",
+      "packages/calibration/src/engine/calibration-engine.js",
+      "packages/calibration/src/index.js",
+      "packages/calibration/src/loss/loss-function.js",
+      "packages/calibration/src/optimizer/coordinate-descent.js",
+      "packages/calibration/src/types.js",
+      "packages/capacity-search/package.json",
+      "packages/capacity-search/src/__tests__/capacity.test.js",
+      "packages/capacity-search/src/algorithms/bisection-search.js",
+      "packages/capacity-search/src/algorithms/bottleneck-finder.js",
+      "packages/capacity-search/src/algorithms/knee-point.js",
+      "packages/capacity-search/src/engine/capacity-finder.js",
+      "packages/capacity-search/src/index.js",
+      "packages/capacity-search/src/types.js",
+      "packages/chaos-engine/package.json",
+      "packages/chaos-engine/src/__tests__/chaos.test.js",
+      "packages/chaos-engine/src/engine/chaos-engine.js",
+      "packages/chaos-engine/src/faults/fault-injector.js",
+      "packages/chaos-engine/src/index.js",
+      "packages/chaos-engine/src/metrics/resilience-evaluator.js",
+      "packages/chaos-engine/src/propagation/cascade-analyzer.js",
+      "packages/chaos-engine/src/types.js",
+      "packages/comparison/package.json",
+      "packages/comparison/src/__tests__/comparison.test.js",
+      "packages/comparison/src/driver/real-benchmark-driver.js",
+      "packages/comparison/src/engine/comparator.js",
+      "packages/comparison/src/index.js",
+      "packages/comparison/src/metrics/ks-test.js",
+      "packages/comparison/src/metrics/quantile-error.js",
+      "packages/comparison/src/metrics/wasserstein.js",
+      "packages/config-client/package.json",
+      "packages/config-client/src/env.js",
+      "packages/config-client/src/index.js",
+      "packages/config-server/package.json",
+      "packages/config-server/src/__tests__/env.test.js",
+      "packages/config-server/src/env.js",
+      "packages/config-server/src/index.js",
+      "packages/contracts/package.json",
+      "packages/contracts/src/errors/__tests__/envelope.test.js",
+      "packages/contracts/src/errors/codes.js",
+      "packages/contracts/src/errors/envelope.js",
+      "packages/contracts/src/health/schemas.js",
+      "packages/contracts/src/identity/types.js",
+      "packages/contracts/src/index.js",
+      "packages/contracts/src/topology/schemas.js",
+      "packages/db/package.json",
+      "packages/db/src/client.js",
+      "packages/db/src/index.js",
+      "packages/db/src/migrate.js",
+      "packages/db/src/migrations/001_core.sql",
+      "packages/db/src/migrations/002_topology.sql",
+      "packages/db/src/migrations/003_workloads.sql",
+      "packages/db/src/migrations/004_benchmarks.sql",
+      "packages/db/src/migrations/005_capacity_search.sql",
+      "packages/db/src/migrations/006_calibration.sql",
+      "packages/db/src/migrations/007_load_generators.sql",
+      "packages/db/src/migrations/008_leases_and_outbox.sql",
+      "packages/db/src/migrations/009_chaos.sql",
+      "packages/db/src/migrations/010_storage.sql",
+      "packages/db/src/migrations/011_worker_quantiles.sql",
+      "packages/db/src/schema/benchmarks.js",
+      "packages/db/src/schema/calibration.js",
+      "packages/db/src/schema/capacity.js",
+      "packages/db/src/schema/chaos.js",
+      "packages/db/src/schema/core.js",
+      "packages/db/src/schema/leases.js",
+      "packages/db/src/schema/load_generators.js",
+      "packages/db/src/schema/storage.js",
+      "packages/db/src/schema/topology.js",
+      "packages/db/src/schema/workloads.js",
+      "packages/domain/package.json",
+      "packages/domain/src/graph/__tests__/algorithms.test.js",
+      "packages/domain/src/graph/algorithms.js",
+      "packages/domain/src/graph/graph.js",
+      "packages/domain/src/graph/types.js",
+      "packages/domain/src/index.js",
+      "packages/domain/src/operations/operation.entity.js",
+      "packages/execution-leases/package.json",
+      "packages/execution-leases/src/__tests__/leases.test.js",
+      "packages/execution-leases/src/inbox/inbox-consumer.js",
+      "packages/execution-leases/src/index.js",
+      "packages/execution-leases/src/leases/epoch-fence.js",
+      "packages/execution-leases/src/leases/lease-manager.js",
+      "packages/execution-leases/src/outbox/outbox-relay.js",
+      "packages/execution-leases/src/types.js",
+      "packages/load-orchestrator/package.json",
+      "packages/load-orchestrator/src/__tests__/orchestrator.test.js",
+      "packages/load-orchestrator/src/aggregator/telemetry-aggregator.js",
+      "packages/load-orchestrator/src/index.js",
+      "packages/load-orchestrator/src/orchestrator/load-orchestrator.js",
+      "packages/load-orchestrator/src/protocol/kafka-commander.js",
+      "packages/load-orchestrator/src/types.js",
+      "packages/load-orchestrator/src/worker/load-worker.js",
+      "packages/load-orchestrator/src/worker/worker-pool.js",
+      "packages/logging/package.json",
+      "packages/logging/src/index.js",
+      "packages/logging/src/logger.js",
+      "packages/observability/package.json",
+      "packages/observability/src/index.js",
+      "packages/observability/src/metrics/prometheus-exporter.js",
+      "packages/observability/src/otel-bootstrap.js",
+      "packages/security/package.json",
+      "packages/security/src/__tests__/tokens.test.js",
+      "packages/security/src/api-keys.js",
+      "packages/security/src/identity.js",
+      "packages/security/src/index.js",
+      "packages/security/src/tokens.js",
+      "packages/simulation-engine/package.json",
+      "packages/simulation-engine/src/__tests__/simulation.test.js",
+      "packages/simulation-engine/src/events/event-queue.js",
+      "packages/simulation-engine/src/hashing/canonical-hasher.js",
+      "packages/simulation-engine/src/index.js",
+      "packages/simulation-engine/src/kernel/simulation-kernel.js",
+      "packages/simulation-engine/src/resources/connection-pool.js",
+      "packages/simulation-engine/src/resources/cpu.js",
+      "packages/simulation-engine/src/resources/threadpool.js",
+      "packages/simulation-engine/src/runner/simulation-runner.js",
+      "packages/statistics/package.json",
+      "packages/statistics/src/__tests__/statistics.test.js",
+      "packages/statistics/src/icdf/tables.js",
+      "packages/statistics/src/index.js",
+      "packages/statistics/src/metrics/histogram.js",
+      "packages/statistics/src/metrics/littles-law.js",
+      "packages/statistics/src/metrics/prediction-interval.js",
+      "packages/statistics/src/metrics/welford.js",
+      "packages/statistics/src/rng/splitter.js",
+      "packages/statistics/src/rng/substream.js",
+      "packages/storage/package.json",
+      "packages/storage/src/__tests__/storage.test.js",
+      "packages/storage/src/index.js",
+      "packages/storage/src/service/storage-service.js",
+      "packages/storage/src/types.js",
+      "packages/workload-spec/package.json",
+      "packages/workload-spec/src/__tests__/workload.test.js",
+      "packages/workload-spec/src/adapters/real-load-adapter.js",
+      "packages/workload-spec/src/adapters/simulation-adapter.js",
+      "packages/workload-spec/src/index.js",
+      "packages/workload-spec/src/patterns/types.js",
+      "packages/workload-spec/src/state-machines/bulkhead.js",
+      "packages/workload-spec/src/state-machines/circuit-breaker.js",
+      "scripts/workspace.mjs",
+      "tests/gates/verify-m0.js",
+      "tests/gates/verify-m1.js",
+      "tests/gates/verify-m10.js",
+      "tests/gates/verify-m11.js",
+      "tests/gates/verify-m12.js",
+      "tests/gates/verify-m2.js",
+      "tests/gates/verify-m3.js",
+      "tests/gates/verify-m4.js",
+      "tests/gates/verify-m5.js",
+      "tests/gates/verify-m6.js",
+      "tests/gates/verify-m7.js",
+      "tests/gates/verify-m8.js",
+      "tests/gates/verify-m9.js",
+      "turbo.json",
+      "vitest.config.js"
+    ],
+    "routes": [
+      {
+        "path": "apps/blackbox-api/src/routes/analytics.js",
+        "line": 26,
+        "declaration": "app.get('/api/v1/campaigns/:id/report', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/analytics.js",
+        "line": 159,
+        "declaration": "app.get('/api/v1/analytics/time-series', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/analytics.js",
+        "line": 198,
+        "declaration": "app.get('/api/v1/comparison/visualizer/:id', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 35,
+        "declaration": "app.post('/api/v1/projects', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 54,
+        "declaration": "app.get('/api/v1/projects', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 60,
+        "declaration": "app.post('/api/v1/projects/:projectId/environments', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 85,
+        "declaration": "app.post('/api/v1/environments/:envId/nodes', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 106,
+        "declaration": "app.get('/api/v1/environments/:envId/nodes', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 115,
+        "declaration": "app.post('/api/v1/environments/:envId/edges', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 140,
+        "declaration": "app.get('/api/v1/environments/:envId/edges', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 149,
+        "declaration": "app.post('/api/v1/environments/:envId/topology/validate', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 194,
+        "declaration": "app.get('/api/v1/projects/:id/topology', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 233,
+        "declaration": "app.post('/api/v1/nodes/:nodeId/operations', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/routes/topology.js",
+        "line": 280,
+        "declaration": "app.get('/api/v1/nodes/:nodeId/operations', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 31,
+        "declaration": "app.get('/metrics', async (_req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 47,
+        "declaration": "app.get('/', async (req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 68,
+        "declaration": "app.get('/health/live', async (_req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 72,
+        "declaration": "app.get('/health/startup', async (_req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 76,
+        "declaration": "app.get('/health/ready', async (_req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 88,
+        "declaration": "app.get('/health/dependencies', async (_req, reply) => {"
+      },
+      {
+        "path": "apps/blackbox-api/src/server.js",
+        "line": 101,
+        "declaration": "app.post('/api/probe', async (req, reply) => {"
+      }
+    ],
+    "declaredRuntime": {
+      "node": ">=24.12.0 <=24.21.0",
+      "npm": ">=11.6.2 <=11.19.1"
+    },
+    "declaredPackageManager": "npm@11.6.2",
+    "scripts": {
+      "build": "turbo run build",
+      "dev": "turbo run dev --parallel",
+      "lint": "eslint .",
+      "dep-cruiser": "depcruise --config .dependency-cruiser.cjs packages apps",
+      "test": "vitest run",
+      "test:unit": "vitest run",
+      "db:migrate": "turbo run db:migrate --filter=@blackbox-x/db",
+      "verify:m0": "node tests/gates/verify-m0.js",
+      "verify:m1": "node tests/gates/verify-m1.js",
+      "verify:m2": "node tests/gates/verify-m2.js",
+      "verify:m3": "node tests/gates/verify-m3.js",
+      "verify:m4": "node tests/gates/verify-m4.js",
+      "verify:m5": "node tests/gates/verify-m5.js",
+      "verify:m6": "node tests/gates/verify-m6.js",
+      "verify:m7": "node tests/gates/verify-m7.js",
+      "verify:m8": "node tests/gates/verify-m8.js",
+      "verify:m9": "node tests/gates/verify-m9.js",
+      "verify:m10": "node tests/gates/verify-m10.js",
+      "verify:m11": "node tests/gates/verify-m11.js",
+      "verify:m12": "node tests/gates/verify-m12.js",
+      "format": "prettier --write \"**/*.{js,cjs,mjs,json,md,css}\"",
+      "format:check": "prettier --check \"**/*.{js,cjs,mjs,json,md,css}\"",
+      "check": "node scripts/workspace.mjs check",
+      "pretest": "npm run build",
+      "pretest:unit": "npm run build"
+    }
+  },
+  "QL": {
+    "name": "Quorum Lab",
+    "doc": "../QUORUM LAB/QUORUM_LAB.md",
+    "sha256": "9e4c03302c0b59b38611a05ced5c8d5410414833dab448ff86dfd50921e91fea",
+    "specificationLines": 959,
+    "headings": [
+      {
+        "line": 1,
+        "heading": "QUORUM LAB — Master Architecture, Protocol Specification & Verification Reference"
+      },
+      {
+        "line": 10,
+        "heading": "1. Executive Summary & Mission"
+      },
+      {
+        "line": 12,
+        "heading": "1.1 The Fundamental Mission"
+      },
+      {
+        "line": 36,
+        "heading": "1.2 Core Capabilities"
+      },
+      {
+        "line": 51,
+        "heading": "2. Business Problem & Distributed Systems Objectives"
+      },
+      {
+        "line": 53,
+        "heading": "2.1 The Distributed Systems Challenge"
+      },
+      {
+        "line": 64,
+        "heading": "2.2 Concrete Objectives of QUORUM LAB"
+      },
+      {
+        "line": 72,
+        "heading": "3. Complete Features & Implementation Status Matrix (Q0–Q11)"
+      },
+      {
+        "line": 93,
+        "heading": "4. Verified Technology Stack"
+      },
+      {
+        "line": 111,
+        "heading": "5. Repository & Workspace Structure"
+      },
+      {
+        "line": 187,
+        "heading": "6. Architecture Overview & High-Level Invariants"
+      },
+      {
+        "line": 218,
+        "heading": "Core Architectural Invariants"
+      },
+      {
+        "line": 228,
+        "heading": "7. The 5-Axis Decoupled Consistency Model"
+      },
+      {
+        "line": 251,
+        "heading": "Detailed Breakdown of the 5 Axes"
+      },
+      {
+        "line": 253,
+        "heading": "Axis A: Replication Engine"
+      },
+      {
+        "line": 258,
+        "heading": "Axis B: Read Consistency"
+      },
+      {
+        "line": 266,
+        "heading": "Axis C: Write Acknowledgment Policy"
+      },
+      {
+        "line": 271,
+        "heading": "Axis D: Local Durability Policy"
+      },
+      {
+        "line": 279,
+        "heading": "Axis E: Conflict Resolution Strategy"
+      },
+      {
+        "line": 287,
+        "heading": "8. Main Request & Data Flows"
+      },
+      {
+        "line": 289,
+        "heading": "8.1 Quorum Write Flow ($W=2$ on $N=3$)"
+      },
+      {
+        "line": 314,
+        "heading": "8.2 Quorum Read Flow with Read Repair ($R=2$ on $N=3$)"
+      },
+      {
+        "line": 336,
+        "heading": "8.3 Raft Consensus Flow ($N=3$)"
+      },
+      {
+        "line": 362,
+        "heading": "9. Storage Engine & Crash Recovery Architecture"
+      },
+      {
+        "line": 391,
+        "heading": "9.1 Binary Frame Format"
+      },
+      {
+        "line": 408,
+        "heading": "9.2 The Three WAL Corruption Classes"
+      },
+      {
+        "line": 435,
+        "heading": "9.3 Crash Recovery Protocol"
+      },
+      {
+        "line": 445,
+        "heading": "10. Causality, Vector Clocks & Version Frontiers"
+      },
+      {
+        "line": 447,
+        "heading": "10.1 Structured Versioning (`VersionStamp`)"
+      },
+      {
+        "line": 464,
+        "heading": "10.2 Version Frontier & Partial Ordering"
+      },
+      {
+        "line": 482,
+        "heading": "11. Active Anti-Entropy, Merkle Trees & Tombstones"
+      },
+      {
+        "line": 484,
+        "heading": "11.1 1024-Bucket Merkle Tree Anti-Entropy"
+      },
+      {
+        "line": 491,
+        "heading": "11.2 Hinted Handoff"
+      },
+      {
+        "line": 497,
+        "heading": "11.3 4-Condition Tombstone Garbage Collection"
+      },
+      {
+        "line": 523,
+        "heading": "12. Failure Injection, Fault Model & Experiment Runtime"
+      },
+      {
+        "line": 525,
+        "heading": "12.1 Supported Fault Types & Scopes"
+      },
+      {
+        "line": 541,
+        "heading": "12.2 Deterministic PRNG Stream Derivation"
+      },
+      {
+        "line": 554,
+        "heading": "13. API Reference: Fastify Control API"
+      },
+      {
+        "line": 558,
+        "heading": "Endpoints Table"
+      },
+      {
+        "line": 585,
+        "heading": "14. gRPC Service Contracts & Protocol Buffers"
+      },
+      {
+        "line": 589,
+        "heading": "14.1 `NodeService` (`node.proto`)"
+      },
+      {
+        "line": 606,
+        "heading": "14.2 `RaftService` (`raft.proto`)"
+      },
+      {
+        "line": 615,
+        "heading": "14.3 `FaultControlService` (`fault.proto`)"
+      },
+      {
+        "line": 627,
+        "heading": "15. Control-Plane Database & Entity Relationship Model"
+      },
+      {
+        "line": 709,
+        "heading": "16. Authentication, Operational Security & mTLS"
+      },
+      {
+        "line": 711,
+        "heading": "16.1 Mutual TLS (mTLS) Implementation"
+      },
+      {
+        "line": 717,
+        "heading": "16.2 Control-Plane Isolation & Quotas"
+      },
+      {
+        "line": 725,
+        "heading": "17. Kubernetes Productionization"
+      },
+      {
+        "line": 743,
+        "heading": "18. Empirical Benchmarks & Research Findings"
+      },
+      {
+        "line": 745,
+        "heading": "18.1 Replication Engine Performance ($N=3$, Balanced Workload)"
+      },
+      {
+        "line": 755,
+        "heading": "18.2 Key Research Insights"
+      },
+      {
+        "line": 762,
+        "heading": "19. SYSTEM-X & Commerce Reliability Testbed (CRT) Integration"
+      },
+      {
+        "line": 771,
+        "heading": "20. Testing Strategy & Verification Evidence"
+      },
+      {
+        "line": 781,
+        "heading": "Full Test Breakdown by Package & App"
+      },
+      {
+        "line": 836,
+        "heading": "21. Local Setup & Operational Commands"
+      },
+      {
+        "line": 838,
+        "heading": "21.1 Prerequisites"
+      },
+      {
+        "line": 844,
+        "heading": "21.2 Installation & Build"
+      },
+      {
+        "line": 846,
+        "heading": "1. Install all dependencies across Turborepo workspace"
+      },
+      {
+        "line": 849,
+        "heading": "2. Build all packages and applications"
+      },
+      {
+        "line": 852,
+        "heading": "3. Run all 48 test suites across all packages"
+      },
+      {
+        "line": 856,
+        "heading": "21.3 Running Standalone Quorum Nodes"
+      },
+      {
+        "line": 858,
+        "heading": "Start Node 1 (port 50051)"
+      },
+      {
+        "line": 861,
+        "heading": "Start Node 2 (port 50052)"
+      },
+      {
+        "line": 864,
+        "heading": "Start Node 3 (port 50053)"
+      },
+      {
+        "line": 868,
+        "heading": "21.4 Starting the Control API & Web Explorer"
+      },
+      {
+        "line": 870,
+        "heading": "Start Control API on port 3000"
+      },
+      {
+        "line": 877,
+        "heading": "22. Environment Variables Reference"
+      },
+      {
+        "line": 897,
+        "heading": "23. Technical Limitations & Known Trade-offs"
+      },
+      {
+        "line": 906,
+        "heading": "24. Interview Preparation Guide"
+      },
+      {
+        "line": 910,
+        "heading": "24.1 The 60-Second Elevator Pitch"
+      },
+      {
+        "line": 913,
+        "heading": "24.2 Deep-Dive Technical Questions & Implementation Answers"
+      },
+      {
+        "line": 915,
+        "heading": "Q1: \"Why decouple Write Ack Policy from Local Durability?\""
+      },
+      {
+        "line": 918,
+        "heading": "Q2: \"How does QUORUM LAB handle torn writes during a power failure?\""
+      },
+      {
+        "line": 921,
+        "heading": "Q3: \"Why use Version Frontiers instead of a scalar version counter?\""
+      },
+      {
+        "line": 924,
+        "heading": "Q4: \"How does the Leader Replication Engine prevent split-brain zombies?\""
+      },
+      {
+        "line": 927,
+        "heading": "Q5: \"What is the coordination cost of Raft versus Leaderless Quorums?\""
+      },
+      {
+        "line": 932,
+        "heading": "25. Glossary of Distributed Systems Terms"
+      },
+      {
+        "line": 950,
+        "heading": "26. Verification Audit Record"
+      }
+    ],
+    "claims": [
+      {
+        "line": 4,
+        "text": "> **Status:** Production-Parity Implementation Complete & Certified (Q0–Q11 Verified)"
+      },
+      {
+        "line": 78,
+        "text": "| **Q0** | **Foundation & Node Protocol** | `protocol`, `quorum-node`, `clocks` | gRPC `NodeService`, in-memory `MemStore`, Wall/Monotonic/Lamport clocks, node lifecycle state machine (`STARTING` → `BOOTSTRAPPING` → `READY` → `HEALTHY`). | `grpcNodeService.test.ts`, `memStore.test.ts`, `clocks.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 79,
+        "text": "| **Q1** | **Durable Storage & Recovery** | `storage`, `quorum-node/engine` | `AppendOnlyLog`, CRC32C, WAL envelope, `SnapshotManager`, `RecoveryManager`, `IdempotencyTable`, 3-class corruption handler. | `wal.test.ts`, `recovery.test.ts`, `snapshot.test.ts`, `crc32c.test.ts`, `durableRecovery.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 80,
+        "text": "| **Q2** | **Replication Engine** | `replication`, `quorum-node` | `ReplicationEngine` interface, `AsyncReplicationEngine`, `SyncReplicationEngine`, `PeerClientPool`, membership version checking. | `syncReplication.test.ts`, `asyncReplication.test.ts`, `staleMembership.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 81,
+        "text": "| **Q3** | **Quorum & Control Plane** | `contracts`, `control-api`, `replication` | Fastify REST API, `QuorumReplicationEngine`, Quorum math resolver ($W+R>N$), project/cluster/node/policy management. | `api.test.ts`, `capabilityValidation.test.ts`, `quorumMath.test.ts`, `quorumReplication.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 82,
+        "text": "| **Q4** | **Failure Injection & Runtime** | `fault-model`, `experiment-worker` | `FaultControlService`, 10 fault types, 5 scopes, seeded PRNG (`SHA256(rootSeed + stream)`), `TimelineRunner`, `WorkloadGenerator`. | `faultRegistry.test.ts`, `prng.test.ts`, `timeline.test.ts`, `orchestrator.test.ts`, `faultControlService.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 83,
+        "text": "| **Q5** | **Conflict & Causality** | `consistency`, `quorum-node` | Vector clocks, Dot counters, `VersionFrontier`, 4 conflict resolvers (`LWW`, `VERSION_VECTOR`, `MULTI_VALUE`, `CUSTOM_MERGE`). | `vectorClock.test.ts`, `keyState.test.ts`, `conflictResolvers.test.ts`, `causalConflict.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 84,
+        "text": "| **Q6** | **Repair & Convergence** | `repair`, `quorum-node` | 1024-bucket Merkle trees (`ReadDigest`), `ReadRepairCoordinator`, `HintedHandoffManager`, 4-condition `sweepTombstones`. | `merkleTree.test.ts`, `readRepair.test.ts`, `hintedHandoff.test.ts`, `tombstoneGc.test.ts`, `antiEntropyRepair.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 85,
+        "text": "| **Q7** | **Correctness & Verification** | `analysis-worker`, `report-worker` | `ConsistencyChecker`, history analysis, verification of RYW, Monotonic Reads, Stale Reads, SLO calculation, HTML report generator. | `analysisWorker.test.ts`, `reportWorker.test.ts`, `sessionGuarantees.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 86,
+        "text": "| **Q8** | **Leader & Epoch Fencing** | `replication`, `quorum-node` | `LeaderReplicationEngine`, `FencingCoordinator`, lease management, two-phase write (`PREPARE` → `COMMIT`), epoch validation. | `leaderFencing.test.ts`, `leaderReplication.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 87,
+        "text": "| **Q9** | **Native Raft Consensus** | `replication`, `protocol` | `RaftNode`, `RaftLog`, `RaftService` (`RequestVote`, `AppendEntries`, `InstallSnapshot`), election timeouts, majority commits. | `raftConsensus.test.ts`, `raftCluster.test.ts`, `grpcSnapshot.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 88,
+        "text": "| **Q10** | **Kubernetes Productionization** | `deploy/kubernetes`, `quorum-node` | StatefulSet manifests, headless service discovery (`parsePodOrdinal`), PVC preservation across pod restarts, mTLS cert-manager. | `podLifecycle.test.ts`, `mtlsSecurity.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 89,
+        "text": "| **Q11** | **Research & Benchmarking** | `benchmarks`, `docs/benchmarks` | Tiered benchmark runner (Tier A Smoke, Tier B Core, Tier C Research), Zipfian/Uniform generators, percentile stats ($p50/p95/p99$). | `benchmarks.test.ts` | **PASS (100%)** |"
+      },
+      {
+        "line": 957,
+        "text": "- **Zero Mocks Invariant:** Certified (Real gRPC sockets, real disk I/O, real network faults)"
+      }
+    ],
+    "files": [
+      ".env.example",
+      "Dockerfile",
+      "QUORUM_LAB.md",
+      "README.md",
+      "apps/analysis-worker/Dockerfile",
+      "apps/analysis-worker/package.json",
+      "apps/analysis-worker/src/checker.js",
+      "apps/analysis-worker/src/index.js",
+      "apps/analysis-worker/src/main.js",
+      "apps/analysis-worker/src/types.js",
+      "apps/analysis-worker/tests/analysisWorker.test.js",
+      "apps/control-api/Dockerfile",
+      "apps/control-api/package.json",
+      "apps/control-api/src/app.js",
+      "apps/control-api/src/config.js",
+      "apps/control-api/src/dashboardTemplate.js",
+      "apps/control-api/src/main.js",
+      "apps/control-api/src/repository/clusterRepository.js",
+      "apps/control-api/src/repository/experimentRepository.js",
+      "apps/control-api/src/repository/projectRepository.js",
+      "apps/control-api/src/routes/clusters.js",
+      "apps/control-api/src/routes/experiments.js",
+      "apps/control-api/src/routes/projects.js",
+      "apps/control-api/tests/api.test.js",
+      "apps/control-api/tests/capabilityValidation.test.js",
+      "apps/experiment-worker/Dockerfile",
+      "apps/experiment-worker/package.json",
+      "apps/experiment-worker/src/grpcClients.js",
+      "apps/experiment-worker/src/index.js",
+      "apps/experiment-worker/src/main.js",
+      "apps/experiment-worker/src/orchestrator.js",
+      "apps/experiment-worker/src/timelineRunner.js",
+      "apps/experiment-worker/src/workloadGenerator.js",
+      "apps/experiment-worker/tests/orchestrator.test.js",
+      "apps/quorum-node/Dockerfile",
+      "apps/quorum-node/package.json",
+      "apps/quorum-node/src/app.js",
+      "apps/quorum-node/src/cluster/ordinalDiscovery.js",
+      "apps/quorum-node/src/config.js",
+      "apps/quorum-node/src/dashboardTemplate.js",
+      "apps/quorum-node/src/engine/memStore.js",
+      "apps/quorum-node/src/engine/mutationExecutor.js",
+      "apps/quorum-node/src/engine/nodeEngine.js",
+      "apps/quorum-node/src/index.js",
+      "apps/quorum-node/src/main.js",
+      "apps/quorum-node/src/runtime/clocks.js",
+      "apps/quorum-node/src/runtime/lifecycle.js",
+      "apps/quorum-node/src/runtime/nodeState.js",
+      "apps/quorum-node/src/service/faultControlServiceImpl.js",
+      "apps/quorum-node/src/service/healthServiceImpl.js",
+      "apps/quorum-node/src/service/nodeServiceImpl.js",
+      "apps/quorum-node/src/service/raftServiceImpl.js",
+      "apps/quorum-node/tests/integration/antiEntropyRepair.test.js",
+      "apps/quorum-node/tests/integration/asyncReplication.test.js",
+      "apps/quorum-node/tests/integration/causalConflict.test.js",
+      "apps/quorum-node/tests/integration/durableRecovery.test.js",
+      "apps/quorum-node/tests/integration/faultControlService.test.js",
+      "apps/quorum-node/tests/integration/grpcNodeService.test.js",
+      "apps/quorum-node/tests/integration/grpcSnapshot.test.js",
+      "apps/quorum-node/tests/integration/leaderFencing.test.js",
+      "apps/quorum-node/tests/integration/mtlsSecurity.test.js",
+      "apps/quorum-node/tests/integration/podLifecycle.test.js",
+      "apps/quorum-node/tests/integration/quorumReplication.test.js",
+      "apps/quorum-node/tests/integration/raftCluster.test.js",
+      "apps/quorum-node/tests/integration/sessionGuarantees.test.js",
+      "apps/quorum-node/tests/integration/staleMembership.test.js",
+      "apps/quorum-node/tests/integration/syncReplication.test.js",
+      "apps/quorum-node/tests/unit/config.test.js",
+      "apps/quorum-node/tests/unit/memStore.test.js",
+      "apps/report-worker/Dockerfile",
+      "apps/report-worker/package.json",
+      "apps/report-worker/src/index.js",
+      "apps/report-worker/src/main.js",
+      "apps/report-worker/src/reportGenerator.js",
+      "apps/report-worker/src/types.js",
+      "apps/report-worker/tests/reportWorker.test.js",
+      "deploy/kubernetes/00-namespace.yaml",
+      "deploy/kubernetes/01-resource-quota.yaml",
+      "deploy/kubernetes/02-secrets.yaml",
+      "deploy/kubernetes/03-rbac.yaml",
+      "deploy/kubernetes/04-network-policies.yaml",
+      "deploy/kubernetes/05-pod-disruption-budget.yaml",
+      "deploy/kubernetes/06-quorum-node-statefulset.yaml",
+      "deploy/kubernetes/07-control-api-deployment.yaml",
+      "deploy/kubernetes/08-workers-deployment.yaml",
+      "deploy/kubernetes/09-backup-cronjob.yaml",
+      "deploy/kubernetes/10-prometheus-alerts.yaml",
+      "docs/benchmarks/BENCHMARKS.md",
+      "docs/benchmarks/RESEARCH_REPORT.md",
+      "docs/integration/BLACKBOX_X_INTEGRATION.md",
+      "docs/operations/BACKUP_RESTORE.md",
+      "docs/operations/REDIS_FAILURE_MODES.md",
+      "docs/operations/SECURITY_MTLS.md",
+      "docs/operations/UPGRADE_ROLLBACK.md",
+      "package.json",
+      "packages/benchmarks/package.json",
+      "packages/benchmarks/src/benchmarkRunner.js",
+      "packages/benchmarks/src/distributions.js",
+      "packages/benchmarks/src/index.js",
+      "packages/benchmarks/src/stats.js",
+      "packages/benchmarks/src/workload.js",
+      "packages/benchmarks/tests/benchmarks.test.js",
+      "packages/clocks/package.json",
+      "packages/clocks/src/index.js",
+      "packages/clocks/src/lamportClock.js",
+      "packages/clocks/src/monotonicClock.js",
+      "packages/clocks/src/wallClock.js",
+      "packages/clocks/tests/clocks.test.js",
+      "packages/consistency/package.json",
+      "packages/consistency/src/causalConsistency.js",
+      "packages/consistency/src/conflictResolvers.js",
+      "packages/consistency/src/index.js",
+      "packages/consistency/src/keyState.js",
+      "packages/consistency/src/sessionGuarantees.js",
+      "packages/consistency/src/vectorClock.js",
+      "packages/consistency/src/versionFrontier.js",
+      "packages/consistency/src/versionStamp.js",
+      "packages/consistency/tests/causalConsistency.test.js",
+      "packages/consistency/tests/conflictResolvers.test.js",
+      "packages/consistency/tests/keyState.test.js",
+      "packages/consistency/tests/sessionGuarantees.test.js",
+      "packages/consistency/tests/vectorClock.test.js",
+      "packages/contracts/package.json",
+      "packages/contracts/src/capabilities.js",
+      "packages/contracts/src/config.js",
+      "packages/contracts/src/index.js",
+      "packages/contracts/src/lifecycle.js",
+      "packages/contracts/src/membership.js",
+      "packages/contracts/src/policyConfig.js",
+      "packages/contracts/tests/membership.test.js",
+      "packages/fault-model/package.json",
+      "packages/fault-model/src/faultRegistry.js",
+      "packages/fault-model/src/index.js",
+      "packages/fault-model/src/prng.js",
+      "packages/fault-model/src/timeline.js",
+      "packages/fault-model/src/types.js",
+      "packages/fault-model/tests/faultRegistry.test.js",
+      "packages/fault-model/tests/prng.test.js",
+      "packages/fault-model/tests/timeline.test.js",
+      "packages/protocol/package.json",
+      "packages/protocol/proto/common.proto",
+      "packages/protocol/proto/events.proto",
+      "packages/protocol/proto/fault.proto",
+      "packages/protocol/proto/health.proto",
+      "packages/protocol/proto/node.proto",
+      "packages/protocol/proto/raft.proto",
+      "packages/protocol/src/index.js",
+      "packages/protocol/src/loader.js",
+      "packages/protocol/src/types.js",
+      "packages/protocol/tests/protocolLoader.test.js",
+      "packages/repair/package.json",
+      "packages/repair/src/hintedHandoff.js",
+      "packages/repair/src/index.js",
+      "packages/repair/src/merkleTree.js",
+      "packages/repair/src/readRepair.js",
+      "packages/repair/src/tombstoneGc.js",
+      "packages/repair/tests/hintedHandoff.test.js",
+      "packages/repair/tests/merkleTree.test.js",
+      "packages/repair/tests/readRepair.test.js",
+      "packages/repair/tests/tombstoneGc.test.js",
+      "packages/replication/package.json",
+      "packages/replication/src/asyncReplicationEngine.js",
+      "packages/replication/src/index.js",
+      "packages/replication/src/leaderReplicationEngine.js",
+      "packages/replication/src/lwwResolver.js",
+      "packages/replication/src/peerClient.js",
+      "packages/replication/src/quorumReplicationEngine.js",
+      "packages/replication/src/raftLog.js",
+      "packages/replication/src/raftNode.js",
+      "packages/replication/src/raftReplicationEngine.js",
+      "packages/replication/src/sessionRouter.js",
+      "packages/replication/src/syncReplicationEngine.js",
+      "packages/replication/src/types.js",
+      "packages/replication/tests/leaderReplication.test.js",
+      "packages/replication/tests/quorumMath.test.js",
+      "packages/replication/tests/raftConsensus.test.js",
+      "packages/replication/tests/replicationEngine.test.js",
+      "packages/replication/tests/sessionRouter.test.js",
+      "packages/replication/tests/tlsHelper.js",
+      "packages/storage/package.json",
+      "packages/storage/src/appendOnlyLog.js",
+      "packages/storage/src/crc32c.js",
+      "packages/storage/src/idempotency.js",
+      "packages/storage/src/index.js",
+      "packages/storage/src/recoveryManager.js",
+      "packages/storage/src/snapshotManager.js",
+      "packages/storage/src/storageEngine.js",
+      "packages/storage/src/types.js",
+      "packages/storage/src/wal.js",
+      "packages/storage/tests/appendOnlyLog.test.js",
+      "packages/storage/tests/crc32c.test.js",
+      "packages/storage/tests/idempotency.test.js",
+      "packages/storage/tests/recovery.test.js",
+      "packages/storage/tests/snapshot.test.js",
+      "packages/storage/tests/wal.test.js",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "scripts/workspace.mjs",
+      "tests/verification-results.json",
+      "turbo.json"
+    ],
+    "routes": [
+      {
+        "path": "apps/control-api/src/app.js",
+        "line": 23,
+        "declaration": "app.get('/health', async () => ({ status: 'UP' }));"
+      },
+      {
+        "path": "apps/control-api/src/app.js",
+        "line": 24,
+        "declaration": "app.get('/', async (req, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/clusters.js",
+        "line": 5,
+        "declaration": "fastify.post('/v1/clusters', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/clusters.js",
+        "line": 37,
+        "declaration": "fastify.get('/v1/clusters', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/clusters.js",
+        "line": 42,
+        "declaration": "fastify.get('/v1/clusters/:id', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/clusters.js",
+        "line": 51,
+        "declaration": "fastify.post('/v1/clusters/:id/nodes', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/clusters.js",
+        "line": 70,
+        "declaration": "fastify.get('/v1/clusters/:id/nodes', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/clusters.js",
+        "line": 79,
+        "declaration": "fastify.post('/v1/clusters/:id/policies', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 4,
+        "declaration": "fastify.post('/v1/experiments', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 32,
+        "declaration": "fastify.get('/v1/experiments', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 37,
+        "declaration": "fastify.get('/v1/experiments/:id', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 46,
+        "declaration": "fastify.post('/v1/experiments/:id/runs', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 78,
+        "declaration": "fastify.get('/v1/experiments/:id/runs', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 83,
+        "declaration": "fastify.get('/v1/runs/:runId', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 92,
+        "declaration": "fastify.patch('/v1/runs/:runId', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 111,
+        "declaration": "fastify.post('/v1/runs/:runId/execute', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/experiments.js",
+        "line": 137,
+        "declaration": "fastify.post('/v1/runs/:runId/cancel', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/projects.js",
+        "line": 3,
+        "declaration": "fastify.post('/v1/projects', async (request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/projects.js",
+        "line": 20,
+        "declaration": "fastify.get('/v1/projects', async (_request, reply) => {"
+      },
+      {
+        "path": "apps/control-api/src/routes/projects.js",
+        "line": 23,
+        "declaration": "fastify.get('/v1/projects/:id', async (request, reply) => {"
+      },
+      {
+        "path": "apps/quorum-node/src/main.js",
+        "line": 15,
+        "declaration": "const wantsJson = parsedUrl.pathname === '/health' || parsedUrl.pathname === '/api/status' ||"
+      },
+      {
+        "path": "packages/protocol/proto/fault.proto",
+        "line": 8,
+        "declaration": "rpc SetFault(SetFaultRequest) returns (SetFaultResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/fault.proto",
+        "line": 9,
+        "declaration": "rpc ClearFault(ClearFaultRequest) returns (ClearFaultResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/fault.proto",
+        "line": 10,
+        "declaration": "rpc ClearAllFaults(ClearAllFaultsRequest) returns (ClearAllFaultsResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/fault.proto",
+        "line": 11,
+        "declaration": "rpc Crash(CrashRequest) returns (CrashResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/health.proto",
+        "line": 20,
+        "declaration": "rpc Check(HealthCheckRequest) returns (HealthCheckResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/health.proto",
+        "line": 21,
+        "declaration": "rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 9,
+        "declaration": "rpc Put(PutRequest) returns (PutResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 10,
+        "declaration": "rpc Get(GetRequest) returns (GetResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 11,
+        "declaration": "rpc Delete(DeleteRequest) returns (DeleteResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 12,
+        "declaration": "rpc GetVersions(GetVersionsRequest) returns (quorum.common.v1.VersionFrontier);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 13,
+        "declaration": "rpc GetNodeState(GetNodeStateRequest) returns (NodeStateResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 16,
+        "declaration": "rpc CreateSnapshot(CreateSnapshotRequest) returns (CreateSnapshotResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 19,
+        "declaration": "rpc Replicate(ReplicateRequest) returns (ReplicateResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 22,
+        "declaration": "rpc ReadDigest(ReadDigestRequest) returns (ReadDigestResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 23,
+        "declaration": "rpc Repair(RepairRequest) returns (RepairResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 26,
+        "declaration": "rpc PrepareWrite(PrepareWriteRequest) returns (PrepareWriteResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/node.proto",
+        "line": 27,
+        "declaration": "rpc CommitWrite(CommitWriteRequest) returns (CommitWriteResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/raft.proto",
+        "line": 8,
+        "declaration": "rpc RequestVote(RequestVoteRequest) returns (RequestVoteResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/raft.proto",
+        "line": 9,
+        "declaration": "rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesResponse);"
+      },
+      {
+        "path": "packages/protocol/proto/raft.proto",
+        "line": 10,
+        "declaration": "rpc InstallSnapshot(InstallSnapshotRequest) returns (InstallSnapshotResponse);"
+      }
+    ],
+    "declaredRuntime": {
+      "node": ">=24.0.0"
+    },
+    "declaredPackageManager": "pnpm@12.4.2",
+    "scripts": {
+      "build": "turbo run build",
+      "test": "turbo run test",
+      "clean": "turbo run clean",
+      "check": "node scripts/workspace.mjs check"
+    }
+  }
+}

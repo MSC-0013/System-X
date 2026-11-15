@@ -96,4 +96,3 @@ export function computeTraceHash(entries) {
     const canonicalJson = canonicalJsonStringify(entries);
     return createHash('sha256').update(canonicalJson, 'utf8').digest('hex');
 }
-//# sourceMappingURL=canonical.js.map

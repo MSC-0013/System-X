@@ -48,4 +48,3 @@ export function computeRecordHash(record) {
     const canonical = canonicalJsonStringify(record);
     return computeSha256(canonical);
 }
-//# sourceMappingURL=artifactIntegrity.js.map

@@ -4,22 +4,18 @@
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsc -b",
-    "clean": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\"",
+    "build": "node ../../scripts/workspace.mjs build",
+    "clean": "node ../../scripts/workspace.mjs clean",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "check": "node ../../scripts/workspace.mjs check"
   },
   "devDependencies": {
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.7",
-    "@types/node": "^24.0.0"
+    "vitest": "^3.0.7"
   }
 }

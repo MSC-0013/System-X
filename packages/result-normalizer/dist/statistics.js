@@ -38,4 +38,3 @@ export function mean(values) {
         return 0;
     return values.reduce((s, v) => s + v, 0) / values.length;
 }
-//# sourceMappingURL=statistics.js.map

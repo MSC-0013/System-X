@@ -18,23 +18,35 @@ let activeRunId = null;
 let sseEventSource = null;
 let cachedBenchmarkRuns = [];
 let simPollInterval = null;
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+function setBadge(element, state) {
+  if (!element) return;
+  element.textContent = state;
+  (element.closest(".status-item") || element).dataset.state = state.toLowerCase().replace("legacy ", "");
+}
 
 // Tab Navigation
 function switchTab(tabId, ev) {
   if (ev) ev.preventDefault();
+  if (!document.getElementById("view-" + tabId)) return;
+  if (location.hash !== "#" + tabId) history.replaceState(null, "", "#" + tabId);
 
   document.querySelectorAll('.tab-content').forEach(function(el) {
     el.classList.remove('active');
   });
   document.querySelectorAll('.tab-btn').forEach(function(el) {
     el.classList.remove('active');
+    el.removeAttribute('aria-current');
   });
 
   const targetView = document.getElementById('view-' + tabId);
   const targetNav = document.getElementById('tabnav-' + tabId);
 
   if (targetView) targetView.classList.add('active');
-  if (targetNav) targetNav.classList.add('active');
+  if (targetNav) {
+    targetNav.classList.add('active');
+    targetNav.setAttribute('aria-current', 'page');
+  }
 
   const titleMap = {
     overview: 'Overview',
@@ -81,23 +93,22 @@ function goToStep(stepNum, ev) {
 // 1. Ecosystem Status Poller
 // ---------------------------------------------------------------------------
 async function pollStatus() {
+  const badges = { systemX: ["hdr-sx-status", "svc-system"], blackboxApi: ["hdr-bbx-status", "svc-blackbox"],
+    quorumApi: ["hdr-qrm-status", "svc-quorum", "quorum-live-state"], crtTestbed: ["hdr-crt-status"] };
+  const status = document.getElementById("status-updated");
   try {
-    const res = await fetch('/api/status');
-    if (res.ok) {
-      const data = await res.json();
-      const elSx = document.getElementById('hdr-sx-status');
-      const elBbx = document.getElementById('hdr-bbx-status');
-      const elQrm = document.getElementById('hdr-qrm-status');
-      const elCrt = document.getElementById('hdr-crt-status');
-      const elCount = document.getElementById('nav-runs-count');
-
-      if (elSx) elSx.textContent = data.systemX || 'ONLINE';
-      if (elBbx) elBbx.textContent = data.blackboxApi || 'READY';
-      if (elQrm) elQrm.textContent = data.quorumApi || 'READY';
-      if (elCrt) elCrt.textContent = data.crtTestbed || 'READY';
-      if (elCount) elCount.textContent = (data.runsCount || 0) + (data.benchmarkRunsCount || 0);
+    const res = await fetch("/api/status", { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error("Health check failed");
+    const data = await res.json();
+    for (const [key, ids] of Object.entries(badges)) {
+      for (const id of ids) setBadge(document.getElementById(id), data[key] || "UNKNOWN");
     }
-  } catch (err) {}
+    document.getElementById("nav-runs-count").textContent = data.runsCount ?? 0;
+    if (status) status.textContent = "Checked " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  } catch {
+    for (const id of Object.values(badges).flat()) setBadge(document.getElementById(id), "UNKNOWN");
+    if (status) status.textContent = "Service check unavailable";
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -112,10 +123,7 @@ async function validateTarget() {
   const allowLocalhost = allowLocalhostEl ? allowLocalhostEl.checked : true;
   const authorizedConfirm = authorizedConfirmEl ? authorizedConfirmEl.checked : true;
 
-  if (!urlInput) {
-    alert('Please enter a website or API URL.');
-    return;
-  }
+  document.getElementById('bench-next').disabled = true;
 
   const resultsDiv = document.getElementById('target-probe-results');
   if (resultsDiv) resultsDiv.style.display = 'block';
@@ -137,6 +145,7 @@ async function validateTarget() {
     });
 
     const data = await res.json();
+    document.getElementById('bench-next').disabled = !data.valid;
     const titleEl = document.getElementById('probe-status-title');
     const ipEl = document.getElementById('probe-ip');
     const codeEl = document.getElementById('probe-code');
@@ -188,9 +197,10 @@ async function discoverMoreRoutes() {
     const res = await fetch('/api/benchmarks/discover-routes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: urlInput, allowLocalhost: allowLocalhost }),
+      body: JSON.stringify({ url: urlInput, allowLocalhost, authorizedConfirmed: document.getElementById("chk-authorized-confirm").checked }),
     });
     const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Route discovery failed');
     if (data.discovered && data.discovered.length > 0) {
       if (routesCountEl) routesCountEl.textContent = data.discovered.length + ' discovered' + (data.sitemapFound ? ' (sitemap.xml)' : '');
       if (routesListEl) routesListEl.textContent = data.discovered.join(', ');
@@ -207,6 +217,11 @@ async function discoverMoreRoutes() {
 // 3. Screen 2 & 3: Start Benchmark Execution & SSE Streaming
 // ---------------------------------------------------------------------------
 async function startBenchmarkExecution() {
+  const button = document.getElementById('bench-start');
+  const feedback = document.getElementById('bench-form-error');
+  if (button.disabled) return;
+  button.disabled = true;
+  feedback.textContent = '';
   const targetUrl = document.getElementById('target-url-input').value.trim();
   const allowLocalhost = document.getElementById('chk-allow-localhost').checked;
   const authorizedConfirm = document.getElementById('chk-authorized-confirm').checked;
@@ -238,7 +253,7 @@ async function startBenchmarkExecution() {
 
     const data = await res.json();
     if (!res.ok) {
-      alert('Failed to start benchmark: ' + (data.error || 'Unknown error'));
+      feedback.textContent = data.error || 'Unable to start benchmark.';
       return;
     }
 
@@ -247,7 +262,9 @@ async function startBenchmarkExecution() {
     setupLiveExecutionScreen(data.run);
     connectSSEStream(data.runId);
   } catch (err) {
-    alert('Error starting benchmark: ' + err.message);
+    feedback.textContent = 'Unable to start benchmark: ' + err.message;
+  } finally {
+    button.disabled = false;
   }
 }
 
@@ -284,15 +301,16 @@ function connectSSEStream(runId) {
   };
 
   sseEventSource.onerror = function() {
-    if (sseEventSource) sseEventSource.close();
+    document.getElementById('live-run-state').textContent = 'Reconnecting…';
   };
 }
 
 function handleLiveUpdate(payload) {
   const terminal = document.getElementById('live-event-terminal');
   const run = payload.run;
-  if (!run) return;
+  if (!run || run.runId !== activeRunId) return;
 
+  setBadge(document.getElementById('live-run-state'), run.state);
   const total = run.config.requestCount;
   const completed = run.completedRequests;
   const pct = Math.min(100, Math.round((completed / total) * 100));
@@ -317,7 +335,7 @@ function handleLiveUpdate(payload) {
 
   if (payload.type === 'COMPLETED' || run.state === 'COMPLETED' || run.state === 'FAILED' || run.state === 'CANCELLED') {
     if (sseEventSource) sseEventSource.close();
-    document.getElementById('live-run-state').textContent = '✓ ' + run.state;
+    setBadge(document.getElementById('live-run-state'), run.state);
     if (terminal) {
       terminal.textContent += '[' + new Date().toLocaleTimeString() + '] Benchmark execution finished with state: ' + run.state + '\n';
     }
@@ -330,8 +348,8 @@ function handleLiveUpdate(payload) {
 async function cancelCurrentRun() {
   if (!activeRunId) return;
   try {
-    await fetch('/api/benchmarks/runs/' + activeRunId + '/cancel', { method: 'POST' });
-    document.getElementById('live-run-state').textContent = '! CANCELLED';
+    const res = await fetch('/api/benchmarks/runs/' + activeRunId + '/cancel', { method: 'POST' });
+    if (res.ok && (await res.json()).cancelled) document.getElementById('live-run-state').textContent = 'Cancelling…';
   } catch (err) {}
 }
 
@@ -340,6 +358,8 @@ async function cancelCurrentRun() {
 // ---------------------------------------------------------------------------
 function showBenchmarkResults(run) {
   goToStep(4);
+  document.getElementById('res-run-state').textContent = run.state;
+  document.getElementById('res-run-state').dataset.state = run.state.toLowerCase();
   document.getElementById('res-run-id').textContent = run.runId;
   document.getElementById('res-throughput').textContent = run.throughputRps + ' rps';
   document.getElementById('res-mean').textContent = (run.latency ? run.latency.meanMs : 0) + ' ms';
@@ -367,7 +387,7 @@ function showBenchmarkResults(run) {
         const stat = run.routeBreakdown[route];
         const tr = document.createElement('tr');
         tr.innerHTML =
-          '<td><code>' + route + '</code></td>' +
+          '<td><code>' + escapeHtml(route) + '</code></td>' +
           '<td>' + stat.count + '</td>' +
           '<td>' + (stat.count > 0 ? Math.round((stat.successCount / stat.count) * 100) : 0) + '%</td>' +
           '<td>' + stat.meanMs + 'ms</td>' +
@@ -408,15 +428,15 @@ async function loadRequestSamples(runId, filter) {
       tr.innerHTML =
         '<td><code>' + s.requestId + '</code></td>' +
         '<td><strong>' + s.method + '</strong></td>' +
-        '<td><code>' + s.route + '</code></td>' +
+        '<td><code>' + escapeHtml(s.route) + '</code></td>' +
         '<td><code>HTTP ' + s.statusCode + '</code></td>' +
         '<td>' + s.durationMs + 'ms</td>' +
         '<td><span class="badge ' + (isPass ? '' : 'badge-inverse') + '">' + (isPass ? '✓ PASS' : '! FAIL') + '</span></td>' +
-        '<td>' + (s.errorMessage ? s.errorMessage : '—') + '</td>';
+        '<td>' + escapeHtml(s.errorMessage || '—') + '</td>';
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">Failed to load samples: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">Failed to load samples: ' + escapeHtml(err.message) + '</td></tr>';
   }
 }
 
@@ -495,7 +515,7 @@ function renderComparisonResults(data) {
   const vBox = document.getElementById('cmp-verdict-box');
   const tblCard = document.getElementById('cmp-table-card');
   vBox.style.display = 'block';
-  tblCard.style.display = 'block';
+  tblCard.style.display = data.comparable ? 'block' : 'none';
 
   const vTitle = document.getElementById('cmp-verdict-title');
   const vBadge = document.getElementById('cmp-verdict-badge');
@@ -550,10 +570,6 @@ let topologyNodes = [
   { id: 'node-quorum-db', name: 'Quorum Cluster', type: 'STORAGE', concurrency: 32, serviceTimeMs: 15, maxQueueDepth: 500 },
 ];
 let lastBottleneckNodeId = null;
-
-function escapeHtml(str) {
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 
 function renderTopologyCanvas() {
   const canvas = document.getElementById('model-canvas');
@@ -796,77 +812,6 @@ function simulateModelTopology() {
 // ---------------------------------------------------------------------------
 // 7. TAB 5: Quorum Lab Chaos & Fault Injector
 // ---------------------------------------------------------------------------
-function crashNode(nodeNum) {
-  const terminal = document.getElementById('quorum-terminal');
-  if (terminal) {
-    terminal.textContent += '[Chaos Injection] Node ' + nodeNum + ' CRASHED! Heartbeat lost.\n';
-    terminal.scrollTop = terminal.scrollHeight;
-  }
-  const badge = document.getElementById('badge-node-' + nodeNum);
-  if (badge) {
-    badge.textContent = '— OFFLINE';
-    badge.classList.remove('badge-inverse');
-  }
-}
-
-function partitionNode(nodeNum) {
-  const terminal = document.getElementById('quorum-terminal');
-  if (terminal) {
-    terminal.textContent += '[Chaos Injection] Node ' + nodeNum + ' isolated into asymmetric network partition!\n';
-    terminal.scrollTop = terminal.scrollHeight;
-  }
-  const badge = document.getElementById('badge-node-' + nodeNum);
-  if (badge) badge.textContent = '! PARTITIONED';
-}
-
-function healAllNodes() {
-  const terminal = document.getElementById('quorum-terminal');
-  if (terminal) {
-    terminal.textContent += '[Quorum Engine] Healed all network partitions. Nodes 1, 2, 3 re-established quorum.\n';
-    terminal.scrollTop = terminal.scrollHeight;
-  }
-  const b1 = document.getElementById('badge-node-1');
-  const b2 = document.getElementById('badge-node-2');
-  const b3 = document.getElementById('badge-node-3');
-  if (b1) b1.textContent = 'LEADER';
-  if (b2) b2.textContent = 'FOLLOWER';
-  if (b3) b3.textContent = 'FOLLOWER';
-}
-
-function injectQuorumPartition() {
-  partitionNode(3);
-}
-
-function executeQuorumWrite() {
-  const terminal = document.getElementById('quorum-terminal');
-  const k = document.getElementById('quorum-key').value;
-  const v = document.getElementById('quorum-val').value;
-  if (terminal) {
-    terminal.textContent += '[Write W=2] Sending key "' + k + '"="' + v + '" -> Replicated to Node 1 and Node 2. Quorum ACK received (12ms).\n';
-    terminal.scrollTop = terminal.scrollHeight;
-  }
-}
-
-function executeQuorumRead() {
-  const terminal = document.getElementById('quorum-terminal');
-  const k = document.getElementById('quorum-key').value;
-  if (terminal) {
-    terminal.textContent += '[Read R=2] Reading key "' + k + '" from 2 replicas -> Versions match: v=95. Consistent read verified.\n';
-    terminal.scrollTop = terminal.scrollHeight;
-  }
-}
-
-function triggerReadRepair() {
-  const terminal = document.getElementById('quorum-terminal');
-  if (terminal) {
-    terminal.textContent += '[Read Repair] Reconciling stale replica Node 3 with current WAL index 1,042 -> Stale read invalidated & repaired.\n';
-    terminal.scrollTop = terminal.scrollHeight;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// 8. TAB 6: Commerce Reliability Testbed (CRT)
-// ---------------------------------------------------------------------------
 async function loadCrtScenarios() {
   const tbody = document.getElementById('tbody-crt-scenarios');
   if (!tbody) return;
@@ -874,6 +819,7 @@ async function loadCrtScenarios() {
 
   try {
     const res = await fetch('/api/crt/scenarios');
+    if (!res.ok) throw new Error("Scenario list unavailable");
     const scenarios = await res.json();
     tbody.innerHTML = '';
 
@@ -890,7 +836,7 @@ async function loadCrtScenarios() {
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">Failed to load scenarios: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="color:var(--text-muted); text-align:center;">Failed to load scenarios: ' + escapeHtml(err.message) + '</td></tr>';
   }
 }
 
@@ -905,7 +851,8 @@ async function runSingleCrtScenario(id) {
   try {
     const res = await fetch('/api/crt/scenarios/run/' + id, { method: 'POST' });
     const result = await res.json();
-    if (badge) badge.textContent = result.passed ? '✓ PASS' : '! FAIL';
+    if (!res.ok) throw new Error(result.error || 'Scenario could not run');
+    if (badge) badge.textContent = result.status === 'UNVERIFIED' ? 'UNVERIFIED' : result.passed ? '✓ PASS' : '! FAIL';
     if (terminal) {
       terminal.textContent += JSON.stringify(result, null, 2) + '\n';
       terminal.scrollTop = terminal.scrollHeight;
@@ -921,7 +868,7 @@ async function runSingleCrtScenario(id) {
 async function runAllCrtScenarios() {
   const terminal = document.getElementById('crt-terminal');
   if (terminal) {
-    terminal.textContent = '[' + new Date().toLocaleTimeString() + '] Executing entire CRT Scenario Suite (CRT-01 to CRT-08)...\n';
+    terminal.textContent = '[' + new Date().toLocaleTimeString() + '] Running the commerce scenario matrix…\n';
   }
   const badge = document.getElementById('crt-status-badge');
   if (badge) badge.textContent = '↻ RUNNING';
@@ -929,6 +876,7 @@ async function runAllCrtScenarios() {
   try {
     const res = await fetch('/api/crt/scenarios/run-all', { method: 'POST' });
     const results = await res.json();
+    if (!res.ok) throw new Error(results.error || 'Scenario matrix could not run');
     if (badge) badge.textContent = '✓ FINISHED';
     if (terminal) {
       terminal.textContent += JSON.stringify(results, null, 2) + '\n';
@@ -937,7 +885,7 @@ async function runAllCrtScenarios() {
     if (Array.isArray(results)) {
       results.forEach(function(r) {
         const scBadge = document.getElementById('crt-res-' + r.scenarioId);
-        if (scBadge) scBadge.textContent = r.passed ? '✓ PASS' : '! FAIL';
+        if (scBadge) scBadge.textContent = r.status === 'UNVERIFIED' ? 'UNVERIFIED' : r.passed ? '✓ PASS' : '! FAIL';
       });
     }
   } catch (err) {
@@ -951,17 +899,16 @@ async function runAllCrtScenarios() {
 // ---------------------------------------------------------------------------
 // 9. TAB 7: Closed-Loop Master Experiment Runner
 // ---------------------------------------------------------------------------
-async function runMasterExperiment(mode) {
-  mode = mode || 'calibrated';
+async function runMasterExperiment() {
   const terminal = document.getElementById('sim-terminal');
   const badge = document.getElementById('sim-status-badge');
   if (badge) badge.textContent = '↻ RUNNING';
   if (terminal) {
-    terminal.textContent = '[' + new Date().toLocaleTimeString() + '] Initiating closed-loop experiment in ' + mode + ' mode...\n';
+    terminal.textContent = '[' + new Date().toLocaleTimeString() + '] Starting local experiment...\n';
   }
 
   try {
-    const res = await fetch('/api/experiment/run?mode=' + mode, { method: 'POST' });
+    const res = await fetch('/api/experiment/run', { method: 'POST' });
     if (!res.ok) {
       const errData = await res.json();
       if (terminal) terminal.textContent += 'Error: ' + (errData.error || 'Execution blocked') + '\n';
@@ -989,7 +936,7 @@ async function pollMasterStatus() {
 
     if (!data.running) {
       clearInterval(simPollInterval);
-      if (badge) badge.textContent = '✓ COMPLETED';
+      if (badge) badge.textContent = data.error ? '! FAILED' : '✓ COMPLETED';
       loadAllRuns();
     }
   } catch (err) {}
@@ -997,7 +944,7 @@ async function pollMasterStatus() {
 
 function runClosedLoopQuick() {
   switchTab('simulation');
-  runMasterExperiment('calibrated');
+  runMasterExperiment();
 }
 
 // ---------------------------------------------------------------------------
@@ -1023,7 +970,7 @@ function renderRecentRunsTable(benchRuns, masterRuns) {
 
   const all = [].concat(
     benchRuns.map(function(b) { return Object.assign({}, b, { source: 'BENCHMARK' }); }),
-    masterRuns.map(function(m) { return Object.assign({}, m, { source: 'SIMULATION' }); })
+    masterRuns.filter(m => m.type !== 'WEBSITE_BENCHMARK').map(m => ({ ...m, source: 'EXPERIMENT' }))
   ).sort(function(a, b) {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
@@ -1038,7 +985,7 @@ function renderRecentRunsTable(benchRuns, masterRuns) {
     const isBench = r.source === 'BENCHMARK';
     const p99 = isBench
       ? (r.latency && r.latency.p99Ms ? r.latency.p99Ms + 'ms' : '—')
-      : (r.summary && r.summary.p99LatencyMs ? r.summary.p99LatencyMs + 'ms' : '—');
+      : (r.summary?.qrMetrics?.p99 != null ? r.summary.qrMetrics.p99.toFixed(2) + ' ms' : '—');
     const tput = isBench
       ? (r.throughputRps ? r.throughputRps + ' rps' : '—')
       : (r.summary && r.summary.throughputQps ? r.summary.throughputQps + ' qps' : '—');
@@ -1047,17 +994,17 @@ function renderRecentRunsTable(benchRuns, masterRuns) {
       : 'Closed-Loop Master';
     const successRate = isBench
       ? (r.completedRequests > 0 ? Math.round((r.successfulRequests / r.completedRequests) * 100) + '%' : '—')
-      : (r.summary && r.summary.certificationStatus ? r.summary.certificationStatus : 'PASS');
+      : (r.summary?.evidenceVersion === 2 ? (r.summary.certified ? 'Certified' : 'Not certified') : 'Unverified');
 
     tr.innerHTML =
-      '<td><code>' + r.runId + '</code></td>' +
+      '<td><code>' + escapeHtml(r.runId) + '</code></td>' +
       '<td><span class="badge">' + r.source + '</span></td>' +
-      '<td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">' + target + '</td>' +
-      '<td><span class="badge">' + (r.state || 'COMPLETED') + '</span></td>' +
+      '<td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">' + escapeHtml(target) + '</td>' +
+      '<td><span class="badge" data-state="' + escapeHtml((r.state || 'UNKNOWN').toLowerCase().replace('legacy ', '')) + '">' + escapeHtml(r.state || 'Unknown') + '</span></td>' +
       '<td>' + tput + '</td>' +
       '<td>' + p99 + '</td>' +
       '<td>' + successRate + '</td>' +
-      '<td><a href="/artifacts/' + r.runId + '/report.html" target="_blank" class="btn btn-secondary btn-sm">Report →</a></td>';
+      '<td><a href="/artifacts/' + encodeURIComponent(r.runId) + '/report.html" target="_blank" class="btn btn-secondary btn-sm">Report →</a></td>';
     tbody.appendChild(tr);
   });
 }
@@ -1069,7 +1016,7 @@ function renderArchiveRunsTable(benchRuns, masterRuns) {
 
   const all = [].concat(
     benchRuns.map(function(b) { return Object.assign({}, b, { source: 'BENCHMARK' }); }),
-    masterRuns.map(function(m) { return Object.assign({}, m, { source: 'SIMULATION' }); })
+    masterRuns.filter(m => m.type !== 'WEBSITE_BENCHMARK').map(m => ({ ...m, source: 'EXPERIMENT' }))
   ).sort(function(a, b) {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
@@ -1084,22 +1031,22 @@ function renderArchiveRunsTable(benchRuns, masterRuns) {
     const isBench = r.source === 'BENCHMARK';
     const p99 = isBench
       ? (r.latency && r.latency.p99Ms ? r.latency.p99Ms + 'ms' : '—')
-      : (r.summary && r.summary.p99LatencyMs ? r.summary.p99LatencyMs + 'ms' : '—');
+      : (r.summary?.qrMetrics?.p99 != null ? r.summary.qrMetrics.p99.toFixed(2) + ' ms' : '—');
     const tput = isBench
       ? (r.throughputRps ? r.throughputRps + ' rps' : '—')
       : (r.summary && r.summary.throughputQps ? r.summary.throughputQps + ' qps' : '—');
 
     tr.innerHTML =
-      '<td><code>' + r.runId + '</code></td>' +
+      '<td><code>' + escapeHtml(r.runId) + '</code></td>' +
       '<td><span class="badge">' + r.source + '</span></td>' +
       '<td style="font-size:11px;">' + new Date(r.createdAt).toLocaleString() + '</td>' +
-      '<td>' + (isBench && r.config ? r.config.targetUrl : 'Closed-Loop Verification') + '</td>' +
-      '<td><span class="badge">' + (r.state || 'COMPLETED') + '</span></td>' +
+      '<td>' + escapeHtml(isBench && r.config ? r.config.targetUrl : 'Quorum experiment') + '</td>' +
+      '<td><span class="badge" data-state="' + escapeHtml((r.state || 'UNKNOWN').toLowerCase().replace('legacy ', '')) + '">' + escapeHtml(r.state || 'Unknown') + '</span></td>' +
       '<td>' + tput + '</td>' +
       '<td>' + p99 + '</td>' +
       '<td>' +
-      '  <a href="/artifacts/' + r.runId + '/summary.json" target="_blank" class="btn btn-secondary btn-sm">JSON</a>' +
-      '  <a href="/artifacts/' + r.runId + '/report.html" target="_blank" class="btn btn-primary btn-sm" style="margin-left:4px;">Report</a>' +
+      '  <a href="/artifacts/' + encodeURIComponent(r.runId) + '/summary.json" target="_blank" class="btn btn-secondary btn-sm">JSON</a>' +
+      '  <a href="/artifacts/' + encodeURIComponent(r.runId) + '/report.html" target="_blank" class="btn btn-primary btn-sm" style="margin-left:4px;">Report</a>' +
       '</td>';
     tbody.appendChild(tr);
   });
@@ -1109,6 +1056,20 @@ function renderArchiveRunsTable(benchRuns, masterRuns) {
 // Initial Boot
 // ---------------------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', function() {
+  for (const card of document.querySelectorAll('[data-spotlight]')) {
+    card.addEventListener('pointermove', event => {
+      const box = card.getBoundingClientRect();
+      card.style.setProperty('--spot-x', (event.clientX - box.left) + 'px');
+      card.style.setProperty('--spot-y', (event.clientY - box.top) + 'px');
+    }, { passive: true });
+  }
+  for (const id of ['target-url-input', 'chk-allow-localhost', 'chk-authorized-confirm']) {
+    document.getElementById(id).addEventListener('input', () => { document.getElementById('bench-next').disabled = true; });
+  }
+  document.getElementById('target-url-input').addEventListener('keydown', event => {
+    if (event.key === 'Enter') validateTarget();
+  });
+  switchTab(location.hash.slice(1) || 'overview');
   pollStatus();
   setInterval(pollStatus, 4000);
   loadAllRuns();
@@ -1132,13 +1093,6 @@ window.removeModelNode = removeModelNode;
 window.updateNodeParam = updateNodeParam;
 window.resetDefaultTopology = resetDefaultTopology;
 window.simulateModelTopology = simulateModelTopology;
-window.crashNode = crashNode;
-window.partitionNode = partitionNode;
-window.healAllNodes = healAllNodes;
-window.injectQuorumPartition = injectQuorumPartition;
-window.executeQuorumWrite = executeQuorumWrite;
-window.executeQuorumRead = executeQuorumRead;
-window.triggerReadRepair = triggerReadRepair;
 window.loadCrtScenarios = loadCrtScenarios;
 window.runSingleCrtScenario = runSingleCrtScenario;
 window.runAllCrtScenarios = runAllCrtScenarios;
